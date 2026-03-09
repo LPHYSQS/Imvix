@@ -5,107 +5,108 @@
 <h1 align="center">Imvix</h1>
 
 <p align="center">
-  A modern desktop image converter built for batch processing, smart format guidance, and controlled output quality.
+  面向批量处理、智能格式判断与输出可控性的现代桌面图像转换工具
 </p>
 
 <p align="center">
-  <a href="README.zh-CN.md">简体中文</a> ·
-  <a href="#highlights">Highlights</a> ·
-  <a href="#build-and-run">Build</a> ·
-  <a href="#license">License</a>
+  <a href="README.en.md">English</a> ·
+  <a href="#核心亮点">核心亮点</a> ·
+  <a href="#构建与运行">构建</a> ·
+  <a href="#许可说明">许可</a>
 </p>
 
 <p align="center">
-  .NET 10 · Avalonia 11 · MVVM · Batch Workflows · Folder Watch
+  .NET 10 · Avalonia 11 · MVVM · 批量工作流 · 文件夹监听
 </p>
 
-> Imvix focuses on repetitive image conversion work: import files or folders, preview results, tune compression and resizing, save presets, and optionally watch a folder for new files.
+> Imvix 不是只做“格式改后缀”的轻量小工具，而是围绕高频图片处理场景设计的桌面工作台，强调批量效率、参数可控、结果可预览、错误可追踪。
 
-## Overview
+## 项目概览
 
-Imvix is a desktop image converter for people who need more control than a one-click converter but still want a clean, fast interface. The app combines format conversion, batch compression, resizing, rename rules, smart recommendations, history tracking, and failure logging in a single UI.
+Imvix 是一个桌面端图片转换器，适合需要批量导入、压缩、缩放、重命名、预览、记录历史和自动监听目录的工作流。它把常用操作放在主界面中，同时保留压缩质量、尺寸策略、输出目录、覆盖规则、SVG 背景色等细粒度控制。
 
-Current repository version: `1.3.0`
+当前仓库版本：`1.3.0`
 
-## Highlights
+## 核心亮点
 
-| Area | What Imvix provides |
+| 能力方向 | Imvix 提供的内容 |
 | --- | --- |
-| Batch intake | Multi-file import, folder import, drag-and-drop, and optional recursive folder expansion |
-| Output control | PNG, JPEG, WEBP, BMP, GIF, TIFF, ICO, and SVG output with source-folder or custom-folder routing |
-| Quality tuning | Compression presets, custom quality, resize modes, SVG background fill, and overwrite control |
-| Workflow tools | Presets, pause/resume/cancel, recent history, failure logs, and automatic folder watch mode |
-| Smart assistance | Format recommendations, size estimation, transparency warnings, and high-compression warnings |
-| UX | Preview pane, double-click full preview, light/dark themes, window placement restore, and multilingual UI |
+| 批量导入 | 支持多文件导入、文件夹导入、拖拽导入，以及按需递归导入子目录 |
+| 输出控制 | 支持 PNG、JPEG、WEBP、BMP、GIF、TIFF、ICO、SVG 输出，并可保存到源目录或指定目录 |
+| 质量调优 | 支持压缩模式、自定义质量、尺寸调整、SVG 背景填充与覆盖同名文件控制 |
+| 工作流增强 | 支持预设保存、暂停、继续、取消、最近历史、失败日志与自动监听目录 |
+| 智能辅助 | 提供格式推荐、体积预估、透明背景风险提示和高压缩风险提示 |
+| 界面体验 | 提供预览面板、双击大图预览、浅色/深色主题、多语言界面与窗口位置记忆 |
 
-## Supported Formats
+## 支持的格式
 
-| Type | Formats |
+| 类型 | 格式 |
 | --- | --- |
-| Input | PNG, JPG, JPEG, WEBP, BMP, GIF, TIFF, TIF, ICO, SVG |
-| Output | PNG, JPEG, WEBP, BMP, GIF, TIFF, ICO, SVG |
+| 输入 | PNG、JPG、JPEG、WEBP、BMP、GIF、TIFF、TIF、ICO、SVG |
+| 输出 | PNG、JPEG、WEBP、BMP、GIF、TIFF、ICO、SVG |
 
-`GIF` and `TIFF` export are Windows-only in the current build because they rely on `System.Drawing.Common` for encoding.
+当前构建中的 `GIF` 和 `TIFF` 导出依赖 `System.Drawing.Common`，因此以 Windows 为主要支持目标。
 
-## Conversion Flow
+## 转换流程
 
 ```mermaid
 flowchart LR
-    A["Import files or folders"] --> B["Analyze content and size"]
-    B --> C["Show warnings and format recommendations"]
-    C --> D["Apply format, compression, resize, rename, and output rules"]
-    D --> E["Write converted files"]
-    E --> F["Store history and failure logs"]
+    A["导入文件或文件夹"] --> B["分析内容与体积"]
+    B --> C["给出提示与格式推荐"]
+    C --> D["应用格式、压缩、缩放、重命名与输出规则"]
+    D --> E["写出转换结果"]
+    E --> F["记录历史与失败日志"]
 ```
 
-## Feature Detail
+## 功能细节
 
-- Smart format recommendation based on detected content type such as photo, transparent graphic, icon, or vector art.
-- Estimated output size range before running a batch.
-- Preflight warnings for transparency loss when exporting to JPEG and for high-compression settings.
-- Folder watch mode with debounced file readiness checks to process newly added images automatically.
-- Recent conversion history limited to the latest 12 jobs.
-- Failure log generation only when a batch contains errors.
-- JSON-based settings and localization dictionaries for easier maintenance.
+- 基于图片内容类型进行智能推荐，例如照片、透明图形、图标或矢量素材。
+- 在执行批量任务前给出输出体积预估区间。
+- 当导出为 JPEG 可能丢失透明背景时，会提前给出风险提示。
+- 当压缩强度过高时，会提示可能带来的画质损失。
+- 文件夹监听模式具备去抖和就绪检测逻辑，可自动处理新加入的图片。
+- 最近转换历史默认保留最近 12 条记录。
+- 仅当任务出现失败项时才会写出失败日志。
+- 设置项和本地化资源采用 JSON 组织，便于维护与扩展。
 
-## Repository Layout
+## 仓库结构
 
 ```text
 Imvix/
-|-- Assets/                  # logo, icons, localization dictionaries
-|-- Dependencies/Svg/        # bundled SVG-related assemblies
-|-- Models/                  # options, presets, history, summaries, enums
-|-- Services/                # conversion, analysis, watch, settings, logs, localization
-|-- ViewModels/              # primary MVVM logic and advanced workflows
-|-- Views/                   # main window and dialog windows
-|-- App.axaml                # theme resources, icons, global styles
-|-- App.axaml.cs             # app startup and main window wiring
-`-- Imvix.csproj             # .NET 10 desktop project definition
+|-- Assets/                  # logo、图标、本地化字典
+|-- Dependencies/Svg/        # 随项目分发的 SVG 相关程序集
+|-- Models/                  # 转换选项、预设、历史、摘要、枚举模型
+|-- Services/                # 转换、分析、监听、设置、日志、本地化服务
+|-- ViewModels/              # 主 MVVM 逻辑与增强工作流逻辑
+|-- Views/                   # 主窗口与各类对话框
+|-- App.axaml                # 主题资源、图标资源、全局样式
+|-- App.axaml.cs             # 应用启动与主窗口装配
+`-- Imvix.csproj             # .NET 10 桌面项目定义
 ```
 
-### Key Implementation Pieces
+### 关键实现模块
 
-| Path | Responsibility |
+| 路径 | 作用 |
 | --- | --- |
-| `ViewModels/MainWindowViewModel.cs` | Primary UI state, presets, settings synchronization, preview state, localization, and manual conversion entry points |
-| `ViewModels/MainWindowViewModel.V3.cs` | Advanced workflow layer: watch mode, warnings, history, failure logs, pause/resume/cancel, and conversion insights |
-| `Services/ImageConversionService.cs` | Core conversion pipeline, preview generation, resize logic, format encoding, naming, and output routing |
-| `Services/ImageAnalysisService.cs` | Content classification, transparency detection, recommendation logic, and size estimation |
-| `Services/FolderWatchService.cs` | Debounced file-system monitoring for watch mode |
-| `Services/SettingsService.cs` | Persistent user settings |
-| `Services/ConversionHistoryService.cs` | Recent-job history persistence |
-| `Services/ConversionLogService.cs` | Failure log writing |
-| `Assets/Localization/*.json` | UI translations |
+| `ViewModels/MainWindowViewModel.cs` | 主界面状态、预设管理、设置同步、预览状态、多语言切换、手动转换入口 |
+| `ViewModels/MainWindowViewModel.V3.cs` | 文件夹监听、风险提示、历史记录、失败日志、暂停/继续/取消与转换洞察 |
+| `Services/ImageConversionService.cs` | 核心转换流程、预览生成、缩放逻辑、格式编码、命名规则与输出路径处理 |
+| `Services/ImageAnalysisService.cs` | 内容分类、透明检测、格式推荐与体积估算 |
+| `Services/FolderWatchService.cs` | 基于文件系统事件的监听与去抖处理 |
+| `Services/SettingsService.cs` | 用户设置持久化 |
+| `Services/ConversionHistoryService.cs` | 最近任务历史持久化 |
+| `Services/ConversionLogService.cs` | 失败日志输出 |
+| `Assets/Localization/*.json` | 界面翻译资源 |
 
-## Build and Run
+## 构建与运行
 
-### Requirements
+### 环境要求
 
-- Windows is the primary tested target in this repository.
+- 当前仓库主要以 Windows 作为验证和发布目标
 - `.NET 10 SDK`
-- A desktop environment supported by Avalonia
+- Avalonia 支持的桌面运行环境
 
-### Run Locally
+### 本地运行
 
 ```bash
 dotnet restore
@@ -113,27 +114,27 @@ dotnet build Imvix.csproj
 dotnet run --project Imvix.csproj
 ```
 
-### Publish a Windows Single-File Build
+### 发布 Windows 单文件版本
 
 ```bash
 dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 ```
 
-The repository already includes a Windows publish profile at `Properties/PublishProfiles/FolderProfile.pubxml`.
+仓库中已经包含一个 Windows 发布配置文件：`Properties/PublishProfiles/FolderProfile.pubxml`。
 
-## Configuration and Data
+## 配置与数据存储
 
-On Windows, Imvix stores application data under `%AppData%\Imvix`:
+在 Windows 上，Imvix 会将应用数据保存到 `%AppData%\Imvix`：
 
-| File or folder | Purpose |
+| 文件或目录 | 说明 |
 | --- | --- |
-| `settings.json` | UI preferences, default conversion options, presets, watch configuration, and window placement |
-| `history.json` | Recent conversion history |
-| `Logs/conversion-*.log` | Failure logs for batches that contain errors |
+| `settings.json` | 界面偏好、默认转换参数、预设、监听配置与窗口位置 |
+| `history.json` | 最近转换历史 |
+| `Logs/conversion-*.log` | 批量任务失败时生成的错误日志 |
 
-## Localization
+## 本地化支持
 
-The app includes built-in localization assets for:
+当前内置了以下界面语言资源：
 
 - `zh-CN`
 - `zh-TW`
@@ -146,25 +147,25 @@ The app includes built-in localization assets for:
 - `ru-RU`
 - `ar-SA`
 
-Arabic uses right-to-left layout support in the UI.
+其中阿拉伯语界面支持从右向左布局。
 
-## Tech Stack
+## 技术栈
 
 - `.NET 10`
 - `Avalonia UI 11`
 - `CommunityToolkit.Mvvm`
 - `SkiaSharp`
 - `Svg.Skia`
-- `System.Drawing.Common` for the current Windows-specific GIF/TIFF encoding path
+- `System.Drawing.Common`（当前 GIF/TIFF 编码路径依赖 Windows）
 
-## License
+## 许可说明
 
-This repository ships with a custom non-commercial license in [`LICENSE`](LICENSE).
+本仓库附带的许可文件为英文版 [`LICENSE`](LICENSE)，采用自定义的非商用许可。
 
-You may use, study, modify, and redistribute the software for personal, educational, research, evaluation, and other non-commercial purposes. Any commercial use is prohibited unless you first obtain written permission from the author or other copyright holder.
+你可以在个人使用、学习研究、评估测试、非商用二次开发和非商用分发场景中使用本项目；但任何商业用途都必须事先取得作者或其他版权持有者的书面许可。
 
-Important: because commercial use is restricted, this license is source-available, not an OSI-approved open source license.
+需要特别说明的是：由于该许可明确限制商业使用，因此它在严格定义上属于 source-available，而不是 OSI 意义上的开源许可。
 
-## Commercial Use
+## 商业使用
 
-If you want to use Imvix in a commercial product, paid service, revenue-generating workflow, or internal business operation, you must obtain prior written permission from the author or other copyright holder first.
+如果你希望将 Imvix 用于商业产品、付费服务、营收型流程或企业内部商业场景，请先获得作者或其他版权持有者的书面授权。
