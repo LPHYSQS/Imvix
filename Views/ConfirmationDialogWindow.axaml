@@ -1,0 +1,39 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.ConfirmationDialogWindow"
+        Width="540"
+        Height="320"
+        MinWidth="460"
+        MinHeight="240"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Grid RowDefinitions="*,Auto" Margin="14" RowSpacing="12">
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12">
+            <TextBlock x:Name="MessageText" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" />
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button x:Name="CancelButton" MinWidth="104" Click="OnCancelClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCloseGeometry}" />
+                    <TextBlock x:Name="CancelButtonText" />
+                </StackPanel>
+            </Button>
+            <Button x:Name="ConfirmButton" MinWidth="104" Classes="primary" Click="OnConfirmClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon inverse" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock x:Name="ConfirmButtonText" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,142 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Imvix.App"
+             xmlns:local="using:Imvix"
+             RequestedThemeVariant="Default">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#EEF3F8" />
+                    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#F7F9FC" />
+                    <SolidColorBrush x:Key="SurfaceSubtleBrush" Color="#F1F5FA" />
+                    <SolidColorBrush x:Key="BorderBrush" Color="#CBD5E2" />
+                    <SolidColorBrush x:Key="BorderStrongBrush" Color="#AFBECF" />
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#101828" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#42526B" />
+                    <SolidColorBrush x:Key="AccentBrush" Color="#1769D1" />
+                    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#FFF1F1" />
+                    <SolidColorBrush x:Key="DangerBorderBrush" Color="#E4A8A8" />
+                    <SolidColorBrush x:Key="DangerTextBrush" Color="#8D1D1D" />
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#11161D" />
+                    <SolidColorBrush x:Key="SurfaceBrush" Color="#171E27" />
+                    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#1E2733" />
+                    <SolidColorBrush x:Key="SurfaceSubtleBrush" Color="#242F3D" />
+                    <SolidColorBrush x:Key="BorderBrush" Color="#2E3B4C" />
+                    <SolidColorBrush x:Key="BorderStrongBrush" Color="#42556D" />
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#ECF2FA" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B2C2D4" />
+                    <SolidColorBrush x:Key="AccentBrush" Color="#4F9DFF" />
+                    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#041425" />
+                    <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#3A1F24" />
+                    <SolidColorBrush x:Key="DangerBorderBrush" Color="#8A4A53" />
+                    <SolidColorBrush x:Key="DangerTextBrush" Color="#FFBFC5" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <StreamGeometry x:Key="IconImportGeometry">M 12 3 V 14 M 8.5 10.5 L 12 14 L 15.5 10.5 M 4 17.5 V 19 C 4 20.1 4.9 21 6 21 H 18 C 19.1 21 20 20.1 20 19 V 17.5</StreamGeometry>
+            <StreamGeometry x:Key="IconImportFolderGeometry">M 3 7.5 H 8 L 10 5.5 H 19 C 20.1 5.5 21 6.4 21 7.5 V 18.5 C 21 19.6 20.1 20.5 19 20.5 H 5 C 3.9 20.5 3 19.6 3 18.5 Z M 3 9.5 H 21 M 12 12 V 16.5 M 9.5 14 L 12 16.5 L 14.5 14</StreamGeometry>
+            <StreamGeometry x:Key="IconFolderOpenGeometry">M 3 7.5 H 8 L 10 5.5 H 19 C 20.1 5.5 21 6.4 21 7.5 V 9.5 H 3 Z M 3 10.5 H 21 L 19.4 18.2 C 19.1 19.2 18.3 19.9 17.3 19.9 H 6.7 C 5.7 19.9 4.9 19.2 4.6 18.2 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconTrashGeometry">M 8 7 H 16 M 9.2 7 V 5.8 C 9.2 4.8 10 4 11 4 H 13 C 14 4 14.8 4.8 14.8 5.8 V 7 M 6 7 H 18 M 7.3 7.8 L 8.1 19 C 8.2 20 9 20.8 10 20.8 H 14 C 15 20.8 15.8 20 15.9 19 L 16.7 7.8 M 10 10.2 V 17 M 14 10.2 V 17</StreamGeometry>
+            <StreamGeometry x:Key="IconPlayGeometry">M 8 6.5 L 17 12 L 8 17.5 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconPauseGeometry">M 9 6 V 18 M 15 6 V 18</StreamGeometry>
+            <StreamGeometry x:Key="IconCancelGeometry">M 12 3.5 C 7.3 3.5 3.5 7.3 3.5 12 C 3.5 16.7 7.3 20.5 12 20.5 C 16.7 20.5 20.5 16.7 20.5 12 C 20.5 7.3 16.7 3.5 12 3.5 Z M 8.7 8.7 L 15.3 15.3 M 15.3 8.7 L 8.7 15.3</StreamGeometry>
+            <StreamGeometry x:Key="IconCloseGeometry">M 8 8 L 16 16 M 16 8 L 8 16</StreamGeometry>
+            <StreamGeometry x:Key="IconImageGeometry">M 4 6.5 C 4 5.4 4.9 4.5 6 4.5 H 18 C 19.1 4.5 20 5.4 20 6.5 V 17.5 C 20 18.6 19.1 19.5 18 19.5 H 6 C 4.9 19.5 4 18.6 4 17.5 Z M 7 15 L 10 12 L 12.6 14.6 L 16 11.2 L 18 13.5 M 8.5 8.5 H 8.6</StreamGeometry>
+            <StreamGeometry x:Key="IconSettingsGeometry">M 4 7 H 9 M 13 7 H 20 M 9 7 C 9 8.1 9.9 9 11 9 C 12.1 9 13 8.1 13 7 C 13 5.9 12.1 5 11 5 C 9.9 5 9 5.9 9 7 Z M 4 17 H 11 M 17 17 H 20 M 13 17 C 13 18.1 13.9 19 15 19 C 16.1 19 17 18.1 17 17 C 17 15.9 16.1 15 15 15 C 13.9 15 13 15.9 13 17 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconLanguageGeometry">M 12 4 C 16.4 4 20 7.6 20 12 C 20 16.4 16.4 20 12 20 C 7.6 20 4 16.4 4 12 C 4 7.6 7.6 4 12 4 Z M 8 9 H 16 M 8 15 H 16 M 12 4 C 10.3 6.2 9.4 9 9.4 12 C 9.4 15 10.3 17.8 12 20 M 12 4 C 13.7 6.2 14.6 9 14.6 12 C 14.6 15 13.7 17.8 12 20</StreamGeometry>
+            <StreamGeometry x:Key="IconThemeGeometry">M 12 4 V 6.2 M 12 17.8 V 20 M 4 12 H 6.2 M 17.8 12 H 20 M 6.4 6.4 L 7.9 7.9 M 16.1 16.1 L 17.6 17.6 M 17.6 6.4 L 16.1 7.9 M 7.9 16.1 L 6.4 17.6 M 12 8 C 14.2 8 16 9.8 16 12 C 16 14.2 14.2 16 12 16 C 9.8 16 8 14.2 8 12 C 8 9.8 9.8 8 12 8 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconCompressionGeometry">M 7 7 H 17 M 7 12 H 14 M 7 17 H 11 M 17.5 9.5 L 20 12 L 17.5 14.5</StreamGeometry>
+            <StreamGeometry x:Key="IconResizeGeometry">M 8 4 H 4 V 8 M 16 4 H 20 V 8 M 8 20 H 4 V 16 M 16 20 H 20 V 16 M 10 10 L 7 7 M 14 10 L 17 7 M 10 14 L 7 17 M 14 14 L 17 17</StreamGeometry>
+            <StreamGeometry x:Key="IconRenameGeometry">M 4 18 H 20 M 7 15.5 L 15.2 7.3 C 16 6.5 17.3 6.5 18.1 7.3 C 18.9 8.1 18.9 9.4 18.1 10.2 L 9.9 18.4 H 7 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconPresetGeometry">M 7 4.5 H 17 C 18.1 4.5 19 5.4 19 6.5 V 20 L 12 16.5 L 5 20 V 6.5 C 5 5.4 5.9 4.5 7 4.5 Z</StreamGeometry>
+            <StreamGeometry x:Key="IconSaveGeometry">M 6.5 4.5 H 17 L 19 6.5 V 19.5 C 19 20.3 18.3 21 17.5 21 H 6.5 C 5.7 21 5 20.3 5 19.5 V 6 C 5 5.2 5.7 4.5 6.5 4.5 Z M 8 4.5 V 9 H 16 V 4.5 M 9 21 V 15 H 15 V 21</StreamGeometry>
+            <StreamGeometry x:Key="IconCheckGeometry">M 6.5 12.5 L 10.2 16.2 L 17.5 8.9</StreamGeometry>
+            <StreamGeometry x:Key="IconVectorGeometry">M 6 6 H 10 V 10 H 6 Z M 14 14 H 18 V 18 H 14 Z M 8 10 L 10 12 L 14 12 M 12 8 V 12 M 10 6 H 14 L 16 8 V 12</StreamGeometry>
+            <StreamGeometry x:Key="IconWatchGeometry">M 3 7.5 H 8 L 10 5.5 H 19 C 20.1 5.5 21 6.4 21 7.5 V 11.5 M 3 9.5 H 15 M 16.5 13 C 18.4 13 20 14.6 20 16.5 C 20 18.4 18.4 20 16.5 20 C 14.6 20 13 18.4 13 16.5 C 13 14.6 14.6 13 16.5 13 Z M 16.5 14.8 V 16.7 L 17.8 17.8</StreamGeometry>
+            <StreamGeometry x:Key="IconStatusGeometry">M 3 12 H 7 L 9.5 7 L 13.2 17 L 16 12 H 21</StreamGeometry>
+            <StreamGeometry x:Key="IconFileGeometry">M 8 3.5 H 14 L 19 8.5 V 20 C 19 21.1 18.1 22 17 22 H 8 C 6.9 22 6 21.1 6 20 V 5.5 C 6 4.4 6.9 3.5 8 3.5 Z M 14 3.5 V 8.5 H 19</StreamGeometry>
+            <StreamGeometry x:Key="IconLayersGeometry">M 12 5 L 20 9 L 12 13 L 4 9 Z M 4 14 L 12 18 L 20 14</StreamGeometry>
+            <StreamGeometry x:Key="IconInfoGeometry">M 12 3.5 C 7.3 3.5 3.5 7.3 3.5 12 C 3.5 16.7 7.3 20.5 12 20.5 C 16.7 20.5 20.5 16.7 20.5 12 C 20.5 7.3 16.7 3.5 12 3.5 Z M 12 10.2 V 16 M 12 7.9 H 12.1</StreamGeometry>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+
+        <Style Selector="Window Button">
+            <Setter Property="Background" Value="{DynamicResource SurfaceSubtleBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Button.icon-only">
+            <Setter Property="Width" Value="38" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <Style Selector="Button TextBlock">
+            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+        </Style>
+
+        <Style Selector="StackPanel.icon-label">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Spacing" Value="8" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Border.icon-badge">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceSubtleBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="Path.line-icon">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Stroke" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="StrokeThickness" Value="1.8" />
+            <Setter Property="StrokeLineCap" Value="Round" />
+            <Setter Property="StrokeJoin" Value="Round" />
+        </Style>
+
+        <Style Selector="Path.line-icon.secondary">
+            <Setter Property="Stroke" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="Path.line-icon.inverse">
+            <Setter Property="Stroke" Value="{DynamicResource AccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="Path.line-icon.danger">
+            <Setter Property="Stroke" Value="{DynamicResource DangerTextBrush}" />
+        </Style>
+    </Application.Styles>
+</Application>

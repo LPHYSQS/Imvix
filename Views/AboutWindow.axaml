@@ -1,0 +1,120 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.AboutWindow"
+        x:CompileBindings="False"
+        Width="760"
+        Height="680"
+        MinWidth="680"
+        MinHeight="600"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Window.Styles>
+        <Style Selector="TextBlock.about-section-body">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="24" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="Border.about-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
+        <Border Grid.Row="0" Classes="about-card">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                <Border Width="120"
+                        Height="120"
+                        Background="{DynamicResource SurfaceAltBrush}"
+                        BorderBrush="{DynamicResource AccentBrush}"
+                        BorderThickness="1.5"
+                        CornerRadius="24"
+                        Padding="20">
+                    <Image Source="/Assets/logo.png" Stretch="Uniform" />
+                </Border>
+
+                <StackPanel Grid.Column="1" Spacing="10" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                        <TextBlock Text="Imvix" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
+                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="999" Padding="12,4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding AppVersionText}" Foreground="{DynamicResource AccentForegroundBrush}" FontWeight="SemiBold" />
+                        </Border>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding AboutTaglineText}" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding AboutSummaryText}" Classes="secondary" TextWrapping="Wrap" />
+
+                    <WrapPanel ItemHeight="30" VerticalAlignment="Center">
+                        <StackPanel Classes="icon-label" Margin="0,0,18,0">
+                            <Path Classes="line-icon secondary" Data="{StaticResource IconInfoGeometry}" />
+                            <TextBlock Text="{Binding AboutVersionLabelText}" Classes="secondary" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding AppVersionText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon secondary" Data="{StaticResource IconRenameGeometry}" />
+                            <TextBlock Text="{Binding AboutAuthorLabelText}" Classes="secondary" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding AboutAuthorNameText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+            <StackPanel Spacing="12" Margin="0,0,4,0">
+                <Border Classes="about-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconLayersGeometry}" />
+                            </Border>
+                            <TextBlock Text="{Binding AboutFeatureSectionTitleText}" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Classes="about-section-body" Text="{Binding AboutFeatureSectionBodyText}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="about-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconSettingsGeometry}" />
+                            </Border>
+                            <TextBlock Text="{Binding AboutTechSectionTitleText}" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Classes="about-section-body" Text="{Binding AboutTechSectionBodyText}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="about-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconStatusGeometry}" />
+                            </Border>
+                            <TextBlock Text="{Binding AboutIdeasSectionTitleText}" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Classes="about-section-body" Text="{Binding AboutIdeasSectionBodyText}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button MinWidth="108" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock Text="{Binding CloseText}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

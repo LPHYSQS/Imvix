@@ -1,0 +1,685 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Imvix.ViewModels"
+        xmlns:cp="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.ColorPicker"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.MainWindow"
+        x:CompileBindings="False"
+        Width="1280"
+        Height="760"
+        MinWidth="980"
+        MinHeight="620"
+        Icon="/Assets/logo.ico"
+        Title="Imvix"
+        FlowDirection="{Binding UiFlowDirection}"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource AppBackgroundBrush}">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="Window TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.secondary">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.toolbar-label">
+            <Setter Property="Width" Value="96" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="TextAlignment" Value="Right" />
+        </Style>
+
+
+        <Style Selector="ComboBox.toolbar-control">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="TextBox.toolbar-control">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+
+        <Style Selector="TextBox.settings-folder-input">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+
+        <Style Selector="Button.status-action">
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16" Background="{DynamicResource AppBackgroundBrush}">
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceAltBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10"
+                Padding="12"
+                Margin="0,0,0,12">
+            <WrapPanel VerticalAlignment="Center" ItemHeight="44">
+                <Button MinWidth="122" Click="OnImportClick" Margin="0,0,8,8" ToolTip.Tip="{Binding ImportButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon" Data="{StaticResource IconImportGeometry}" />
+                        <TextBlock Text="{Binding ImportButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button MinWidth="148" Click="OnImportFolderClick" Margin="0,0,8,8" ToolTip.Tip="{Binding ImportFolderButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon" Data="{StaticResource IconImportFolderGeometry}" />
+                        <TextBlock Text="{Binding ImportFolderButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button MinWidth="112" Command="{Binding ClearImagesCommand}" Margin="0,0,12,8" ToolTip.Tip="{Binding ClearButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon danger" Data="{StaticResource IconTrashGeometry}" />
+                        <TextBlock Text="{Binding ClearButtonText}" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Classes="toolbar-label" Text="{Binding OutputFormatText}" Margin="0,0,8,8" />
+                <ComboBox Classes="toolbar-control" Width="126" ItemsSource="{Binding OutputFormats}" SelectedItem="{Binding SelectedOutputFormat}" Margin="0,0,12,8" />
+
+                <TextBlock Classes="toolbar-label" Text="{Binding OutputFolderText}" Margin="0,0,8,8" />
+                <TextBox Classes="toolbar-control"
+                         Width="300"
+                         Text="{Binding OutputDirectory}"
+                         Watermark="{Binding OutputDirectoryHintText}"
+                         Background="{DynamicResource SurfaceSubtleBrush}"
+                         BorderBrush="{DynamicResource BorderBrush}"
+                         Margin="0,0,8,8" />
+                <Button Classes="icon-only" Click="OnSelectOutputFolderClick" Margin="0,0,12,8" ToolTip.Tip="{Binding ChooseFolderButtonText}">
+                    <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                </Button>
+
+                <Button MinWidth="156" Classes="primary" Command="{Binding StartConversionCommand}" Margin="0,0,8,8" ToolTip.Tip="{Binding StartConversionButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon inverse" Data="{StaticResource IconPlayGeometry}" />
+                        <TextBlock Text="{Binding StartConversionButtonText}" />
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="3*,2*" ColumnSpacing="12">
+            <Border Grid.Column="0"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="12">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0" Classes="icon-label" Margin="0,0,0,8">
+                        <Border Classes="icon-badge">
+                            <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                        </Border>
+                        <TextBlock Text="{Binding ImageListText}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <Border Grid.Row="1"
+                            IsVisible="{Binding IsEmpty}"
+                            Background="{DynamicResource SurfaceSubtleBrush}"
+                            BorderBrush="{DynamicResource BorderStrongBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            DragDrop.AllowDrop="True"
+                            DragDrop.DragOver="OnDropZoneDragOver"
+                            DragDrop.Drop="OnDropZoneDrop">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <TextBlock Text="{Binding DropHintTitleText}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding DropHintDescriptionText}" Classes="secondary" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <ListBox Grid.Row="1"
+                             IsVisible="{Binding HasImages}"
+                             ItemsSource="{Binding Images}"
+                             SelectedItem="{Binding SelectedImage}"
+                             Background="{DynamicResource SurfaceBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             DragDrop.AllowDrop="True"
+                             DragDrop.DragOver="OnDropZoneDragOver"
+                             DragDrop.Drop="OnDropZoneDrop">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4" ColumnDefinitions="72,*,Auto" ColumnSpacing="10" DoubleTapped="OnImageItemDoubleTapped">
+                                    <Border Width="64"
+                                            Height="64"
+                                            Background="{DynamicResource SurfaceSubtleBrush}"
+                                            CornerRadius="6"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1">
+                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="400" />
+                                        <TextBlock Text="{Binding Extension}" Classes="secondary" />
+                                        <TextBlock Text="{Binding ResolutionText}" Classes="secondary" />
+                                        <TextBlock Text="{Binding SizeText}" Classes="secondary" />
+                                    </StackPanel>
+                                    <Button Grid.Column="2"
+                                            Classes="icon-only"
+                                            ToolTip.Tip="{Binding $parent[Window].DataContext.RemoveText}"
+                                            Command="{Binding $parent[Window].DataContext.RemoveImageCommand}"
+                                            CommandParameter="{Binding}">
+                                        <Path Classes="line-icon danger" Data="{StaticResource IconCloseGeometry}" />
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <TabControl Grid.Column="1" SelectedIndex="{Binding RightPanelTabIndex}">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                            <TextBlock Text="{Binding PreviewTabText}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer Margin="8" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+                        <StackPanel Spacing="10" Margin="0,0,12,0">
+                            <Border Background="{DynamicResource SurfaceSubtleBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="8"
+                                    Height="240">
+                                <Image Source="{Binding SelectedPreview}" Stretch="Uniform" />
+                            </Border>
+
+                            <TextBlock Text="{Binding NoPreviewText}" Classes="secondary" />
+                            <TextBlock Text="{Binding CurrentFile, StringFormat='{}{0}'}" TextTrimming="CharacterEllipsis" />
+
+                            <Border IsVisible="{Binding HasFormatRecommendation}"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding FormatRecommendationTitleText}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding FormatRecommendationText}" />
+                                    <TextBlock Text="{Binding FormatRecommendationReasonText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasSizeEstimate}"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding EstimatedSizeTitleText}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding OriginalSizeSummaryText}" />
+                                    <TextBlock Text="{Binding EstimatedSizeSummaryText}" Classes="secondary" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasActiveWarnings}"
+                                    Background="{DynamicResource DangerBackgroundBrush}"
+                                    BorderBrush="{DynamicResource DangerBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{Binding WarningsTitleText}" FontWeight="SemiBold" Foreground="{DynamicResource DangerTextBrush}" />
+                                    <ItemsControl ItemsSource="{Binding ActiveWarnings}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="{DynamicResource DangerTextBrush}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasFailureLog}"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding FailureLogLabelText}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding LastFailureLogPath}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding HistoryTitleText}" FontWeight="SemiBold" />
+                                    <TextBlock IsVisible="{Binding IsHistoryEmpty}" Text="{Binding HistoryEmptyText}" Classes="secondary" />
+                                    <ItemsControl IsVisible="{Binding HasRecentConversions}" ItemsSource="{Binding RecentConversions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{DynamicResource SurfaceBrush}"
+                                                        BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Padding="8"
+                                                        Margin="0,0,0,6">
+                                                    <StackPanel Spacing="4">
+                                                        <TextBlock Text="{Binding TimestampText}" Classes="secondary" />
+                                                        <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                        <TextBlock Text="{Binding DetailText}" Classes="secondary" TextWrapping="Wrap" />
+                                                        <TextBlock IsVisible="{Binding HasFailureLog}" Text="{Binding FailureLogPath}" Classes="secondary" TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasFailures}"
+                                    Background="{DynamicResource DangerBackgroundBrush}"
+                                    BorderBrush="{DynamicResource DangerBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{Binding FailedFilesText}" FontWeight="SemiBold" Foreground="{DynamicResource DangerTextBrush}" />
+                                    <ItemsControl ItemsSource="{Binding FailedConversions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,0,0,6">
+                                                    <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" Foreground="{DynamicResource DangerTextBrush}" />
+                                                    <TextBlock Text="{Binding Reason}" TextWrapping="Wrap" Foreground="{DynamicResource DangerTextBrush}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon" Data="{StaticResource IconSettingsGeometry}" />
+                            <TextBlock Text="{Binding SettingsTabText}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer Margin="8" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+                        <StackPanel Spacing="10" Margin="0,0,16,0">
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconLanguageGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding LanguageLabelText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconThemeGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding ThemeLabelText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding DefaultOutputFormatText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox ItemsSource="{Binding OutputFormats}" SelectedItem="{Binding SelectedOutputFormat}" />
+
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconCompressionGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding CompressionModeText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox ItemsSource="{Binding CompressionModes}" SelectedItem="{Binding SelectedCompressionModeOption}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Text="{Binding CompressionModeHintText}" Classes="secondary" TextWrapping="Wrap" />
+
+                            <TextBlock Text="{Binding QualityText}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <Slider Grid.Column="0" Minimum="1" Maximum="100" Value="{Binding Quality}" IsEnabled="{Binding IsQualityEditable}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Quality}" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconResizeGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding ResizeSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding ResizeModeText}" />
+                                    <ComboBox ItemsSource="{Binding ResizeModes}" SelectedItem="{Binding SelectedResizeModeOption}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsResizeWidthVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding ResizeWidthText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding ResizeWidth, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsResizeHeightVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding ResizeHeightText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding ResizeHeight, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsResizePercentVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding ResizePercentText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding ResizePercent, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconRenameGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding RenameSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding RenameModeText}" />
+                                    <ComboBox ItemsSource="{Binding RenameModes}" SelectedItem="{Binding SelectedRenameModeOption}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsRenamePrefixVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding RenamePrefixText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding RenamePrefix}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsRenameSuffixVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding RenameSuffixText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding RenameSuffix}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsRenameNumberVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding RenameStartNumberText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding RenameStartNumber, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsRenameNumberVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding RenameDigitsText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding RenameNumberDigits, UpdateSourceTrigger=LostFocus}" />
+                                    </Grid>
+                                    <TextBlock Text="{Binding RenameHintText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconPresetGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding PresetSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <ComboBox ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                        <TextBlock Grid.Column="0" Text="{Binding PresetNameText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding PresetNameInput}" Watermark="{Binding PresetNameHintText}" />
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button Command="{Binding SavePresetCommand}" ToolTip.Tip="{Binding SavePresetText}">
+                                            <StackPanel Classes="icon-label">
+                                                <Path Classes="line-icon" Data="{StaticResource IconSaveGeometry}" />
+                                                <TextBlock Text="{Binding SavePresetText}" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding ApplyPresetCommand}" ToolTip.Tip="{Binding ApplyPresetText}">
+                                            <StackPanel Classes="icon-label">
+                                                <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                                                <TextBlock Text="{Binding ApplyPresetText}" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding DeletePresetCommand}" ToolTip.Tip="{Binding DeletePresetText}">
+                                            <StackPanel Classes="icon-label">
+                                                <Path Classes="line-icon danger" Data="{StaticResource IconTrashGeometry}" />
+                                                <TextBlock Text="{Binding DeletePresetText}" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconVectorGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding SvgSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox IsChecked="{Binding SvgUseBackground}" Content="{Binding SvgUseBackgroundText}" />
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColor, UpdateSourceTrigger=LostFocus}" Watermark="#FFFFFFFF" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorRgbText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColorRgb, UpdateSourceTrigger=LostFocus}" Watermark="255,255,255" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgColorPickerText}" VerticalAlignment="Top" Margin="0,6,0,0" />
+                                        <cp:ColorView Grid.Column="1"
+                                                      MinHeight="220"
+                                                      Color="{Binding SvgBackgroundColorValue}"
+                                                      IsAlphaEnabled="False"
+                                                      IsAlphaVisible="False"
+                                                      IsColorModelVisible="False"
+                                                      IsComponentSliderVisible="False"
+                                                      IsComponentTextInputVisible="False" />
+                                    </Grid>
+                                    <TextBlock IsVisible="{Binding IsSvgBackgroundColorVisible}" Text="{Binding SvgBackgroundColorHintText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconWatchGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding WatchModeTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox IsChecked="{Binding WatchModeEnabled}" Content="{Binding WatchModeEnabledText}" />
+                                    <TextBlock Text="{Binding WatchStatusLabelText}" />
+                                    <TextBlock Text="{Binding WatchStatusText}" />
+                                    <TextBlock Text="{Binding WatchMetricsText}" Classes="secondary" />
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <TextBox Grid.Column="0" Classes="settings-folder-input" Text="{Binding WatchInputDirectory}" Watermark="{Binding WatchInputFolderText}" />
+                                        <Button Grid.Column="1" Classes="icon-only" Click="OnSelectWatchInputFolderClick" ToolTip.Tip="{Binding ChooseFolderButtonText}">
+                                            <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                                        </Button>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <TextBox Grid.Column="0" Classes="settings-folder-input" Text="{Binding WatchOutputDirectory}" Watermark="{Binding WatchOutputFolderText}" />
+                                        <Button Grid.Column="1" Classes="icon-only" Click="OnSelectWatchOutputFolderClick" ToolTip.Tip="{Binding ChooseFolderButtonText}">
+                                            <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                                        </Button>
+                                    </Grid>
+                                    <CheckBox IsChecked="{Binding WatchIncludeSubfolders}" Content="{Binding WatchIncludeSubfoldersText}" />
+                                    <TextBlock Text="{Binding WatchHintText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <CheckBox IsChecked="{Binding UseSourceFolder}" Content="{Binding UseSourceFolderText}" />
+                            <CheckBox IsChecked="{Binding IncludeSubfoldersOnFolderImport}" Content="{Binding IncludeSubfoldersOnImportText}" />
+
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding DefaultOutputFolderLabelText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox Grid.Column="0"
+                                         Classes="settings-folder-input"
+                                         Text="{Binding OutputDirectory}"
+                                         Watermark="{Binding OutputDirectoryHintText}"
+                                         Background="{DynamicResource SurfaceSubtleBrush}"
+                                         BorderBrush="{DynamicResource BorderBrush}" />
+                                <Button Grid.Column="1" Classes="icon-only" Click="OnSelectOutputFolderClick" ToolTip.Tip="{Binding ChooseFolderButtonText}">
+                                    <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                                </Button>
+                            </Grid>
+
+                            <CheckBox IsChecked="{Binding AutoOpenOutputDirectory}" Content="{Binding AutoOpenOutputFolderText}" />
+                            <CheckBox IsChecked="{Binding AllowOverwrite}" Content="{Binding AllowOverwriteText}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{DynamicResource SurfaceAltBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10"
+                Padding="10"
+                Margin="0,12,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Button Grid.Column="0"
+                        IsVisible="{Binding IsLeftToRightLayout}"
+                        Click="OnShowAboutClick"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding AboutButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon" Data="{StaticResource IconInfoGeometry}" />
+                        <TextBlock Text="{Binding AboutButtonText}" />
+                    </StackPanel>
+                </Button>
+
+                <Border Grid.Column="0"
+                        IsVisible="{Binding IsRightToLeftLayout}"
+                        Background="{DynamicResource AccentBrush}"
+                        CornerRadius="999"
+                        Padding="12,4"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AppVersionText}"
+                               Foreground="{DynamicResource AccentForegroundBrush}"
+                               FontWeight="SemiBold" />
+                </Border>
+
+                <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding StatusLabelText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0,4,0" />
+                    <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                    <TextBlock Text="{Binding CurrentFileLabelText}" VerticalAlignment="Center" />
+                    <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0,4,0" />
+                    <TextBlock Text="{Binding CurrentFile}" Width="240" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                    <TextBlock Text="{Binding RemainingLabelText}" VerticalAlignment="Center" />
+                    <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0,4,0" />
+                    <TextBlock Text="{Binding RemainingCount}" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                    <TextBlock Text="{Binding ProgressLabelText}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <ProgressBar Width="160" Height="16" Minimum="0" Maximum="100" Value="{Binding ProgressPercent}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ProgressPercentText}" VerticalAlignment="Center" Margin="6,0,12,0" />
+
+                    <Button Classes="status-action" Command="{Binding PauseConversionCommand}" Margin="0,0,8,0" ToolTip.Tip="{Binding PauseText}">
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon" Data="{StaticResource IconPauseGeometry}" />
+                            <TextBlock Text="{Binding PauseText}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="status-action" Command="{Binding ResumeConversionCommand}" Margin="0,0,8,0" ToolTip.Tip="{Binding ResumeText}">
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon" Data="{StaticResource IconPlayGeometry}" />
+                            <TextBlock Text="{Binding ResumeText}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="status-action" Command="{Binding CancelConversionCommand}" ToolTip.Tip="{Binding CancelTaskText}">
+                        <StackPanel Classes="icon-label">
+                            <Path Classes="line-icon danger" Data="{StaticResource IconCancelGeometry}" />
+                            <TextBlock Text="{Binding CancelTaskText}" />
+                        </StackPanel>
+                    </Button>
+                </WrapPanel>
+
+                <Border Grid.Column="2"
+                        IsVisible="{Binding IsLeftToRightLayout}"
+                        Background="{DynamicResource AccentBrush}"
+                        CornerRadius="999"
+                        Padding="12,4"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AppVersionText}"
+                               Foreground="{DynamicResource AccentForegroundBrush}"
+                               FontWeight="SemiBold" />
+                </Border>
+
+                <Button Grid.Column="2"
+                        IsVisible="{Binding IsRightToLeftLayout}"
+                        Click="OnShowAboutClick"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding AboutButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon" Data="{StaticResource IconInfoGeometry}" />
+                        <TextBlock Text="{Binding AboutButtonText}" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+
+
+
+
+
+
+

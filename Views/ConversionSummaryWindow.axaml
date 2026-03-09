@@ -1,0 +1,33 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.ConversionSummaryWindow"
+        Width="520"
+        Height="280"
+        MinWidth="440"
+        MinHeight="220"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Grid RowDefinitions="*,Auto" Margin="14" RowSpacing="12">
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12">
+            <TextBlock x:Name="SummaryText" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" />
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button x:Name="CloseButton" MinWidth="104" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock x:Name="CloseButtonText" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

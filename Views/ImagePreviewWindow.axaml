@@ -1,0 +1,38 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.ImagePreviewWindow"
+        Width="1100"
+        Height="760"
+        MinWidth="680"
+        MinHeight="460"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Grid RowDefinitions="Auto,*" Margin="12" RowSpacing="10">
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceAltBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="10">
+            <StackPanel Classes="icon-label">
+                <Border Classes="icon-badge">
+                    <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                </Border>
+                <TextBlock x:Name="FileNameText" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="8">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+                <Image x:Name="PreviewImage" Stretch="Uniform" />
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
