@@ -33,25 +33,7 @@ namespace Imvix.Services
         {
             lock (_gate)
             {
-                try
-                {
-                    if (!File.Exists(_historyPath))
-                    {
-                        return [];
-                    }
-
-                    var json = File.ReadAllText(_historyPath);
-                    var entries = JsonSerializer.Deserialize<List<ConversionHistoryEntry>>(json, JsonOptions);
-                    return entries?
-                        .OrderByDescending(entry => entry.Timestamp)
-                        .Take(MaxEntries)
-                        .ToList()
-                        ?? [];
-                }
-                catch
-                {
-                    return [];
-                }
+                return NormalizeEntries(LoadInternal());
             }
         }
 
@@ -61,14 +43,22 @@ namespace Imvix.Services
             {
                 var entries = LoadInternal();
                 entries.Insert(0, entry);
-                if (entries.Count > MaxEntries)
-                {
-                    entries.RemoveRange(MaxEntries, entries.Count - MaxEntries);
-                }
+                entries = NormalizeEntries(entries);
 
                 var json = JsonSerializer.Serialize(entries, JsonOptions);
                 File.WriteAllText(_historyPath, json);
                 return entries;
+            }
+        }
+
+        public IReadOnlyList<ConversionHistoryEntry> Clear()
+        {
+            lock (_gate)
+            {
+                var empty = new List<ConversionHistoryEntry>();
+                var json = JsonSerializer.Serialize(empty, JsonOptions);
+                File.WriteAllText(_historyPath, json);
+                return empty;
             }
         }
 
@@ -89,6 +79,14 @@ namespace Imvix.Services
             {
                 return [];
             }
+        }
+
+        private static List<ConversionHistoryEntry> NormalizeEntries(IEnumerable<ConversionHistoryEntry> entries)
+        {
+            return entries
+                .OrderByDescending(entry => entry.Timestamp)
+                .Take(MaxEntries)
+                .ToList();
         }
     }
 }

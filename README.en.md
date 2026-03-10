@@ -25,7 +25,7 @@
 
 Imvix is a desktop image converter for people who need more control than a one-click converter but still want a clean, fast interface. The app combines format conversion, batch compression, resizing, rename rules, smart recommendations, history tracking, and failure logging in a single UI.
 
-Current repository version: `1.3.0`
+Current repository version: `1.3.1`
 
 ## Highlights
 

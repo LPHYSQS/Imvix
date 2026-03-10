@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\MyProgram\\Imvix\\Imvix.csproj": {}
+    "E:\\净云流枫工作室\\Imvix\\Imvix.csproj": {}
   },
   "projects": {
-    "E:\\MyProgram\\Imvix\\Imvix.csproj": {
-      "version": "1.3.0",
+    "E:\\净云流枫工作室\\Imvix\\Imvix.csproj": {
+      "version": "1.3.1",
       "restore": {
-        "projectUniqueName": "E:\\MyProgram\\Imvix\\Imvix.csproj",
+        "projectUniqueName": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
         "projectName": "Imvix",
-        "projectPath": "E:\\MyProgram\\Imvix\\Imvix.csproj",
+        "projectPath": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
         "packagesPath": "C:\\Users\\30106\\.nuget\\packages\\",
-        "outputPath": "E:\\MyProgram\\Imvix\\obj\\",
+        "outputPath": "E:\\净云流枫工作室\\Imvix\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "E:\\MyProgram\\Imvix\\NuGet.Config",
+          "E:\\净云流枫工作室\\Imvix\\NuGet.Config",
           "C:\\Users\\30106\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"

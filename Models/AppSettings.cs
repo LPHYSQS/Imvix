@@ -67,6 +67,8 @@ namespace Imvix.Models
 
         public bool WatchIncludeSubfolders { get; set; } = true;
 
+        public bool KeepRunningInTray { get; set; }
+
         public bool HasWindowPlacement { get; set; }
 
         public int WindowPositionX { get; set; }

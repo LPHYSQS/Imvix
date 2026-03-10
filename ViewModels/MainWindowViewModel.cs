@@ -28,6 +28,7 @@ namespace Imvix.ViewModels
         private string _statusKey = "StatusReady";
         private bool _isLoadingSettings;
         private bool _isSyncingSvgColorInputs;
+        private bool _isVersionBadgeHovered;
 
         public event EventHandler<ConversionSummary>? ConversionCompleted;
 
@@ -122,22 +123,22 @@ namespace Imvix.ViewModels
 
         public IReadOnlyList<LanguageOption> Languages { get; } =
         [
-            new LanguageOption("zh-CN", "简体中文"),
-            new LanguageOption("zh-TW", "繁體中文"),
+            new LanguageOption("zh-CN", "\u7B80\u4F53\u4E2D\u6587"),
+            new LanguageOption("zh-TW", "\u7E41\u9AD4\u4E2D\u6587"),
             new LanguageOption("en-US", "English"),
-            new LanguageOption("ja-JP", "日本語"),
+            new LanguageOption("ja-JP", "\u65E5\u672C\u8A9E"),
             new LanguageOption("ko-KR", "\uD55C\uAD6D\uC5B4"),
             new LanguageOption("fr-FR", "Fran\u00E7ais"),
             new LanguageOption("de-DE", "Deutsch"),
             new LanguageOption("it-IT", "Italiano"),
-            new LanguageOption("ru-RU", "Русский"),
-            new LanguageOption("ar-SA", "العربية")
+            new LanguageOption("ru-RU", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"),
+            new LanguageOption("ar-SA", "\u0627\u0644\u0639\u0631\u0628\u064A\u0629")
         ];
 
         public IReadOnlyList<ThemeOption> Themes { get; } =
         [
-            new ThemeOption("Dark", "Dark / 暗黑"),
-            new ThemeOption("Light", "Light / 明亮")
+            new ThemeOption("Dark", "Dark / \u6697\u9ED1"),
+            new ThemeOption("Light", "Light / \u660E\u4EAE")
         ];
 
         public bool HasImages => Images.Count > 0;
@@ -166,7 +167,7 @@ namespace Imvix.ViewModels
 
         public string ProgressPercentText => $"{ProgressPercent:0}%";
 
-        public string WindowTitle => "IMVIX";
+        public string WindowTitle => "Imvix";
 
         public string ImportButtonText => T("ImportImages");
 
@@ -309,8 +310,24 @@ namespace Imvix.ViewModels
         public string AboutIdeasSectionTitleText => T("AboutIdeasSectionTitle");
         public string AboutIdeasSectionBodyText => T("AboutIdeasSectionBody");
         public string AboutAuthorLabelText => T("AboutAuthorLabel");
+        public string AboutLinksLabelText => T("AboutLinksLabel");
+        public string AboutWebsiteLabelText => T("AboutWebsiteLabel");
+        public string AboutWebsiteButtonText => T("AboutWebsiteButton");
+        public string AboutRepositoryLabelText => T("AboutRepositoryLabel");
+        public string AboutRepositoryButtonText => T("AboutRepositoryButton");
         public string AboutAuthorNameText => "\u5DF2\u901D\u60C5\u6B87";
-        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.0"}";
+        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.1"}";
+        public string VersionBadgeHoverText => T("VersionBadgeHover");
+        public string VersionBadgeToolTipText => FormatT("VersionBadgeToolTipFormat", AppVersionText);
+        public string FooterVersionBadgeText => _isVersionBadgeHovered ? VersionBadgeHoverText : AppVersionText;
+        public double FooterVersionBadgeFontSize => _isVersionBadgeHovered ? 14d : 15d;
+        public string VersionNotesWindowTitleText => FormatT("VersionNotesWindowTitleFormat", AppVersionText);
+        public string VersionNotesHeaderText => FormatT("VersionNotesHeaderFormat", AppVersionText);
+        public string VersionNotesSummaryText => T("VersionNotesSummary");
+        public string VersionNotesFixesTitleText => T("VersionNotesFixesTitle");
+        public string VersionNotesFixesBodyText => T("VersionNotesFixesBody");
+        public string VersionNotesFeaturesTitleText => T("VersionNotesFeaturesTitle");
+        public string VersionNotesFeaturesBodyText => T("VersionNotesFeaturesBody");
         public bool IsRightToLeftLayout => UiFlowDirection == FlowDirection.RightToLeft;
         public bool IsLeftToRightLayout => !IsRightToLeftLayout;
 
@@ -1101,6 +1118,7 @@ namespace Imvix.ViewModels
                 WatchInputDirectory = WatchInputDirectory,
                 WatchOutputDirectory = WatchOutputDirectory,
                 WatchIncludeSubfolders = WatchIncludeSubfolders,
+                KeepRunningInTray = KeepRunningInTray,
                 HasWindowPlacement = existing.HasWindowPlacement,
                 WindowPositionX = existing.WindowPositionX,
                 WindowPositionY = existing.WindowPositionY,
@@ -1211,9 +1229,26 @@ namespace Imvix.ViewModels
             StatusText = T(key);
         }
 
+        public void SetVersionBadgeHover(bool isHovered)
+        {
+            if (_isVersionBadgeHovered == isHovered)
+            {
+                return;
+            }
+
+            _isVersionBadgeHovered = isHovered;
+            OnPropertyChanged(nameof(FooterVersionBadgeText));
+            OnPropertyChanged(nameof(FooterVersionBadgeFontSize));
+        }
+
         private string T(string key)
         {
             return _localizationService.Translate(key);
+        }
+
+        private string FormatT(string key, params object[] args)
+        {
+            return string.Format(CultureInfo.CurrentCulture, T(key), args);
         }
 
         private static FlowDirection ResolveFlowDirection(string? languageCode)
@@ -1336,8 +1371,23 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(AboutIdeasSectionTitleText));
             OnPropertyChanged(nameof(AboutIdeasSectionBodyText));
             OnPropertyChanged(nameof(AboutAuthorLabelText));
+            OnPropertyChanged(nameof(AboutLinksLabelText));
+            OnPropertyChanged(nameof(AboutWebsiteLabelText));
+            OnPropertyChanged(nameof(AboutWebsiteButtonText));
+            OnPropertyChanged(nameof(AboutRepositoryLabelText));
+            OnPropertyChanged(nameof(AboutRepositoryButtonText));
             OnPropertyChanged(nameof(AboutAuthorNameText));
             OnPropertyChanged(nameof(AppVersionText));
+            OnPropertyChanged(nameof(VersionBadgeHoverText));
+            OnPropertyChanged(nameof(VersionBadgeToolTipText));
+            OnPropertyChanged(nameof(FooterVersionBadgeText));
+            OnPropertyChanged(nameof(VersionNotesWindowTitleText));
+            OnPropertyChanged(nameof(VersionNotesHeaderText));
+            OnPropertyChanged(nameof(VersionNotesSummaryText));
+            OnPropertyChanged(nameof(VersionNotesFixesTitleText));
+            OnPropertyChanged(nameof(VersionNotesFixesBodyText));
+            OnPropertyChanged(nameof(VersionNotesFeaturesTitleText));
+            OnPropertyChanged(nameof(VersionNotesFeaturesBodyText));
             RefreshLocalizedPropertiesV3();
         }
 
@@ -1377,7 +1427,7 @@ namespace Imvix.ViewModels
                 text = text[4..^1];
             }
 
-            var parts = text.Split([',', '，'], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            var parts = text.Split([',', '\uFF0C'], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length != 3)
             {
                 return false;
@@ -1452,6 +1502,7 @@ namespace Imvix.ViewModels
         }
     }
 }
+
 
 
 

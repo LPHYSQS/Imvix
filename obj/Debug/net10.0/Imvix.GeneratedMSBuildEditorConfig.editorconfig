@@ -17,26 +17,29 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Imvix
-build_property.ProjectDir = E:\MyProgram\Imvix\
+build_property.ProjectDir = E:\净云流枫工作室\Imvix\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[E:/MyProgram/Imvix/App.axaml]
+[E:/净云流枫工作室/Imvix/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[E:/MyProgram/Imvix/Views/AboutWindow.axaml]
+[E:/净云流枫工作室/Imvix/Views/AboutWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[E:/MyProgram/Imvix/Views/ConfirmationDialogWindow.axaml]
+[E:/净云流枫工作室/Imvix/Views/ConfirmationDialogWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[E:/MyProgram/Imvix/Views/ConversionSummaryWindow.axaml]
+[E:/净云流枫工作室/Imvix/Views/ConversionSummaryWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[E:/MyProgram/Imvix/Views/ImagePreviewWindow.axaml]
+[E:/净云流枫工作室/Imvix/Views/ImagePreviewWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[E:/MyProgram/Imvix/Views/MainWindow.axaml]
+[E:/净云流枫工作室/Imvix/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/净云流枫工作室/Imvix/Views/UpdateNotesWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

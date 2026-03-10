@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\MyProgram\\Imvix\\",
+  "WorkspaceRootPath": "E:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\Imvix\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|e:\\myprogram\\imvix\\views\\mainwindow.axaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|e:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\imvix\\views\\mainwindow.axaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|solutionrelative:views\\mainwindow.axaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|e:\\myprogram\\imvix\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|e:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\imvix\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BC499CE8-CEBA-866F-49D8-9986C11CFA91}|Imvix.csproj|solutionrelative:viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -24,11 +24,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "MainWindow.axaml",
-              "DocumentMoniker": "E:\\MyProgram\\Imvix\\Views\\MainWindow.axaml",
+              "DocumentMoniker": "E:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\Imvix\\Views\\MainWindow.axaml",
               "RelativeDocumentMoniker": "Views\\MainWindow.axaml",
-              "ToolTip": "E:\\MyProgram\\Imvix\\Views\\MainWindow.axaml",
+              "ToolTip": "E:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\Imvix\\Views\\MainWindow.axaml",
               "RelativeToolTip": "Views\\MainWindow.axaml",
-              "ViewState": "AgIAAEcAAAAAAAAAAAAwwE4AAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAwwE4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-03-06T05:07:50.897Z",
               "EditorCaption": ""
@@ -37,9 +37,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "MainWindowViewModel.cs",
-              "DocumentMoniker": "E:\\MyProgram\\Imvix\\ViewModels\\MainWindowViewModel.cs",
+              "DocumentMoniker": "E:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\Imvix\\ViewModels\\MainWindowViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\MainWindowViewModel.cs",
-              "ToolTip": "E:\\MyProgram\\Imvix\\ViewModels\\MainWindowViewModel.cs",
+              "ToolTip": "E:\\\u51C0\u4E91\u6D41\u67AB\u5DE5\u4F5C\u5BA4\\Imvix\\ViewModels\\MainWindowViewModel.cs",
               "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

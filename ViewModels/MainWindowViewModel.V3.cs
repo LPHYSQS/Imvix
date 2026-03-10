@@ -70,6 +70,12 @@ namespace Imvix.ViewModels
         public string ContinueActionText => T("ContinueAction");
         public string CancelActionText => T("CancelAction");
         public string WatchMetricsText => string.Format(CultureInfo.CurrentCulture, T("WatchMetricsTemplate"), WatchProcessedCount, WatchFailureCount);
+        public string ClearRecentConversionsText => T("ClearRecentConversions");
+        public string TraySettingsTitleText => T("TraySettingsTitle");
+        public string KeepRunningInTrayText => T("KeepRunningInTray");
+        public string TrayHintText => T("TrayHint");
+        public string TrayRestoreText => T("TrayRestore");
+        public string TrayExitText => T("TrayExit");
 
         [ObservableProperty]
         private string formatRecommendationText = string.Empty;
@@ -102,6 +108,9 @@ namespace Imvix.ViewModels
         private bool watchIncludeSubfolders = true;
 
         [ObservableProperty]
+        private bool keepRunningInTray;
+
+        [ObservableProperty]
         private string watchStatusText = string.Empty;
 
         [ObservableProperty]
@@ -127,10 +136,16 @@ namespace Imvix.ViewModels
             WatchInputDirectory = settings.WatchInputDirectory;
             WatchOutputDirectory = settings.WatchOutputDirectory;
             WatchIncludeSubfolders = settings.WatchIncludeSubfolders;
+            KeepRunningInTray = settings.KeepRunningInTray;
             WatchStatusText = T("WatchStatusStopped");
 
-            ReplaceHistory(_conversionHistoryService.Load());
+            LoadRecentConversionHistory();
             RefreshConversionInsights();
+        }
+
+        public void LoadRecentConversionHistory()
+        {
+            ReplaceHistory(_conversionHistoryService.Load());
         }
 
         private async Task CompleteVersion3InitializationAsync()
@@ -460,7 +475,13 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(WarningsTitleText));
             OnPropertyChanged(nameof(HistoryTitleText));
             OnPropertyChanged(nameof(HistoryEmptyText));
+            OnPropertyChanged(nameof(ClearRecentConversionsText));
             OnPropertyChanged(nameof(WatchModeTitleText));
+            OnPropertyChanged(nameof(TraySettingsTitleText));
+            OnPropertyChanged(nameof(KeepRunningInTrayText));
+            OnPropertyChanged(nameof(TrayHintText));
+            OnPropertyChanged(nameof(TrayRestoreText));
+            OnPropertyChanged(nameof(TrayExitText));
             OnPropertyChanged(nameof(WatchModeEnabledText));
             OnPropertyChanged(nameof(WatchInputFolderText));
             OnPropertyChanged(nameof(WatchOutputFolderText));
@@ -702,6 +723,12 @@ namespace Imvix.ViewModels
             }
         }
 
+        [RelayCommand(CanExecute = nameof(CanClearRecentConversions))]
+        private void ClearRecentConversions()
+        {
+            ReplaceHistory(_conversionHistoryService.Clear());
+        }
+
         [RelayCommand(CanExecute = nameof(CanPauseConversion))]
         private void PauseConversion()
         {
@@ -722,6 +749,11 @@ namespace Imvix.ViewModels
         private void CancelConversion()
         {
             _manualConversionCancellationSource?.Cancel();
+        }
+
+        private bool CanClearRecentConversions()
+        {
+            return RecentConversions.Count > 0;
         }
 
         private bool CanPauseConversion()
@@ -795,6 +827,16 @@ namespace Imvix.ViewModels
             PersistSettings();
         }
 
+        partial void OnKeepRunningInTrayChanged(bool value)
+        {
+            if (_isLoadingSettings)
+            {
+                return;
+            }
+
+            PersistSettings();
+        }
+
         partial void OnWatchProcessedCountChanged(int value)
         {
             OnPropertyChanged(nameof(WatchMetricsText));
@@ -814,6 +856,7 @@ namespace Imvix.ViewModels
         {
             OnPropertyChanged(nameof(HasRecentConversions));
             OnPropertyChanged(nameof(IsHistoryEmpty));
+            ClearRecentConversionsCommand.NotifyCanExecuteChanged();
         }
 
         private static string FormatBytes(long bytes)
@@ -840,6 +883,10 @@ namespace Imvix.ViewModels
         }
     }
 }
+
+
+
+
 
 
 

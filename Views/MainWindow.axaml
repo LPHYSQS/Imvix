@@ -12,7 +12,7 @@
         MinWidth="980"
         MinHeight="620"
         Icon="/Assets/logo.ico"
-        Title="Imvix"
+        Title="{Binding WindowTitle}"
         FlowDirection="{Binding UiFlowDirection}"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppBackgroundBrush}">
@@ -62,6 +62,21 @@
             <Setter Property="Padding" Value="12,6" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.version-badge-surface">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="MinWidth" Value="94" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="14,6" />
+        </Style>
+
+        <Style Selector="TextBlock.version-badge-text">
+            <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </Window.Styles>
 
@@ -271,7 +286,17 @@
                                     CornerRadius="8"
                                     Padding="10">
                                 <StackPanel Spacing="8">
-                                    <TextBlock Text="{Binding HistoryTitleText}" FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <TextBlock Grid.Column="0" Text="{Binding HistoryTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        <Button Grid.Column="1"
+                                                Command="{Binding ClearRecentConversionsCommand}"
+                                                ToolTip.Tip="{Binding ClearRecentConversionsText}">
+                                            <StackPanel Classes="icon-label">
+                                                <Path Classes="line-icon danger" Data="{StaticResource IconTrashGeometry}" />
+                                                <TextBlock Text="{Binding ClearRecentConversionsText}" />
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
                                     <TextBlock IsVisible="{Binding IsHistoryEmpty}" Text="{Binding HistoryEmptyText}" Classes="secondary" />
                                     <ItemsControl IsVisible="{Binding HasRecentConversions}" ItemsSource="{Binding RecentConversions}">
                                         <ItemsControl.ItemTemplate>
@@ -555,6 +580,19 @@
                                 </StackPanel>
                             </Border>
 
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconLayersGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding TraySettingsTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox IsChecked="{Binding KeepRunningInTray}" Content="{Binding KeepRunningInTrayText}" />
+                                    <TextBlock Text="{Binding TrayHintText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
                             <CheckBox IsChecked="{Binding UseSourceFolder}" Content="{Binding UseSourceFolderText}" />
                             <CheckBox IsChecked="{Binding IncludeSubfoldersOnFolderImport}" Content="{Binding IncludeSubfoldersOnImportText}" />
 
@@ -605,13 +643,15 @@
 
                 <Border Grid.Column="0"
                         IsVisible="{Binding IsRightToLeftLayout}"
-                        Background="{DynamicResource AccentBrush}"
-                        CornerRadius="999"
-                        Padding="12,4"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="{Binding AppVersionText}"
-                               Foreground="{DynamicResource AccentForegroundBrush}"
-                               FontWeight="SemiBold" />
+                        Classes="version-badge-surface"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding VersionBadgeToolTipText}"
+                        PointerEntered="OnVersionBadgePointerEntered"
+                        PointerExited="OnVersionBadgePointerExited"
+                        PointerPressed="OnVersionBadgePointerPressed">
+                    <TextBlock Classes="version-badge-text"
+                               FontSize="{Binding FooterVersionBadgeFontSize}"
+                               Text="{Binding FooterVersionBadgeText}" />
                 </Border>
 
                 <WrapPanel Grid.Column="1" VerticalAlignment="Center">
@@ -653,13 +693,15 @@
 
                 <Border Grid.Column="2"
                         IsVisible="{Binding IsLeftToRightLayout}"
-                        Background="{DynamicResource AccentBrush}"
-                        CornerRadius="999"
-                        Padding="12,4"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="{Binding AppVersionText}"
-                               Foreground="{DynamicResource AccentForegroundBrush}"
-                               FontWeight="SemiBold" />
+                        Classes="version-badge-surface"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{Binding VersionBadgeToolTipText}"
+                        PointerEntered="OnVersionBadgePointerEntered"
+                        PointerExited="OnVersionBadgePointerExited"
+                        PointerPressed="OnVersionBadgePointerPressed">
+                    <TextBlock Classes="version-badge-text"
+                               FontSize="{Binding FooterVersionBadgeFontSize}"
+                               Text="{Binding FooterVersionBadgeText}" />
                 </Border>
 
                 <Button Grid.Column="2"
@@ -676,6 +718,8 @@
         </Border>
     </Grid>
 </Window>
+
+
 
 
 

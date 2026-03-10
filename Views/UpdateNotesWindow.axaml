@@ -1,0 +1,75 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.UpdateNotesWindow"
+        Width="660"
+        Height="540"
+        MinWidth="580"
+        MinHeight="460"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Window.Styles>
+        <Style Selector="TextBlock.update-section-body">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="24" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="Border.update-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
+        <Border Grid.Row="0" Classes="update-card">
+            <StackPanel Spacing="10">
+                <TextBlock x:Name="HeaderText" FontSize="24" FontWeight="Bold" TextWrapping="Wrap" />
+                <TextBlock x:Name="SummaryText" Classes="secondary" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+            <StackPanel Spacing="12" Margin="0,0,4,0">
+                <Border Classes="update-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                            </Border>
+                            <TextBlock x:Name="FixesTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock x:Name="FixesBodyText" Classes="update-section-body" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="update-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconLayersGeometry}" />
+                            </Border>
+                            <TextBlock x:Name="FeaturesTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock x:Name="FeaturesBodyText" Classes="update-section-body" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button MinWidth="108" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock x:Name="CloseButtonText" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

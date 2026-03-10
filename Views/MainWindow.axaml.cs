@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
@@ -9,6 +10,7 @@ using Imvix.Services;
 using Imvix.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,10 +29,17 @@ namespace Imvix.Views
         private readonly SettingsService _settingsService = new();
         private MainWindowViewModel? _subscribedViewModel;
         private bool _windowPlacementRestored;
+        private bool _startupPathsHandled;
+        private bool _isExplicitExitRequested;
+        private IReadOnlyList<string> _pendingStartupPaths = [];
+        private TrayIcon? _trayIcon;
+        private NativeMenuItem? _restoreTrayMenuItem;
+        private NativeMenuItem? _exitTrayMenuItem;
 
         public MainWindow()
         {
             InitializeComponent();
+            InitializeTrayIcon();
             Opened += OnWindowOpened;
             Closing += OnWindowClosing;
             DataContextChanged += OnDataContextChanged;
@@ -39,11 +48,21 @@ namespace Imvix.Views
 
         private MainWindowViewModel? ViewModel => DataContext as MainWindowViewModel;
 
+        public void SetStartupPaths(IEnumerable<string>? paths)
+        {
+            _pendingStartupPaths = paths?
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(path => path.Trim())
+                .ToArray()
+                ?? [];
+        }
+
         private void OnDataContextChanged(object? sender, EventArgs e)
         {
             if (_subscribedViewModel is not null)
             {
                 _subscribedViewModel.ConversionCompleted -= OnConversionCompleted;
+                _subscribedViewModel.PropertyChanged -= OnViewModelPropertyChanged;
                 _subscribedViewModel.ConfirmDialogAsync = null;
             }
 
@@ -51,7 +70,28 @@ namespace Imvix.Views
             if (_subscribedViewModel is not null)
             {
                 _subscribedViewModel.ConversionCompleted += OnConversionCompleted;
+                _subscribedViewModel.PropertyChanged += OnViewModelPropertyChanged;
                 _subscribedViewModel.ConfirmDialogAsync = ShowConfirmationDialogAsync;
+            }
+
+            UpdateTrayIconState();
+
+            if (_windowPlacementRestored)
+            {
+                ViewModel?.LoadRecentConversionHistory();
+                ApplyStartupPaths();
+            }
+        }
+
+        private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(e.PropertyName) ||
+                e.PropertyName is nameof(MainWindowViewModel.KeepRunningInTray) or
+                    nameof(MainWindowViewModel.TrayRestoreText) or
+                    nameof(MainWindowViewModel.TrayExitText) or
+                    nameof(MainWindowViewModel.WindowTitle))
+            {
+                UpdateTrayIconState();
             }
         }
 
@@ -110,27 +150,267 @@ namespace Imvix.Views
             await dialog.ShowDialog(this);
         }
 
-        private void OnWindowOpened(object? sender, EventArgs e)
+        private async void OnShowVersionNotesClick(object? sender, RoutedEventArgs e)
         {
-            if (_windowPlacementRestored)
+            await ShowVersionNotesDialogAsync();
+        }
+
+        private async void OnVersionBadgePointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 return;
             }
 
-            _windowPlacementRestored = true;
-            RestoreWindowPlacement();
+            e.Handled = true;
+            await ShowVersionNotesDialogAsync();
+        }
+
+        private void OnVersionBadgePointerEntered(object? sender, PointerEventArgs e)
+        {
+            ViewModel?.SetVersionBadgeHover(true);
+        }
+
+        private void OnVersionBadgePointerExited(object? sender, PointerEventArgs e)
+        {
+            ViewModel?.SetVersionBadgeHover(false);
+        }
+
+        private async Task ShowVersionNotesDialogAsync()
+        {
+            var vm = ViewModel;
+            if (vm is null || !IsVisible)
+            {
+                return;
+            }
+
+            vm.SetVersionBadgeHover(false);
+
+            var dialog = new UpdateNotesWindow(
+                vm.VersionNotesWindowTitleText,
+                vm.VersionNotesHeaderText,
+                vm.VersionNotesSummaryText,
+                vm.VersionNotesFixesTitleText,
+                vm.VersionNotesFixesBodyText,
+                vm.VersionNotesFeaturesTitleText,
+                vm.VersionNotesFeaturesBodyText,
+                vm.CloseText)
+            {
+                FlowDirection = this.FlowDirection
+            };
+
+            await dialog.ShowDialog(this);
+        }
+
+        private void OnWindowOpened(object? sender, EventArgs e)
+        {
+            if (!_windowPlacementRestored)
+            {
+                _windowPlacementRestored = true;
+                RestoreWindowPlacement();
+            }
+
+            ViewModel?.LoadRecentConversionHistory();
+            ApplyStartupPaths();
+            UpdateTrayIconState();
         }
 
         private void OnWindowClosing(object? sender, WindowClosingEventArgs e)
         {
+            SaveWindowPlacement();
+
+            if (ShouldHideToTray(e))
+            {
+                e.Cancel = true;
+                HideToTray();
+                return;
+            }
+
+            CleanupTrayIcon();
+
             if (_subscribedViewModel is not null)
             {
                 _subscribedViewModel.ConversionCompleted -= OnConversionCompleted;
+                _subscribedViewModel.PropertyChanged -= OnViewModelPropertyChanged;
                 _subscribedViewModel.ConfirmDialogAsync = null;
                 _subscribedViewModel = null;
             }
+        }
 
-            SaveWindowPlacement();
+        private bool ShouldHideToTray(WindowClosingEventArgs e)
+        {
+            return ViewModel?.KeepRunningInTray == true
+                   && !_isExplicitExitRequested
+                   && e.CloseReason is WindowCloseReason.WindowClosing or WindowCloseReason.Undefined;
+        }
+
+        private void HideToTray()
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                WindowState = WindowState.Normal;
+            }
+
+            ShowInTaskbar = false;
+            Hide();
+            UpdateTrayIconState();
+        }
+
+        private void RestoreFromTray()
+        {
+            ShowInTaskbar = true;
+
+            if (!IsVisible)
+            {
+                Show();
+            }
+
+            WindowState = WindowState.Normal;
+            Activate();
+        }
+
+        private void ExitApplication()
+        {
+            _isExplicitExitRequested = true;
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                if (!desktop.TryShutdown(0))
+                {
+                    _isExplicitExitRequested = false;
+                }
+
+                return;
+            }
+
+            Close();
+        }
+
+        private void InitializeTrayIcon()
+        {
+            if (Application.Current is null)
+            {
+                return;
+            }
+
+            try
+            {
+                using var stream = AssetLoader.Open(new Uri("avares://Imvix/Assets/logo.ico"));
+
+                _restoreTrayMenuItem = new NativeMenuItem();
+                _restoreTrayMenuItem.Click += OnTrayRestoreClick;
+
+                _exitTrayMenuItem = new NativeMenuItem();
+                _exitTrayMenuItem.Click += OnTrayExitClick;
+
+                var menu = new NativeMenu();
+                menu.Add(_restoreTrayMenuItem);
+                menu.Add(new NativeMenuItemSeparator());
+                menu.Add(_exitTrayMenuItem);
+
+                _trayIcon = new TrayIcon
+                {
+                    Icon = new WindowIcon(stream),
+                    Menu = menu,
+                    IsVisible = false
+                };
+
+                _trayIcon.Clicked += OnTrayIconClicked;
+
+                var icons = new TrayIcons();
+                icons.Add(_trayIcon);
+                TrayIcon.SetIcons(Application.Current, icons);
+            }
+            catch
+            {
+                _trayIcon = null;
+                _restoreTrayMenuItem = null;
+                _exitTrayMenuItem = null;
+            }
+        }
+
+        private void UpdateTrayIconState()
+        {
+            if (_trayIcon is null)
+            {
+                return;
+            }
+
+            var vm = ViewModel;
+            _trayIcon.ToolTipText = vm?.WindowTitle ?? "Imvix";
+            _trayIcon.IsVisible = vm?.KeepRunningInTray == true;
+
+            if (_restoreTrayMenuItem is not null)
+            {
+                _restoreTrayMenuItem.Header = vm?.TrayRestoreText ?? "Show Main Window";
+            }
+
+            if (_exitTrayMenuItem is not null)
+            {
+                _exitTrayMenuItem.Header = vm?.TrayExitText ?? "Exit Imvix";
+            }
+        }
+
+        private void CleanupTrayIcon()
+        {
+            if (_restoreTrayMenuItem is not null)
+            {
+                _restoreTrayMenuItem.Click -= OnTrayRestoreClick;
+                _restoreTrayMenuItem = null;
+            }
+
+            if (_exitTrayMenuItem is not null)
+            {
+                _exitTrayMenuItem.Click -= OnTrayExitClick;
+                _exitTrayMenuItem = null;
+            }
+
+            if (_trayIcon is null)
+            {
+                return;
+            }
+
+            _trayIcon.Clicked -= OnTrayIconClicked;
+            _trayIcon.IsVisible = false;
+            _trayIcon.Dispose();
+            _trayIcon = null;
+
+            if (Application.Current is not null)
+            {
+                TrayIcon.SetIcons(Application.Current, new TrayIcons());
+            }
+        }
+
+        private void OnTrayIconClicked(object? sender, EventArgs e)
+        {
+            RestoreFromTray();
+        }
+
+        private void OnTrayRestoreClick(object? sender, EventArgs e)
+        {
+            RestoreFromTray();
+        }
+
+        private void OnTrayExitClick(object? sender, EventArgs e)
+        {
+            ExitApplication();
+        }
+
+        private void ApplyStartupPaths()
+        {
+            if (_startupPathsHandled || _pendingStartupPaths.Count == 0)
+            {
+                return;
+            }
+
+            var vm = ViewModel;
+            if (vm is null)
+            {
+                return;
+            }
+
+            _startupPathsHandled = true;
+            vm.AddFiles(_pendingStartupPaths);
         }
 
         private void RestoreWindowPlacement()
@@ -444,5 +724,3 @@ namespace Imvix.Views
         }
     }
 }
-
-
