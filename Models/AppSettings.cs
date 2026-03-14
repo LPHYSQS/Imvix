@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 
 namespace Imvix.Models
@@ -56,6 +56,8 @@ namespace Imvix.Models
         public bool SvgUseBackground { get; set; }
 
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
+
+        public GifHandlingMode DefaultGifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
 
         public List<ConversionPreset> Presets { get; set; } = [];
 

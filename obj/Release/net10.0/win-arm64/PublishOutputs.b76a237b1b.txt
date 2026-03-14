@@ -1,0 +1,5 @@
+E:\SoftwareBuild\Imvix\Imvix-v1.3.2-win-x64\Imvix.pdb
+E:\SoftwareBuild\Imvix\Imvix-v1.3.2-win-x64\av_libglesv2.dll
+E:\SoftwareBuild\Imvix\Imvix-v1.3.2-win-x64\libHarfBuzzSharp.dll
+E:\SoftwareBuild\Imvix\Imvix-v1.3.2-win-x64\libSkiaSharp.dll
+E:\SoftwareBuild\Imvix\Imvix-v1.3.2-win-x64\Imvix.exe

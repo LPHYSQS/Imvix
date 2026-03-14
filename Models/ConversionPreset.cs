@@ -39,5 +39,7 @@ namespace Imvix.Models
         public bool SvgUseBackground { get; set; }
 
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
+
+        public GifHandlingMode GifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
     }
 }

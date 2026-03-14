@@ -40,6 +40,8 @@ namespace Imvix.Models
 
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
 
+        public GifHandlingMode GifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
+
         public int MaxDegreeOfParallelism { get; set; } = Math.Max(1, Environment.ProcessorCount);
     }
 }

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Imvix.Models;
 using Imvix.Services;
@@ -289,6 +289,7 @@ namespace Imvix.ViewModels
                 AllowOverwrite = AllowOverwrite,
                 SvgUseBackground = SvgUseBackground,
                 SvgBackgroundColor = EffectiveSvgBackgroundColor,
+                GifHandlingMode = SelectedGifHandlingMode,
                 MaxDegreeOfParallelism = _maxParallelism
             };
         }

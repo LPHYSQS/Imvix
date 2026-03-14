@@ -218,7 +218,7 @@ E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\createdump.exe
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\hostfxr.dll
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\hostpolicy.dll
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\mscordaccore.dll
-E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\mscordaccore_x86_x86_10.0.326.7603.dll
+E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\mscordaccore_x86_x86_10.0.426.12010.dll
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\mscordbi.dll
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\mscorrc.dll
 E:\净云流枫工作室\Imvix\bin\Release\net10.0\win-x86\msquic.dll

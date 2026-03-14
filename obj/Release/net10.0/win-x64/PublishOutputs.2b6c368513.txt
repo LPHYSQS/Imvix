@@ -1,5 +1,0 @@
-E:\SoftwareBuild\Imvix\Imvix.pdb
-E:\SoftwareBuild\Imvix\av_libglesv2.dll
-E:\SoftwareBuild\Imvix\libHarfBuzzSharp.dll
-E:\SoftwareBuild\Imvix\libSkiaSharp.dll
-E:\SoftwareBuild\Imvix\Imvix.exe

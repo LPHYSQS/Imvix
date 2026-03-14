@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>PsdSharp</id>
+    <version>1.2.0</version>
+    <authors>Kaelon141</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>logo.png</icon>
+    <readme>README.md</readme>
+    <iconUrl>https://raw.githubusercontent.com/kaelon141/PsdSharp/refs/heads/main/logo.png</iconUrl>
+    <description>PsdSharp is a cross-platform .NET library for reading and rendering Photoshop PSD and PSB files, written entirely in managed C#.</description>
+    <tags>photoshop psd psb adobe</tags>
+    <repository type="git" url="https://github.com/kaelon141/PsdSharp" commit="2c2cbd0bbb90009451bf703222c9abded8c1699c" />
+    <dependencies>
+      <group targetFramework="net6.0" />
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Iconic.Zlib.Netstandard" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Bcl.Numerics" version="9.0.9" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Encoding.CodePages" version="9.0.9" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

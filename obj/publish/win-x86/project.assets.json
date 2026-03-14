@@ -473,7 +473,7 @@
           "lib/net5.0/MicroCom.Runtime.dll": {}
         }
       },
-      "Microsoft.NET.ILLink.Tasks/10.0.3": {
+      "Microsoft.NET.ILLink.Tasks/10.0.4": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
@@ -1026,7 +1026,7 @@
           "lib/net5.0/MicroCom.Runtime.dll": {}
         }
       },
-      "Microsoft.NET.ILLink.Tasks/10.0.3": {
+      "Microsoft.NET.ILLink.Tasks/10.0.4": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
@@ -1777,10 +1777,10 @@
         "microcom.runtime.nuspec"
       ]
     },
-    "Microsoft.NET.ILLink.Tasks/10.0.3": {
-      "sha512": "0B6nZyCHWXnvmlB559oduOspVdNOnpNXPjhpWVMovLPAsDVG7A4jJR9rzECf67JUzxP8/ee/wA8clwIzJcWNFA==",
+    "Microsoft.NET.ILLink.Tasks/10.0.4": {
+      "sha512": "CCx8ojW3mOL150/LnP0DK7qpMrJEt6xxNCmJFKoX89v1h0FwpsEHqennowGPYDxp6zIkIO4f9PxynjOeLF+1zw==",
       "type": "package",
-      "path": "microsoft.net.illink.tasks/10.0.3",
+      "path": "microsoft.net.illink.tasks/10.0.4",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -1793,7 +1793,7 @@
         "build/Microsoft.NET.ILLink.Analyzers.props",
         "build/Microsoft.NET.ILLink.Tasks.props",
         "build/Microsoft.NET.ILLink.targets",
-        "microsoft.net.illink.tasks.10.0.3.nupkg.sha512",
+        "microsoft.net.illink.tasks.10.0.4.nupkg.sha512",
         "microsoft.net.illink.tasks.nuspec",
         "tools/net/ILLink.Tasks.deps.json",
         "tools/net/ILLink.Tasks.dll",
@@ -2104,7 +2104,7 @@
       "Avalonia.Fonts.Inter >= 11.3.12",
       "Avalonia.Themes.Fluent >= 11.3.12",
       "CommunityToolkit.Mvvm >= 8.2.1",
-      "Microsoft.NET.ILLink.Tasks >= 10.0.3",
+      "Microsoft.NET.ILLink.Tasks >= 10.0.4",
       "System.Drawing.Common >= 9.0.2"
     ]
   },
@@ -2113,7 +2113,7 @@
     "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.3.1",
+    "version": "1.3.2",
     "restore": {
       "projectUniqueName": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
       "projectName": "Imvix",
@@ -2192,7 +2192,7 @@
           "Microsoft.NET.ILLink.Tasks": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[10.0.3, )",
+            "version": "[10.0.4, )",
             "autoReferenced": true
           },
           "System.Drawing.Common": {
@@ -2214,15 +2214,15 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Runtime.win-x86",
-            "version": "[10.0.3, 10.0.3]"
+            "version": "[10.0.4, 10.0.4]"
           },
           {
             "name": "Microsoft.NETCore.App.Runtime.win-x86",
-            "version": "[10.0.3, 10.0.3]"
+            "version": "[10.0.4, 10.0.4]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Runtime.win-x86",
-            "version": "[10.0.3, 10.0.3]"
+            "version": "[10.0.4, 10.0.4]"
           }
         ],
         "frameworkReferences": {
@@ -2230,7 +2230,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

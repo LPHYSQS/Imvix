@@ -1,4 +1,4 @@
-﻿using Avalonia.Platform;
+﻿﻿using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
 using System.IO;

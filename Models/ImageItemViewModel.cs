@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+﻿﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SkiaSharp;
 using Svg.Skia;
@@ -10,7 +10,7 @@ namespace Imvix.Models
 {
     public sealed partial class ImageItemViewModel : ObservableObject, IDisposable
     {
-        private ImageItemViewModel(string filePath, long fileSize, int pixelWidth, int pixelHeight, Bitmap? thumbnail)
+        private ImageItemViewModel(string filePath, long fileSize, int pixelWidth, int pixelHeight, Bitmap? thumbnail, int gifFrameCount)
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
@@ -19,6 +19,8 @@ namespace Imvix.Models
             SizeText = FormatSize(FileSizeBytes);
             PixelWidth = Math.Max(0, pixelWidth);
             PixelHeight = Math.Max(0, pixelHeight);
+            GifFrameCount = Math.Max(1, gifFrameCount);
+            IsAnimatedGif = GifFrameCount > 1;
             ResolutionText = PixelWidth > 0 && PixelHeight > 0
                 ? string.Create(CultureInfo.InvariantCulture, $"{PixelWidth} x {PixelHeight}")
                 : "-";
@@ -41,6 +43,10 @@ namespace Imvix.Models
 
         public long PixelCount => (long)PixelWidth * PixelHeight;
 
+        public int GifFrameCount { get; }
+
+        public bool IsAnimatedGif { get; }
+
         public string ResolutionText { get; }
 
         [ObservableProperty]
@@ -48,6 +54,12 @@ namespace Imvix.Models
 
         [ObservableProperty]
         private Bitmap? thumbnail;
+
+        [ObservableProperty]
+        private string gifBadgeText = string.Empty;
+
+        [ObservableProperty]
+        private string gifFrameCountText = string.Empty;
 
         public static bool TryCreate(string filePath, out ImageItemViewModel? item, out string? error, bool generateThumbnail = true)
         {
@@ -77,9 +89,12 @@ namespace Imvix.Models
                     }
                 }
 
-                _ = TryReadImageSize(filePath, out var width, out var height);
+                _ = TryReadImageInfo(filePath, out var width, out var height, out var frameCount);
+                var gifFrameCount = Path.GetExtension(filePath).Equals(".gif", StringComparison.OrdinalIgnoreCase)
+                    ? frameCount
+                    : 1;
 
-                item = new ImageItemViewModel(filePath, fileInfo.Length, width, height, thumbnail);
+                item = new ImageItemViewModel(filePath, fileInfo.Length, width, height, thumbnail, gifFrameCount);
                 return true;
             }
             catch (Exception ex)
@@ -94,10 +109,11 @@ namespace Imvix.Models
             Thumbnail?.Dispose();
         }
 
-        private static bool TryReadImageSize(string filePath, out int width, out int height)
+        private static bool TryReadImageInfo(string filePath, out int width, out int height, out int frameCount)
         {
             width = 0;
             height = 0;
+            frameCount = 1;
 
             try
             {
@@ -113,6 +129,7 @@ namespace Imvix.Models
                     var bounds = picture.CullRect;
                     width = Math.Max(1, (int)Math.Ceiling(bounds.Width));
                     height = Math.Max(1, (int)Math.Ceiling(bounds.Height));
+                    frameCount = 1;
                     return true;
                 }
 
@@ -125,6 +142,7 @@ namespace Imvix.Models
 
                 width = Math.Max(0, codec.Info.Width);
                 height = Math.Max(0, codec.Info.Height);
+                frameCount = Math.Max(1, codec.FrameCount);
                 return width > 0 && height > 0;
             }
             catch

@@ -185,6 +185,8 @@
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="400" />
                                         <TextBlock Text="{Binding Extension}" Classes="secondary" />
+                                        <TextBlock IsVisible="{Binding IsAnimatedGif}" Text="{Binding GifBadgeText}" Classes="secondary" />
+                                        <TextBlock IsVisible="{Binding IsAnimatedGif}" Text="{Binding GifFrameCountText}" Classes="secondary" />
                                         <TextBlock Text="{Binding ResolutionText}" Classes="secondary" />
                                         <TextBlock Text="{Binding SizeText}" Classes="secondary" />
                                     </StackPanel>
@@ -217,12 +219,73 @@
                                     BorderThickness="1"
                                     CornerRadius="8"
                                     Padding="8"
-                                    Height="240">
+                                    Height="240"
+                                    PointerPressed="OnPreviewPointerPressed">
                                 <Image Source="{Binding SelectedPreview}" Stretch="Uniform" />
                             </Border>
 
                             <TextBlock Text="{Binding NoPreviewText}" Classes="secondary" />
                             <TextBlock Text="{Binding CurrentFile, StringFormat='{}{0}'}" TextTrimming="CharacterEllipsis" />
+
+                            <Border IsVisible="{Binding IsGifPreviewVisible}"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconPlayGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding GifHandlingText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <ComboBox ItemsSource="{Binding GifHandlingModes}" SelectedItem="{Binding SelectedGifHandlingModeOption}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+
+                            <Border IsVisible="{Binding IsSvgPreviewVisible}"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="10">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconVectorGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding SvgSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox IsChecked="{Binding SvgUseBackground}" Content="{Binding SvgUseBackgroundText}" />
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColor, UpdateSourceTrigger=LostFocus}" Watermark="#FFFFFFFF" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorRgbText}" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColorRgb, UpdateSourceTrigger=LostFocus}" Watermark="255,255,255" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
+                                        <TextBlock Grid.Column="0" Text="{Binding SvgColorPickerText}" VerticalAlignment="Top" Margin="0,6,0,0" />
+                                        <cp:ColorView Grid.Column="1"
+                                                      MinHeight="220"
+                                                      Color="{Binding SvgBackgroundColorValue}"
+                                                      IsAlphaEnabled="False"
+                                                      IsAlphaVisible="False"
+                                                      IsColorModelVisible="False"
+                                                      IsComponentSliderVisible="False"
+                                                      IsComponentTextInputVisible="False" />
+                                    </Grid>
+                                    <TextBlock IsVisible="{Binding IsSvgBackgroundColorVisible}" Text="{Binding SvgBackgroundColorHintText}" Classes="secondary" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
 
                             <Border IsVisible="{Binding HasFormatRecommendation}"
                                     Background="{DynamicResource SurfaceAltBrush}"
@@ -516,38 +579,6 @@
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
-                                <StackPanel Spacing="8">
-                                    <StackPanel Classes="icon-label">
-                                        <Border Classes="icon-badge">
-                                            <Path Classes="line-icon" Data="{StaticResource IconVectorGeometry}" />
-                                        </Border>
-                                        <TextBlock Text="{Binding SvgSettingsText}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <CheckBox IsChecked="{Binding SvgUseBackground}" Content="{Binding SvgUseBackgroundText}" />
-                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
-                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorText}" VerticalAlignment="Center" />
-                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColor, UpdateSourceTrigger=LostFocus}" Watermark="#FFFFFFFF" />
-                                    </Grid>
-                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
-                                        <TextBlock Grid.Column="0" Text="{Binding SvgBackgroundColorRgbText}" VerticalAlignment="Center" />
-                                        <TextBox Grid.Column="1" Text="{Binding SvgBackgroundColorRgb, UpdateSourceTrigger=LostFocus}" Watermark="255,255,255" />
-                                    </Grid>
-                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" IsVisible="{Binding IsSvgBackgroundColorVisible}">
-                                        <TextBlock Grid.Column="0" Text="{Binding SvgColorPickerText}" VerticalAlignment="Top" Margin="0,6,0,0" />
-                                        <cp:ColorView Grid.Column="1"
-                                                      MinHeight="220"
-                                                      Color="{Binding SvgBackgroundColorValue}"
-                                                      IsAlphaEnabled="False"
-                                                      IsAlphaVisible="False"
-                                                      IsColorModelVisible="False"
-                                                      IsComponentSliderVisible="False"
-                                                      IsComponentTextInputVisible="False" />
-                                    </Grid>
-                                    <TextBlock IsVisible="{Binding IsSvgBackgroundColorVisible}" Text="{Binding SvgBackgroundColorHintText}" Classes="secondary" TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
 

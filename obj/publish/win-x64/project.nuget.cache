@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2Nklcmos1Qs=",
+  "dgSpecHash": "T/nE70eCPy4=",
   "success": true,
   "projectFilePath": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
   "expectedPackageFiles": [
@@ -26,7 +26,7 @@
     "C:\\Users\\30106\\.nuget\\packages\\harfbuzzsharp.nativeassets.webassembly\\8.3.1.1\\harfbuzzsharp.nativeassets.webassembly.8.3.1.1.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\8.3.1.1\\harfbuzzsharp.nativeassets.win32.8.3.1.1.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\microcom.runtime\\0.11.0\\microcom.runtime.0.11.0.nupkg.sha512",
-    "C:\\Users\\30106\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.3\\microsoft.net.illink.tasks.10.0.3.nupkg.sha512",
+    "C:\\Users\\30106\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.4\\microsoft.net.illink.tasks.10.0.4.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.2\\microsoft.win32.systemevents.9.0.2.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\skiasharp\\2.88.9\\skiasharp.2.88.9.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\skiasharp.nativeassets.linux\\2.88.9\\skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",
@@ -35,9 +35,9 @@
     "C:\\Users\\30106\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.9\\skiasharp.nativeassets.win32.2.88.9.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\system.drawing.common\\9.0.2\\system.drawing.common.9.0.2.nupkg.sha512",
     "C:\\Users\\30106\\.nuget\\packages\\tmds.dbus.protocol\\0.21.2\\tmds.dbus.protocol.0.21.2.nupkg.sha512",
-    "C:\\Users\\30106\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.3\\microsoft.netcore.app.runtime.win-x64.10.0.3.nupkg.sha512",
-    "C:\\Users\\30106\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.3\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.3.nupkg.sha512",
-    "C:\\Users\\30106\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.3\\microsoft.aspnetcore.app.runtime.win-x64.10.0.3.nupkg.sha512"
+    "C:\\Users\\30106\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.4\\microsoft.netcore.app.runtime.win-x64.10.0.4.nupkg.sha512",
+    "C:\\Users\\30106\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.4\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.4.nupkg.sha512",
+    "C:\\Users\\30106\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.4\\microsoft.aspnetcore.app.runtime.win-x64.10.0.4.nupkg.sha512"
   ],
   "logs": []
 }

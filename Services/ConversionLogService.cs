@@ -43,6 +43,7 @@ namespace Imvix.Services
             builder.AppendLine($"Compression Mode: {options.CompressionMode}");
             builder.AppendLine($"Quality: {options.Quality}");
             builder.AppendLine($"Resize Mode: {options.ResizeMode}");
+            builder.AppendLine($"GIF Handling: {options.GifHandlingMode}");
             builder.AppendLine($"Total Files: {summary.TotalCount}");
             builder.AppendLine($"Processed Files: {summary.ProcessedCount}");
             builder.AppendLine($"Succeeded: {summary.SuccessCount}");

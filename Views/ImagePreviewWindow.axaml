@@ -1,4 +1,4 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,6 +8,7 @@
         Height="760"
         MinWidth="680"
         MinHeight="460"
+        WindowStartupLocation="CenterOwner"
         Background="{DynamicResource AppBackgroundBrush}">
     <Grid RowDefinitions="Auto,*" Margin="12" RowSpacing="10">
         <Border Grid.Row="0"
@@ -30,9 +31,7 @@
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="8">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
-                <Image x:Name="PreviewImage" Stretch="Uniform" />
-            </ScrollViewer>
+            <Image x:Name="PreviewImage" Stretch="Uniform" />
         </Border>
     </Grid>
 </Window>

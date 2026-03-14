@@ -703,9 +703,39 @@ namespace Imvix.Views
             }
         }
 
-        private async void OnImageItemDoubleTapped(object? sender, TappedEventArgs e)
+        private void OnPreviewPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                return;
+            }
+
+            var vm = ViewModel;
+            if (vm?.SelectedImage is null)
+            {
+                return;
+            }
+
+            var previewWindow = new ImagePreviewWindow(
+                vm.SelectedImage.FilePath,
+                vm.SvgUseBackground,
+                vm.SvgBackgroundColor)
+            {
+                FlowDirection = this.FlowDirection
+            };
+
+            previewWindow.Show(this);
+            e.Handled = true;
+        }
+
+        private void OnImageItemDoubleTapped(object? sender, TappedEventArgs e)
         {
             if (sender is not Control { DataContext: ImageItemViewModel image })
+            {
+                return;
+            }
+
+            if (image.IsAnimatedGif)
             {
                 return;
             }
@@ -719,7 +749,7 @@ namespace Imvix.Views
                 FlowDirection = this.FlowDirection
             };
 
-            await previewWindow.ShowDialog(this);
+            previewWindow.Show(this);
             e.Handled = true;
         }
     }
