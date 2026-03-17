@@ -16,6 +16,12 @@
 </p>
 
 <p align="center">
+  <a href="https://get.microsoft.com/installer/download/9n3ztwz2f3z9?referrer=appbadge" target="_self" >
+	<img src="https://get.microsoft.com/images/zh-cn%20dark.svg" width="200"/>
+  </a>
+</p>
+
+<p align="center">
   .NET 10 | Avalonia 11 | MVVM | Batch Workflows | Folder Watch
 </p>
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.3.2.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.2+b58f174e010cfb7f6ebe0ed6db447845f89775fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.2+ac41eecb155e82866b24f8414d9169835301ff28")]
 [assembly: System.Reflection.AssemblyProductAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.3.2.0")]
