@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Avalonia.Media.Imaging;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Avalonia.Media.Imaging;
 using Imvix.Models;
 using SkiaSharp;
 using Svg.Skia;
@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Drawing.Imaging;
-using System.Runtime.Serialization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -946,11 +945,22 @@ namespace Imvix.Services
 
         private static PropertyItem CreateGifPropertyItem(int id, short type, byte[] value)
         {
-            var item = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            var item = CreatePropertyItem();
             item.Id = id;
             item.Type = type;
             item.Len = value.Length;
             item.Value = value;
+            return item;
+        }
+
+        private static PropertyItem CreatePropertyItem()
+        {
+            var item = (PropertyItem?)Activator.CreateInstance(typeof(PropertyItem), nonPublic: true);
+            if (item is null)
+            {
+                throw new InvalidOperationException("Unable to create a PropertyItem instance.");
+            }
+
             return item;
         }
 

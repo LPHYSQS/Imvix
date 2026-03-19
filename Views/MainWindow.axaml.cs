@@ -31,6 +31,7 @@ namespace Imvix.Views
         private bool _windowPlacementRestored;
         private bool _startupPathsHandled;
         private bool _isExplicitExitRequested;
+        private bool _isRunningInstanceWarningVisible;
         private IReadOnlyList<string> _pendingStartupPaths = [];
         private TrayIcon? _trayIcon;
         private NativeMenuItem? _restoreTrayMenuItem;
@@ -55,6 +56,35 @@ namespace Imvix.Views
                 .Select(path => path.Trim())
                 .ToArray()
                 ?? [];
+        }
+
+        public async Task HandleSecondInstanceActivationAsync()
+        {
+            await BringToFrontAsync();
+
+            var vm = ViewModel;
+            if (vm is null || _isRunningInstanceWarningVisible)
+            {
+                return;
+            }
+
+            var dialog = new RunningInstanceWarningWindow(
+                vm.AlreadyRunningTitleText,
+                vm.AlreadyRunningMessageText,
+                vm.CloseText)
+            {
+                FlowDirection = this.FlowDirection
+            };
+
+            _isRunningInstanceWarningVisible = true;
+            try
+            {
+                await dialog.ShowDialog(this);
+            }
+            finally
+            {
+                _isRunningInstanceWarningVisible = false;
+            }
         }
 
         private void OnDataContextChanged(object? sender, EventArgs e)
@@ -143,6 +173,22 @@ namespace Imvix.Views
             }
 
             var dialog = new AboutWindow(vm)
+            {
+                FlowDirection = this.FlowDirection
+            };
+
+            await dialog.ShowDialog(this);
+        }
+
+        private async void OnShowContactAuthorClick(object? sender, RoutedEventArgs e)
+        {
+            var vm = ViewModel;
+            if (vm is null || !IsVisible)
+            {
+                return;
+            }
+
+            var dialog = new ContactAuthorWindow(vm)
             {
                 FlowDirection = this.FlowDirection
             };
@@ -267,6 +313,29 @@ namespace Imvix.Views
 
             WindowState = WindowState.Normal;
             Activate();
+        }
+
+        private async Task BringToFrontAsync()
+        {
+            ShowInTaskbar = true;
+
+            if (!IsVisible)
+            {
+                Show();
+            }
+
+            if (WindowState == WindowState.Minimized)
+            {
+                WindowState = WindowState.Normal;
+            }
+
+            Activate();
+
+            var wasTopmost = Topmost;
+            Topmost = true;
+            Activate();
+            await Task.Delay(120);
+            Topmost = wasTopmost;
         }
 
         private void ExitApplication()

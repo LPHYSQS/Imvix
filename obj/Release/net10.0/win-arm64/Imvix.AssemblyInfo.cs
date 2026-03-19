@@ -13,11 +13,11 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.3.2.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.2+ce3e19455816384f8d47541cfa6fc0de14cf5c2e")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.3.3.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.3+5a6db11cb0bf536eca155899f771d7ab9dde8669")]
 [assembly: System.Reflection.AssemblyProductAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Imvix")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.3.2.0")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.3.3.0")]
 
 // 由 MSBuild WriteCodeFragment 类生成。
 

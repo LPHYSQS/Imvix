@@ -3,6 +3,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using Imvix.Services;
 using Imvix.ViewModels;
 using Imvix.Views;
 using System.Linq;
@@ -11,6 +13,8 @@ namespace Imvix
 {
     public partial class App : Application
     {
+        public static SingleInstanceService? SingleInstance { get; set; }
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -29,6 +33,21 @@ namespace Imvix
 
                 mainWindow.SetStartupPaths(desktop.Args);
                 desktop.MainWindow = mainWindow;
+
+                if (SingleInstance is not null)
+                {
+                    void HandleActivation()
+                    {
+                        Dispatcher.UIThread.Post(() => _ = mainWindow.HandleSecondInstanceActivationAsync());
+                    }
+
+                    SingleInstance.ActivationRequested += HandleActivation;
+
+                    if (SingleInstance.ConsumePendingActivation())
+                    {
+                        HandleActivation();
+                    }
+                }
             }
 
             base.OnFrameworkInitializationCompleted();

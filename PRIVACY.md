@@ -2,7 +2,7 @@
 
 **Last Updated: March 2026**
 
-**Version: 1.3.2**
+**Version: 1.3.3**
 
 ---
 

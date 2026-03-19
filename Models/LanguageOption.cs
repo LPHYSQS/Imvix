@@ -1,6 +1,8 @@
-﻿namespace Imvix.Models
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace Imvix.Models
 {
-    public sealed class LanguageOption
+    public sealed partial class LanguageOption : ObservableObject
     {
         public LanguageOption(string code, string displayName)
         {
@@ -10,7 +12,8 @@
 
         public string Code { get; }
 
-        public string DisplayName { get; }
+        [ObservableProperty]
+        private string displayName;
 
         public override string ToString() => DisplayName;
     }

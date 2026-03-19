@@ -21,6 +21,7 @@ namespace Imvix.ViewModels
         private readonly ConversionLogService _conversionLogService = new();
         private readonly FolderWatchService _folderWatchService = new();
         private readonly ConversionPauseController _manualPauseController = new();
+        private readonly SystemIntegrationService _systemIntegrationService = new();
         private readonly SemaphoreSlim _watchConfigurationGate = new(1, 1);
         private readonly SemaphoreSlim _watchProcessingGate = new(1, 1);
         private readonly List<ConversionHistoryEntry> _historyCache = [];
@@ -76,6 +77,10 @@ namespace Imvix.ViewModels
         public string TrayHintText => T("TrayHint");
         public string TrayRestoreText => T("TrayRestore");
         public string TrayExitText => T("TrayExit");
+        public string StartupSettingsTitleText => T("StartupSettingsTitle");
+        public string RunOnStartupText => T("RunOnStartup");
+        public string CreateDesktopShortcutText => T("CreateDesktopShortcut");
+        public bool HasDesktopShortcutStatus => !string.IsNullOrWhiteSpace(DesktopShortcutStatusText);
 
         [ObservableProperty]
         private string formatRecommendationText = string.Empty;
@@ -111,6 +116,17 @@ namespace Imvix.ViewModels
         private bool keepRunningInTray;
 
         [ObservableProperty]
+        private bool runOnStartup;
+
+        [ObservableProperty]
+        private string desktopShortcutStatusText = string.Empty;
+
+        partial void OnDesktopShortcutStatusTextChanged(string value)
+        {
+            OnPropertyChanged(nameof(HasDesktopShortcutStatus));
+        }
+
+        [ObservableProperty]
         private string watchStatusText = string.Empty;
 
         [ObservableProperty]
@@ -137,6 +153,7 @@ namespace Imvix.ViewModels
             WatchOutputDirectory = settings.WatchOutputDirectory;
             WatchIncludeSubfolders = settings.WatchIncludeSubfolders;
             KeepRunningInTray = settings.KeepRunningInTray;
+            RunOnStartup = settings.RunOnStartup;
             WatchStatusText = T("WatchStatusStopped");
 
             LoadRecentConversionHistory();
@@ -157,6 +174,16 @@ namespace Imvix.ViewModels
             {
                 await ReconfigureWatchModeAsync();
             }
+        }
+
+        private void EnsureStartupState()
+        {
+            if (_isLoadingSettings)
+            {
+                return;
+            }
+
+            _systemIntegrationService.SetRunOnStartup(RunOnStartup);
         }
 
         private async Task StartManualConversionCoreAsync()
@@ -483,6 +510,9 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(TrayHintText));
             OnPropertyChanged(nameof(TrayRestoreText));
             OnPropertyChanged(nameof(TrayExitText));
+            OnPropertyChanged(nameof(StartupSettingsTitleText));
+            OnPropertyChanged(nameof(RunOnStartupText));
+            OnPropertyChanged(nameof(CreateDesktopShortcutText));
             OnPropertyChanged(nameof(WatchModeEnabledText));
             OnPropertyChanged(nameof(WatchInputFolderText));
             OnPropertyChanged(nameof(WatchOutputFolderText));
@@ -838,6 +868,17 @@ namespace Imvix.ViewModels
             PersistSettings();
         }
 
+        partial void OnRunOnStartupChanged(bool value)
+        {
+            if (_isLoadingSettings)
+            {
+                return;
+            }
+
+            _systemIntegrationService.SetRunOnStartup(value);
+            PersistSettings();
+        }
+
         partial void OnWatchProcessedCountChanged(int value)
         {
             OnPropertyChanged(nameof(WatchMetricsText));
@@ -858,6 +899,21 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(HasRecentConversions));
             OnPropertyChanged(nameof(IsHistoryEmpty));
             ClearRecentConversionsCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand]
+        private void CreateDesktopShortcut()
+        {
+            if (_systemIntegrationService.DesktopShortcutExists())
+            {
+                DesktopShortcutStatusText = T("DesktopShortcutAlreadyExists");
+                return;
+            }
+
+            var created = _systemIntegrationService.CreateDesktopShortcut();
+            DesktopShortcutStatusText = created
+                ? T("DesktopShortcutCreated")
+                : T("DesktopShortcutCreateFailed");
         }
 
         private static string FormatBytes(long bytes)
@@ -884,10 +940,6 @@ namespace Imvix.ViewModels
         }
     }
 }
-
-
-
-
 
 
 

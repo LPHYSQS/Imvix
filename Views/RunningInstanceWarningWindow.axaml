@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.RunningInstanceWarningWindow"
+        Width="520"
+        Height="260"
+        MinWidth="440"
+        MinHeight="220"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Grid RowDefinitions="*,Auto" Margin="14" RowSpacing="12">
+        <Border Background="{DynamicResource DangerBackgroundBrush}"
+                BorderBrush="{DynamicResource DangerBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10"
+                Padding="12">
+            <StackPanel Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Border Classes="icon-badge"
+                            Background="{DynamicResource DangerBackgroundBrush}"
+                            BorderBrush="{DynamicResource DangerBorderBrush}">
+                        <Path Classes="line-icon danger" Data="{StaticResource IconInfoGeometry}" />
+                    </Border>
+                    <TextBlock x:Name="TitleText"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource DangerTextBrush}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock x:Name="MessageText"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button x:Name="CloseButton" MinWidth="108" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock x:Name="CloseButtonText" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

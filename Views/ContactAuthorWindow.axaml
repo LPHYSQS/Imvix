@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Imvix.ViewModels"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.ContactAuthorWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="560"
+        Height="380"
+        MinWidth="520"
+        MinHeight="340"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Window.Styles>
+        <Style Selector="Border.contact-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style Selector="TextBlock.contact-note">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="22" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="18" RowSpacing="14">
+        <Border Grid.Row="0" Classes="contact-card">
+            <TextBlock Text="{Binding ContactAuthorTitleText}"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <Border Grid.Row="1" Classes="contact-card">
+            <StackPanel Spacing="10">
+                <TextBlock Text="{Binding ContactAuthorEmailLabelText}" FontWeight="SemiBold" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <TextBox Grid.Column="0"
+                             Text="{Binding ContactAuthorEmailText}"
+                             IsReadOnly="True"
+                             MinHeight="36"
+                             Padding="10,0"
+                             VerticalContentAlignment="Center"
+                             Background="{DynamicResource SurfaceSubtleBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}" />
+                    <Button Grid.Column="1"
+                            MinHeight="36"
+                            Padding="14,6"
+                            VerticalContentAlignment="Center"
+                            Click="OnCopyEmailClick"
+                            ToolTip.Tip="{Binding ContactAuthorCopyText}">
+                        <TextBlock Text="{Binding ContactAuthorCopyText}" />
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Classes="contact-card">
+            <TextBlock Text="{Binding ContactAuthorNoteText}"
+                       Classes="contact-note" />
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button MinWidth="108" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock Text="{Binding CloseText}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

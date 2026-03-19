@@ -23,6 +23,27 @@ namespace Imvix.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+        private const string ThemeCodeDark = "Dark";
+        private const string ThemeCodeLight = "Light";
+        private const string ThemeCodeSystem = "System";
+        private const string LanguageCodeSystem = "System";
+        private const string FallbackLanguageCode = "en-US";
+        private const string ContactAuthorEmail = "3261296352@qq.com";
+
+        private static readonly (string Code, string DisplayName)[] SupportedLanguageSeeds =
+        [
+            ("zh-CN", "\u7B80\u4F53\u4E2D\u6587"),
+            ("zh-TW", "\u7E41\u9AD4\u4E2D\u6587"),
+            ("en-US", "English"),
+            ("ja-JP", "\u65E5\u672C\u8A9E"),
+            ("ko-KR", "\uD55C\uAD6D\uC5B4"),
+            ("fr-FR", "Fran\u00E7ais"),
+            ("de-DE", "Deutsch"),
+            ("it-IT", "Italiano"),
+            ("ru-RU", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"),
+            ("ar-SA", "\u0627\u0644\u0639\u0631\u0628\u064A\u0629")
+        ];
+
         private readonly SettingsService _settingsService = new();
         private readonly LocalizationService _localizationService = new();
         private readonly ImageConversionService _imageConversionService = new();
@@ -31,6 +52,7 @@ namespace Imvix.ViewModels
         private bool _isLoadingSettings;
         private bool _isSyncingSvgColorInputs;
         private bool _isVersionBadgeHovered;
+        private bool _isRefreshingLanguageOptions;
         private readonly DispatcherTimer _gifPreviewTimer = new();
         private ImageConversionService.GifPreviewHandle? _gifPreviewHandle;
         private IReadOnlyList<Bitmap>? _gifPreviewFrames;
@@ -50,14 +72,19 @@ namespace Imvix.ViewModels
             _isLoadingSettings = true;
 
             var settings = _settingsService.Load();
-            _localizationService.SetLanguage(settings.LanguageCode);
-            UiFlowDirection = ResolveFlowDirection(settings.LanguageCode);
+            var initialLanguageCode = string.IsNullOrWhiteSpace(settings.LanguageCode)
+                ? LanguageCodeSystem
+                : settings.LanguageCode;
+            var effectiveLanguageCode = ResolveEffectiveLanguageCode(initialLanguageCode);
+            _localizationService.SetLanguage(effectiveLanguageCode);
+            UiFlowDirection = ResolveFlowDirection(effectiveLanguageCode);
 
-            SelectedLanguage = Languages.FirstOrDefault(x => x.Code.Equals(settings.LanguageCode, StringComparison.OrdinalIgnoreCase))
-                               ?? Languages[0];
-            SelectedTheme = Themes.FirstOrDefault(x => x.Code.Equals(settings.ThemeCode, StringComparison.OrdinalIgnoreCase))
-                            ?? Themes[0];
-            ApplyTheme(SelectedTheme.Code);
+            RefreshLanguageOptions(initialLanguageCode);
+            RefreshThemeOptions(settings.ThemeCode);
+            if (SelectedTheme is not null)
+            {
+                ApplyTheme(SelectedTheme.Code);
+            }
 
             SelectedOutputFormat = settings.DefaultOutputFormat;
             SelectedCompressionMode = settings.DefaultCompressionMode;
@@ -101,6 +128,7 @@ namespace Imvix.ViewModels
 
             _isLoadingSettings = false;
             RefreshLocalizedProperties();
+            EnsureStartupState();
             _ = CompleteVersion3InitializationAsync();
 
             OnPropertyChanged(nameof(IsSvgBackgroundColorVisible));
@@ -133,25 +161,9 @@ namespace Imvix.ViewModels
 
         public ObservableCollection<EnumOption<GifHandlingMode>> GifHandlingModes { get; } = [];
 
-        public IReadOnlyList<LanguageOption> Languages { get; } =
-        [
-            new LanguageOption("zh-CN", "\u7B80\u4F53\u4E2D\u6587"),
-            new LanguageOption("zh-TW", "\u7E41\u9AD4\u4E2D\u6587"),
-            new LanguageOption("en-US", "English"),
-            new LanguageOption("ja-JP", "\u65E5\u672C\u8A9E"),
-            new LanguageOption("ko-KR", "\uD55C\uAD6D\uC5B4"),
-            new LanguageOption("fr-FR", "Fran\u00E7ais"),
-            new LanguageOption("de-DE", "Deutsch"),
-            new LanguageOption("it-IT", "Italiano"),
-            new LanguageOption("ru-RU", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"),
-            new LanguageOption("ar-SA", "\u0627\u0644\u0639\u0631\u0628\u064A\u0629")
-        ];
+        public ObservableCollection<LanguageOption> Languages { get; } = [];
 
-        public IReadOnlyList<ThemeOption> Themes { get; } =
-        [
-            new ThemeOption("Dark", "Dark / \u6697\u9ED1"),
-            new ThemeOption("Light", "Light / \u660E\u4EAE")
-        ];
+        public ObservableCollection<ThemeOption> Themes { get; } = [];
 
         public bool HasImages => Images.Count > 0;
 
@@ -227,6 +239,10 @@ namespace Imvix.ViewModels
         public string ProgressLabelText => T("Progress");
 
         public string LanguageLabelText => T("Language");
+
+        public string LanguageSystemHintText => T("LanguageSystemHint");
+
+        public bool IsSystemLanguageSelected => SelectedLanguage?.Code.Equals(LanguageCodeSystem, StringComparison.OrdinalIgnoreCase) ?? false;
 
         public string ThemeLabelText => T("Theme");
 
@@ -323,7 +339,15 @@ namespace Imvix.ViewModels
         public string SummaryDurationText => T("SummaryDuration");
 
         public string CloseText => T("Close");
+        public string AlreadyRunningTitleText => T("AlreadyRunningTitle");
+        public string AlreadyRunningMessageText => T("AlreadyRunningMessage");
         public string AboutButtonText => T("AboutButton");
+        public string ContactAuthorButtonText => T("ContactAuthor");
+        public string ContactAuthorTitleText => T("ContactAuthor");
+        public string ContactAuthorEmailLabelText => T("ContactAuthorEmailLabel");
+        public string ContactAuthorCopyText => T("ContactAuthorCopy");
+        public string ContactAuthorEmailText => ContactAuthorEmail;
+        public string ContactAuthorNoteText => FormatT("ContactAuthorNote", AppVersionText);
         public string AboutWindowTitleText => T("AboutWindowTitle");
         public string AboutVersionLabelText => T("AboutVersionLabel");
         public string AboutTaglineText => T("AboutTagline");
@@ -341,7 +365,7 @@ namespace Imvix.ViewModels
         public string AboutRepositoryLabelText => T("AboutRepositoryLabel");
         public string AboutRepositoryButtonText => T("AboutRepositoryButton");
         public string AboutAuthorNameText => "\u5DF2\u901D\u60C5\u6B87";
-        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.2"}";
+        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.3"}";
         public string VersionBadgeHoverText => T("VersionBadgeHover");
         public string VersionBadgeToolTipText => FormatT("VersionBadgeToolTipFormat", AppVersionText);
         public string FooterVersionBadgeText => _isVersionBadgeHovered ? VersionBadgeHoverText : AppVersionText;
@@ -767,12 +791,22 @@ namespace Imvix.ViewModels
                 return;
             }
 
-            _localizationService.SetLanguage(value.Code);
-            UiFlowDirection = ResolveFlowDirection(value.Code);
+            if (_isRefreshingLanguageOptions)
+            {
+                OnPropertyChanged(nameof(IsSystemLanguageSelected));
+                return;
+            }
+
+            var effectiveLanguageCode = ResolveEffectiveLanguageCode(value.Code);
+            _localizationService.SetLanguage(effectiveLanguageCode);
+            UiFlowDirection = ResolveFlowDirection(effectiveLanguageCode);
+            RefreshLanguageOptions(value.Code);
+            RefreshThemeOptions(SelectedTheme?.Code);
             RefreshLocalizedProperties();
             RefreshEnumOptions();
             StatusText = T(_statusKey);
             CurrentFile = T("NoCurrentFile");
+            OnPropertyChanged(nameof(IsSystemLanguageSelected));
             PersistSettings();
         }
 
@@ -1174,8 +1208,8 @@ namespace Imvix.ViewModels
 
             _settingsService.Save(new AppSettings
             {
-                LanguageCode = SelectedLanguage?.Code ?? "zh-CN",
-                ThemeCode = SelectedTheme?.Code ?? "Dark",
+                LanguageCode = SelectedLanguage?.Code ?? LanguageCodeSystem,
+                ThemeCode = SelectedTheme?.Code ?? ThemeCodeSystem,
                 DefaultOutputFormat = SelectedOutputFormat,
                 DefaultCompressionMode = SelectedCompressionMode,
                 DefaultQuality = Quality,
@@ -1205,6 +1239,7 @@ namespace Imvix.ViewModels
                 WatchOutputDirectory = WatchOutputDirectory,
                 WatchIncludeSubfolders = WatchIncludeSubfolders,
                 KeepRunningInTray = KeepRunningInTray,
+                RunOnStartup = RunOnStartup,
                 HasWindowPlacement = existing.HasWindowPlacement,
                 WindowPositionX = existing.WindowPositionX,
                 WindowPositionY = existing.WindowPositionY,
@@ -1305,6 +1340,109 @@ namespace Imvix.ViewModels
             SelectedGifHandlingModeOption = GifHandlingModes.FirstOrDefault(x => EqualityComparer<GifHandlingMode>.Default.Equals(x.Value, SelectedGifHandlingMode));
         }
 
+        private void RefreshLanguageOptions(string? selectedCode)
+        {
+            _isRefreshingLanguageOptions = true;
+            if (Languages.Count == 0)
+            {
+                Languages.Add(new LanguageOption(LanguageCodeSystem, T("LanguageOption_System")));
+                foreach (var language in SupportedLanguageSeeds)
+                {
+                    Languages.Add(new LanguageOption(language.Code, language.DisplayName));
+                }
+            }
+            else
+            {
+                var systemOption = Languages.FirstOrDefault(x => x.Code.Equals(LanguageCodeSystem, StringComparison.OrdinalIgnoreCase));
+                if (systemOption is not null)
+                {
+                    systemOption.DisplayName = T("LanguageOption_System");
+                }
+            }
+
+            var desiredCode = string.IsNullOrWhiteSpace(selectedCode) ? LanguageCodeSystem : selectedCode;
+            var match = Languages.FirstOrDefault(x => x.Code.Equals(desiredCode, StringComparison.OrdinalIgnoreCase)) ?? Languages[0];
+            if (!ReferenceEquals(match, SelectedLanguage))
+            {
+                SelectedLanguage = match;
+            }
+            _isRefreshingLanguageOptions = false;
+            OnPropertyChanged(nameof(IsSystemLanguageSelected));
+        }
+
+        private void RefreshThemeOptions(string? selectedCode)
+        {
+            Themes.Clear();
+            Themes.Add(new ThemeOption(ThemeCodeDark, T("ThemeOption_Dark")));
+            Themes.Add(new ThemeOption(ThemeCodeLight, T("ThemeOption_Light")));
+            Themes.Add(new ThemeOption(ThemeCodeSystem, T("ThemeOption_System")));
+
+            var desiredCode = string.IsNullOrWhiteSpace(selectedCode) ? ThemeCodeSystem : selectedCode;
+            var match = Themes.FirstOrDefault(x => x.Code.Equals(desiredCode, StringComparison.OrdinalIgnoreCase));
+            if (match is not null && !ReferenceEquals(match, SelectedTheme))
+            {
+                SelectedTheme = match;
+            }
+        }
+
+        private string ResolveEffectiveLanguageCode(string? selectedCode)
+        {
+            if (string.IsNullOrWhiteSpace(selectedCode) ||
+                selectedCode.Equals(LanguageCodeSystem, StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveSystemLanguageCode();
+            }
+
+            return ResolveSupportedLanguageCode(selectedCode);
+        }
+
+        private static string ResolveSystemLanguageCode()
+        {
+            return ResolveSupportedLanguageCode(CultureInfo.CurrentUICulture.Name);
+        }
+
+        private static string ResolveSupportedLanguageCode(string? code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return FallbackLanguageCode;
+            }
+
+            foreach (var language in SupportedLanguageSeeds)
+            {
+                if (language.Code.Equals(code, StringComparison.OrdinalIgnoreCase))
+                {
+                    return language.Code;
+                }
+            }
+
+            var normalized = code.Trim();
+            if (normalized.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
+            {
+                var lower = normalized.ToLowerInvariant();
+                if (lower.Contains("hant") || lower.Contains("-tw") || lower.Contains("-hk") || lower.Contains("-mo"))
+                {
+                    return "zh-TW";
+                }
+
+                return "zh-CN";
+            }
+
+            var neutral = normalized.Split(['-', '_'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(neutral))
+            {
+                foreach (var language in SupportedLanguageSeeds)
+                {
+                    if (language.Code.StartsWith(neutral, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return language.Code;
+                    }
+                }
+            }
+
+            return FallbackLanguageCode;
+        }
+
         private static void RebuildEnumOptions<T>(
             ObservableCollection<EnumOption<T>> options,
             IReadOnlyList<T> values,
@@ -1364,9 +1502,19 @@ namespace Imvix.ViewModels
                 return;
             }
 
-            Application.Current.RequestedThemeVariant = themeCode.Equals("Light", StringComparison.OrdinalIgnoreCase)
-                ? ThemeVariant.Light
-                : ThemeVariant.Dark;
+            if (themeCode.Equals(ThemeCodeLight, StringComparison.OrdinalIgnoreCase))
+            {
+                Application.Current.RequestedThemeVariant = ThemeVariant.Light;
+                return;
+            }
+
+            if (themeCode.Equals(ThemeCodeSystem, StringComparison.OrdinalIgnoreCase))
+            {
+                Application.Current.RequestedThemeVariant = ThemeVariant.Default;
+                return;
+            }
+
+            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
         }
 
         private void RefreshGifLabels()
@@ -1583,6 +1731,7 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(RemainingLabelText));
             OnPropertyChanged(nameof(ProgressLabelText));
             OnPropertyChanged(nameof(LanguageLabelText));
+            OnPropertyChanged(nameof(LanguageSystemHintText));
             OnPropertyChanged(nameof(ThemeLabelText));
             OnPropertyChanged(nameof(DefaultOutputFolderLabelText));
             OnPropertyChanged(nameof(UseSourceFolderText));
@@ -1631,7 +1780,14 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(SummaryFailedText));
             OnPropertyChanged(nameof(SummaryDurationText));
             OnPropertyChanged(nameof(CloseText));
+            OnPropertyChanged(nameof(AlreadyRunningTitleText));
+            OnPropertyChanged(nameof(AlreadyRunningMessageText));
             OnPropertyChanged(nameof(AboutButtonText));
+            OnPropertyChanged(nameof(ContactAuthorButtonText));
+            OnPropertyChanged(nameof(ContactAuthorTitleText));
+            OnPropertyChanged(nameof(ContactAuthorEmailLabelText));
+            OnPropertyChanged(nameof(ContactAuthorCopyText));
+            OnPropertyChanged(nameof(ContactAuthorNoteText));
             OnPropertyChanged(nameof(AboutWindowTitleText));
             OnPropertyChanged(nameof(AboutVersionLabelText));
             OnPropertyChanged(nameof(AboutTaglineText));

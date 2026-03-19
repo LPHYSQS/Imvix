@@ -5,9 +5,9 @@ namespace Imvix.Models
 {
     public sealed class AppSettings
     {
-        public string LanguageCode { get; set; } = "zh-CN";
+        public string LanguageCode { get; set; } = "System";
 
-        public string ThemeCode { get; set; } = "Dark";
+        public string ThemeCode { get; set; } = "System";
 
         public OutputImageFormat DefaultOutputFormat { get; set; } = OutputImageFormat.Png;
 
@@ -70,6 +70,8 @@ namespace Imvix.Models
         public bool WatchIncludeSubfolders { get; set; } = true;
 
         public bool KeepRunningInTray { get; set; }
+
+        public bool RunOnStartup { get; set; }
 
         public bool HasWindowPlacement { get; set; }
 

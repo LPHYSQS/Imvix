@@ -429,6 +429,7 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+                            <TextBlock Text="{Binding LanguageSystemHintText}" Classes="secondary" TextWrapping="Wrap" IsVisible="{Binding IsSystemLanguageSelected}" />
 
                             <StackPanel Classes="icon-label">
                                 <Border Classes="icon-badge">
@@ -624,6 +625,28 @@
                                 </StackPanel>
                             </Border>
 
+                            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="8">
+                                <StackPanel Spacing="8">
+                                    <StackPanel Classes="icon-label">
+                                        <Border Classes="icon-badge">
+                                            <Path Classes="line-icon" Data="{StaticResource IconSettingsGeometry}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding StartupSettingsTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox IsChecked="{Binding RunOnStartup}" Content="{Binding RunOnStartupText}" />
+                                    <Button Command="{Binding CreateDesktopShortcutCommand}" ToolTip.Tip="{Binding CreateDesktopShortcutText}">
+                                        <StackPanel Classes="icon-label">
+                                            <Path Classes="line-icon" Data="{StaticResource IconFolderOpenGeometry}" />
+                                            <TextBlock Text="{Binding CreateDesktopShortcutText}" />
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBlock Text="{Binding DesktopShortcutStatusText}"
+                                               Classes="secondary"
+                                               TextWrapping="Wrap"
+                                               IsVisible="{Binding HasDesktopShortcutStatus}" />
+                                </StackPanel>
+                            </Border>
+
                             <CheckBox IsChecked="{Binding UseSourceFolder}" Content="{Binding UseSourceFolderText}" />
                             <CheckBox IsChecked="{Binding IncludeSubfoldersOnFolderImport}" Content="{Binding IncludeSubfoldersOnImportText}" />
 
@@ -672,18 +695,27 @@
                     </StackPanel>
                 </Button>
 
-                <Border Grid.Column="0"
-                        IsVisible="{Binding IsRightToLeftLayout}"
-                        Classes="version-badge-surface"
-                        VerticalAlignment="Center"
-                        ToolTip.Tip="{Binding VersionBadgeToolTipText}"
-                        PointerEntered="OnVersionBadgePointerEntered"
-                        PointerExited="OnVersionBadgePointerExited"
-                        PointerPressed="OnVersionBadgePointerPressed">
-                    <TextBlock Classes="version-badge-text"
-                               FontSize="{Binding FooterVersionBadgeFontSize}"
-                               Text="{Binding FooterVersionBadgeText}" />
-                </Border>
+                <StackPanel Grid.Column="0"
+                            IsVisible="{Binding IsRightToLeftLayout}"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                    <Border Classes="version-badge-surface"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding VersionBadgeToolTipText}"
+                            PointerEntered="OnVersionBadgePointerEntered"
+                            PointerExited="OnVersionBadgePointerExited"
+                            PointerPressed="OnVersionBadgePointerPressed">
+                        <TextBlock Classes="version-badge-text"
+                                   FontSize="{Binding FooterVersionBadgeFontSize}"
+                                   Text="{Binding FooterVersionBadgeText}" />
+                    </Border>
+                    <Button Click="OnShowContactAuthorClick"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding ContactAuthorButtonText}">
+                        <TextBlock Text="{Binding ContactAuthorButtonText}" />
+                    </Button>
+                </StackPanel>
 
                 <WrapPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="{Binding StatusLabelText}" FontWeight="SemiBold" VerticalAlignment="Center" />
@@ -722,18 +754,27 @@
                     </Button>
                 </WrapPanel>
 
-                <Border Grid.Column="2"
-                        IsVisible="{Binding IsLeftToRightLayout}"
-                        Classes="version-badge-surface"
-                        VerticalAlignment="Center"
-                        ToolTip.Tip="{Binding VersionBadgeToolTipText}"
-                        PointerEntered="OnVersionBadgePointerEntered"
-                        PointerExited="OnVersionBadgePointerExited"
-                        PointerPressed="OnVersionBadgePointerPressed">
-                    <TextBlock Classes="version-badge-text"
-                               FontSize="{Binding FooterVersionBadgeFontSize}"
-                               Text="{Binding FooterVersionBadgeText}" />
-                </Border>
+                <StackPanel Grid.Column="2"
+                            IsVisible="{Binding IsLeftToRightLayout}"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                    <Button Click="OnShowContactAuthorClick"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding ContactAuthorButtonText}">
+                        <TextBlock Text="{Binding ContactAuthorButtonText}" />
+                    </Button>
+                    <Border Classes="version-badge-surface"
+                            VerticalAlignment="Center"
+                            ToolTip.Tip="{Binding VersionBadgeToolTipText}"
+                            PointerEntered="OnVersionBadgePointerEntered"
+                            PointerExited="OnVersionBadgePointerExited"
+                            PointerPressed="OnVersionBadgePointerPressed">
+                        <TextBlock Classes="version-badge-text"
+                                   FontSize="{Binding FooterVersionBadgeFontSize}"
+                                   Text="{Binding FooterVersionBadgeText}" />
+                    </Border>
+                </StackPanel>
 
                 <Button Grid.Column="2"
                         IsVisible="{Binding IsRightToLeftLayout}"
