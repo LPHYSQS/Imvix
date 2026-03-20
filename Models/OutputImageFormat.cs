@@ -1,4 +1,4 @@
-namespace ImvixPro.Models
+﻿namespace Imvix.Models
 {
     public enum OutputImageFormat
     {
@@ -9,7 +9,6 @@ namespace ImvixPro.Models
         Gif,
         Tiff,
         Ico,
-        Svg,
-        Pdf
+        Svg
     }
 }

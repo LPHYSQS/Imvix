@@ -5,12 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ImvixPro.Services
+namespace Imvix.Services
 {
     public sealed class FolderWatchService : IDisposable
     {
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _pendingFiles = new(StringComparer.OrdinalIgnoreCase);
-        private readonly ConcurrentDictionary<string, FileReadyState> _lastSignaledFiles = new(StringComparer.OrdinalIgnoreCase);
 
         private FileSystemWatcher? _watcher;
 
@@ -58,7 +57,6 @@ namespace ImvixPro.Services
             }
 
             _pendingFiles.Clear();
-            _lastSignaledFiles.Clear();
             WatchedDirectory = string.Empty;
         }
 
@@ -103,37 +101,22 @@ namespace ImvixPro.Services
 
         private async Task WaitForReadyAsync(string path, CancellationTokenSource cancellation)
         {
-            FileReadyState? previousReadyState = null;
-
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(1.2), cancellation.Token);
 
-                for (var attempt = 0; attempt < 12; attempt++)
+                for (var attempt = 0; attempt < 10; attempt++)
                 {
                     cancellation.Token.ThrowIfCancellationRequested();
 
-                    if (TryGetReadyState(path, out var currentReadyState))
+                    if (File.Exists(path) && CanOpenForRead(path))
                     {
-                        if (previousReadyState.HasValue && previousReadyState.Value.Equals(currentReadyState))
+                        if (_pendingFiles.TryRemove(path, out var pending))
                         {
-                            if (TryRememberSignaledState(path, currentReadyState))
-                            {
-                                FileReady?.Invoke(this, path);
-                            }
-
-                            return;
+                            pending.Dispose();
                         }
 
-                        previousReadyState = currentReadyState;
-                    }
-                    else
-                    {
-                        previousReadyState = null;
-                    }
-
-                    if (attempt == 11)
-                    {
+                        FileReady?.Invoke(this, path);
                         return;
                     }
 
@@ -155,15 +138,12 @@ namespace ImvixPro.Services
             }
         }
 
-        private static bool TryGetReadyState(string path, out FileReadyState state)
+        private static bool CanOpenForRead(string path)
         {
-            state = default;
-
             try
             {
-                using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                state = new FileReadyState(stream.Length, File.GetLastWriteTimeUtc(path));
-                return true;
+                using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                return stream.Length >= 0;
             }
             catch
             {
@@ -171,37 +151,11 @@ namespace ImvixPro.Services
             }
         }
 
-        private bool TryRememberSignaledState(string path, FileReadyState state)
-        {
-            while (true)
-            {
-                if (_lastSignaledFiles.TryGetValue(path, out var existing))
-                {
-                    if (existing.Equals(state))
-                    {
-                        return false;
-                    }
-
-                    if (_lastSignaledFiles.TryUpdate(path, state, existing))
-                    {
-                        return true;
-                    }
-
-                    continue;
-                }
-
-                if (_lastSignaledFiles.TryAdd(path, state))
-                {
-                    return true;
-                }
-            }
-        }
-
         public void Dispose()
         {
             Stop();
         }
-
-        private readonly record struct FileReadyState(long Length, DateTime LastWriteTimeUtc);
     }
 }
+
+

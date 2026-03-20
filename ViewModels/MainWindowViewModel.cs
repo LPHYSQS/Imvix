@@ -6,8 +6,8 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ImvixPro.Models;
-using ImvixPro.Services;
+using Imvix.Models;
+using Imvix.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ImvixPro.ViewModels
+namespace Imvix.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
@@ -110,7 +110,6 @@ namespace ImvixPro.ViewModels
             SvgUseBackground = settings.SvgUseBackground;
             SvgBackgroundColor = string.IsNullOrWhiteSpace(settings.SvgBackgroundColor) ? "#FFFFFFFF" : settings.SvgBackgroundColor;
             SelectedGifHandlingMode = settings.DefaultGifHandlingMode;
-            SelectedGifSpecificFrameIndex = Math.Max(0, settings.DefaultGifSpecificFrameIndex);
 
             Presets.Clear();
             foreach (var preset in settings.Presets.Where(static p => !string.IsNullOrWhiteSpace(p.Name)))
@@ -194,19 +193,12 @@ namespace ImvixPro.ViewModels
                                            SelectedImage.Extension.Equals("GIF", StringComparison.OrdinalIgnoreCase) &&
                                            SelectedOutputFormat != OutputImageFormat.Gif;
 
-        public bool IsGifTrimRangeVisible => SelectedImage is not null &&
-                                             SelectedImage.IsAnimatedGif &&
-                                             SelectedImage.Extension.Equals("GIF", StringComparison.OrdinalIgnoreCase) &&
-                                             SelectedOutputFormat == OutputImageFormat.Gif;
-
         public bool IsSvgPreviewVisible => SelectedImage is not null &&
                                            SelectedImage.Extension.Equals("SVG", StringComparison.OrdinalIgnoreCase);
 
         public string ProgressPercentText => $"{ProgressPercent:0}%";
 
-        public string AppDisplayName => AppIdentity.DisplayName;
-
-        public string WindowTitle => AppIdentity.DisplayName;
+        public string WindowTitle => "Imvix";
 
         public string ImportButtonText => T("ImportImages");
 
@@ -244,7 +236,7 @@ namespace ImvixPro.ViewModels
 
         public string RemainingLabelText => T("Remaining");
 
-        public string ProgressLabelText => T("ConversionProgress");
+        public string ProgressLabelText => T("Progress");
 
         public string LanguageLabelText => T("Language");
 
@@ -297,8 +289,6 @@ namespace ImvixPro.ViewModels
         public string RenameHintText => T("RenameHint");
 
         public string GifHandlingText => T("GifHandling");
-
-        public string GifTrimRangeText => T("GifTrimRange");
 
         public string GifAnimatedLabelText => T("GifAnimatedLabel");
 
@@ -532,7 +522,7 @@ namespace ImvixPro.ViewModels
                     continue;
                 }
 
-                if (TryCreateInputItem(path, out var item, out var error) && item is not null)
+                if (ImageItemViewModel.TryCreate(path, out var item, out var error) && item is not null)
                 {
                     item.Thumbnail ??= ImageConversionService.TryCreatePreview(item.FilePath, 140, svgUseBackground: false, svgBackgroundColor: null);
                     UpdateGifLabels(item);
@@ -632,10 +622,6 @@ namespace ImvixPro.ViewModels
         private void ClearImages()
         {
             SelectedImage = null;
-            _gifSpecificFrameSelections.Clear();
-            _gifTrimSelections.Clear();
-            _pdfPageSelections.Clear();
-            _pdfPageRanges.Clear();
 
             foreach (var image in Images)
             {
@@ -663,10 +649,6 @@ namespace ImvixPro.ViewModels
                 return;
             }
 
-            _gifSpecificFrameSelections.Remove(image.FilePath);
-            _gifTrimSelections.Remove(image.FilePath);
-            _pdfPageSelections.Remove(image.FilePath);
-            _pdfPageRanges.Remove(image.FilePath);
             image.Dispose();
 
             if (wasSelected)
@@ -729,7 +711,6 @@ namespace ImvixPro.ViewModels
             RenameStartNumber = Math.Max(0, SelectedPreset.RenameStartNumber);
             RenameNumberDigits = Math.Clamp(SelectedPreset.RenameNumberDigits, 1, 8);
             SelectedGifHandlingMode = SelectedPreset.GifHandlingMode;
-            SelectedGifSpecificFrameIndex = Math.Max(0, SelectedPreset.GifSpecificFrameIndex);
             OutputDirectory = SelectedPreset.OutputDirectory;
             UseSourceFolder = SelectedPreset.OutputDirectoryRule == OutputDirectoryRule.SourceFolder;
             AllowOverwrite = SelectedPreset.AllowOverwrite;
@@ -779,27 +760,14 @@ namespace ImvixPro.ViewModels
 
         partial void OnSelectedImageChanged(ImageItemViewModel? value)
         {
-            CancelPendingPdfPreviewRender();
             ClearSelectedPreview();
-            RefreshGifHandlingModeOptions();
-            RestoreGifSpecificFrameSelection(value);
-            RestoreGifTrimSelection(value);
-            RestorePdfSelection(value);
 
             if (value is not null)
             {
-                if (value.IsPdfDocument)
-                {
-                    RefreshSelectedPdfPreview(preferImmediatePreview: true);
-                }
-                else
-                {
-                    SelectedPreview = ImageConversionService.TryCreatePreview(value.FilePath, 760, SvgUseBackground, EffectiveSvgBackgroundColor);
-                }
-
+                SelectedPreview = ImageConversionService.TryCreatePreview(value.FilePath, 760, SvgUseBackground, EffectiveSvgBackgroundColor);
                 if (value.IsAnimatedGif)
                 {
-                    if (ShouldLoadGifPreviewFrames())
+                    if (ShouldAnimateGifPreview())
                     {
                         _ = LoadGifPreviewAsync(value.FilePath);
                     }
@@ -811,11 +779,7 @@ namespace ImvixPro.ViewModels
             }
 
             OnPropertyChanged(nameof(IsGifPreviewVisible));
-            OnPropertyChanged(nameof(IsGifTrimRangeVisible));
             OnPropertyChanged(nameof(IsSvgPreviewVisible));
-            RefreshPdfUiState();
-            RefreshGifSpecificFrameUiState();
-            RefreshGifTrimUiState();
 
             RefreshConversionInsights();
         }
@@ -860,18 +824,8 @@ namespace ImvixPro.ViewModels
         partial void OnSelectedOutputFormatChanged(OutputImageFormat value)
         {
             PersistSettings();
-            RefreshGifHandlingModeOptions();
             OnPropertyChanged(nameof(IsGifPreviewVisible));
-            OnPropertyChanged(nameof(IsGifTrimRangeVisible));
-            RestoreGifTrimSelection(SelectedImage);
-            RefreshGifTrimUiState();
-            RefreshPdfUiState();
             RefreshSelectedAnimatedGifPreview();
-
-            if (SelectedImage?.IsPdfDocument == true)
-            {
-                RefreshSelectedPdfPreview(preferImmediatePreview: true);
-            }
         }
 
         partial void OnSelectedCompressionModeChanged(CompressionMode value)
@@ -1004,15 +958,10 @@ namespace ImvixPro.ViewModels
 
             if (SelectedImage is null || !SelectedImage.IsAnimatedGif)
             {
-                RefreshGifPdfUiState();
-                RefreshGifSpecificFrameUiState();
                 return;
             }
 
-            RefreshGifPdfUiState();
-            RefreshGifSpecificFrameUiState();
-
-            if (value is GifHandlingMode.AllFrames or GifHandlingMode.SpecificFrame)
+            if (value == GifHandlingMode.AllFrames)
             {
                 WarmAllGifPreviewsIfNeeded();
             }
@@ -1274,7 +1223,6 @@ namespace ImvixPro.ViewModels
                 DefaultRenameStartNumber = RenameStartNumber,
                 DefaultRenameNumberDigits = RenameNumberDigits,
                 DefaultGifHandlingMode = SelectedGifHandlingMode,
-                DefaultGifSpecificFrameIndex = SelectedGifSpecificFrameIndex,
                 DefaultOutputDirectory = OutputDirectory,
                 UseSourceFolderByDefault = UseSourceFolder,
                 HasOutputDirectoryRule = true,
@@ -1330,7 +1278,6 @@ namespace ImvixPro.ViewModels
                 RenameStartNumber = RenameStartNumber,
                 RenameNumberDigits = RenameNumberDigits,
                 GifHandlingMode = SelectedGifHandlingMode,
-                GifSpecificFrameIndex = SelectedGifSpecificFrameIndex,
                 OutputDirectoryRule = UseSourceFolder ? OutputDirectoryRule.SourceFolder : OutputDirectoryRule.SpecificFolder,
                 OutputDirectory = OutputDirectory,
                 AllowOverwrite = AllowOverwrite,
@@ -1357,7 +1304,6 @@ namespace ImvixPro.ViewModels
                 RenameStartNumber = source.RenameStartNumber,
                 RenameNumberDigits = source.RenameNumberDigits,
                 GifHandlingMode = source.GifHandlingMode,
-                GifSpecificFrameIndex = source.GifSpecificFrameIndex,
                 OutputDirectoryRule = source.OutputDirectoryRule,
                 OutputDirectory = source.OutputDirectory,
                 AllowOverwrite = source.AllowOverwrite,
@@ -1383,10 +1329,15 @@ namespace ImvixPro.ViewModels
                 Enum.GetValues<RenameMode>(),
                 mode => T($"RenameMode_{mode}"));
 
+            RebuildEnumOptions(
+                GifHandlingModes,
+                Enum.GetValues<GifHandlingMode>(),
+                mode => T($"GifHandling_{mode}"));
+
             SelectedCompressionModeOption = CompressionModes.FirstOrDefault(x => EqualityComparer<CompressionMode>.Default.Equals(x.Value, SelectedCompressionMode));
             SelectedResizeModeOption = ResizeModes.FirstOrDefault(x => EqualityComparer<ResizeMode>.Default.Equals(x.Value, SelectedResizeMode));
             SelectedRenameModeOption = RenameModes.FirstOrDefault(x => EqualityComparer<RenameMode>.Default.Equals(x.Value, SelectedRenameMode));
-            RefreshGifHandlingModeOptions();
+            SelectedGifHandlingModeOption = GifHandlingModes.FirstOrDefault(x => EqualityComparer<GifHandlingMode>.Default.Equals(x.Value, SelectedGifHandlingMode));
         }
 
         private void RefreshLanguageOptions(string? selectedCode)
@@ -1589,18 +1540,7 @@ namespace ImvixPro.ViewModels
 
         private void WarmGifPreviewIfNeeded(ImageItemViewModel image)
         {
-            if (!image.IsAnimatedGif)
-            {
-                return;
-            }
-
-            if (SelectedOutputFormat == OutputImageFormat.Gif)
-            {
-                ImageConversionService.WarmGifPreview(image.FilePath, 760);
-                return;
-            }
-
-            if (SelectedGifHandlingMode is not (GifHandlingMode.AllFrames or GifHandlingMode.SpecificFrame))
+            if (!image.IsAnimatedGif || SelectedGifHandlingMode != GifHandlingMode.AllFrames)
             {
                 return;
             }
@@ -1610,8 +1550,7 @@ namespace ImvixPro.ViewModels
 
         private void WarmAllGifPreviewsIfNeeded()
         {
-            if (SelectedOutputFormat != OutputImageFormat.Gif &&
-                SelectedGifHandlingMode is not (GifHandlingMode.AllFrames or GifHandlingMode.SpecificFrame))
+            if (SelectedGifHandlingMode != GifHandlingMode.AllFrames)
             {
                 return;
             }
@@ -1634,15 +1573,13 @@ namespace ImvixPro.ViewModels
         {
             if (SelectedImage is null || !SelectedImage.IsAnimatedGif)
             {
-                RefreshGifSpecificFrameUiState();
-                RefreshGifTrimUiState();
                 return;
             }
 
             ClearSelectedPreview();
             SelectedPreview = ImageConversionService.TryCreatePreview(SelectedImage.FilePath, 760, SvgUseBackground, EffectiveSvgBackgroundColor);
 
-            if (ShouldLoadGifPreviewFrames())
+            if (ShouldAnimateGifPreview())
             {
                 _ = LoadGifPreviewAsync(SelectedImage.FilePath);
             }
@@ -1650,9 +1587,6 @@ namespace ImvixPro.ViewModels
             {
                 Interlocked.Increment(ref _gifPreviewRequestId);
             }
-
-            RefreshGifSpecificFrameUiState();
-            RefreshGifTrimUiState();
         }
 
         private async Task LoadGifPreviewAsync(string filePath)
@@ -1677,13 +1611,13 @@ namespace ImvixPro.ViewModels
                     return;
                 }
 
-                ApplyLoadedGifPreviewHandle(handle);
+                StartGifPreview(handle);
             });
         }
 
         private void StartGifPreview(ImageConversionService.GifPreviewHandle handle)
         {
-            ResetGifPreviewState(resetSpecificFramePlaybackState: true);
+            StopGifPreview();
 
             var frames = handle.Frames;
             var durations = handle.Durations;
@@ -1696,21 +1630,14 @@ namespace ImvixPro.ViewModels
             _gifPreviewHandle = handle;
             _gifPreviewFrames = frames;
             _gifPreviewDurations = durations;
-            _gifPreviewIndex = IsGifTrimRangeVisible
-                ? GetCurrentGifTrimSelection().StartIndex
-                : 0;
+            _gifPreviewIndex = 0;
             SelectedPreview?.Dispose();
-            SelectedPreview = frames[_gifPreviewIndex];
-            _gifPreviewTimer.Interval = ClampGifDuration(durations[_gifPreviewIndex]);
+            SelectedPreview = frames[0];
+            _gifPreviewTimer.Interval = ClampGifDuration(durations[0]);
             _gifPreviewTimer.Start();
         }
 
         private void StopGifPreview()
-        {
-            ResetGifPreviewState(resetSpecificFramePlaybackState: true);
-        }
-
-        private void ResetGifPreviewState(bool resetSpecificFramePlaybackState)
         {
             if (_gifPreviewTimer.IsEnabled)
             {
@@ -1722,11 +1649,6 @@ namespace ImvixPro.ViewModels
             _gifPreviewFrames = null;
             _gifPreviewDurations = null;
             _gifPreviewIndex = 0;
-
-            if (resetSpecificFramePlaybackState && IsGifSpecificFramePlaying)
-            {
-                IsGifSpecificFramePlaying = false;
-            }
         }
 
         private void ClearSelectedPreview()
@@ -1751,31 +1673,8 @@ namespace ImvixPro.ViewModels
                 return;
             }
 
-            if (IsGifTrimRangeVisible)
-            {
-                var selection = GetCurrentGifTrimSelection();
-                if (_gifPreviewIndex < selection.StartIndex || _gifPreviewIndex > selection.EndIndex)
-                {
-                    _gifPreviewIndex = selection.StartIndex;
-                }
-                else
-                {
-                    _gifPreviewIndex = _gifPreviewIndex >= selection.EndIndex
-                        ? selection.StartIndex
-                        : _gifPreviewIndex + 1;
-                }
-            }
-            else
-            {
-                _gifPreviewIndex = (_gifPreviewIndex + 1) % _gifPreviewFrames.Count;
-            }
-
+            _gifPreviewIndex = (_gifPreviewIndex + 1) % _gifPreviewFrames.Count;
             SelectedPreview = _gifPreviewFrames[_gifPreviewIndex];
-
-            if (SelectedGifHandlingMode == GifHandlingMode.SpecificFrame && IsGifSpecificFrameControlsVisible)
-            {
-                SetGifSpecificFrameIndex(_gifPreviewIndex, persist: false, refreshPreview: false);
-            }
 
             if (_gifPreviewIndex < _gifPreviewDurations.Count)
             {
@@ -1856,7 +1755,6 @@ namespace ImvixPro.ViewModels
             OnPropertyChanged(nameof(RenameDigitsText));
             OnPropertyChanged(nameof(RenameHintText));
             OnPropertyChanged(nameof(GifHandlingText));
-            OnPropertyChanged(nameof(GifTrimRangeText));
             OnPropertyChanged(nameof(GifAnimatedLabelText));
             OnPropertyChanged(nameof(GifFrameCountTemplateText));
             OnPropertyChanged(nameof(PresetSettingsText));
@@ -1919,9 +1817,7 @@ namespace ImvixPro.ViewModels
             OnPropertyChanged(nameof(VersionNotesFeaturesTitleText));
             OnPropertyChanged(nameof(VersionNotesFeaturesBodyText));
             RefreshLocalizedPropertiesV3();
-            RefreshPdfLocalizedProperties();
             RefreshGifLabels();
-            RefreshGifPdfLocalizedProperties();
         }
 
         private string EffectiveSvgBackgroundColor => ToHexColor(SvgBackgroundColorValue);

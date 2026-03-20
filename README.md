@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Assets/logo.png" alt="Imvix Pro logo" width="128" />
+  <img src="Assets/logo.png" alt="Imvix logo" width="128" />
 </p>
 
-<h1 align="center">Imvix Pro</h1>
+<h1 align="center">Imvix</h1>
 
 <p align="center">
   面向批量处理、智能格式判断与输出可控性的现代桌面图像转换工具
@@ -25,17 +25,17 @@
   .NET 10 · Avalonia 11 · MVVM · 批量工作流 · 文件夹监听
 </p>
 
-> Imvix Pro 不是只做“格式改后缀”的轻量小工具，而是围绕高频图片处理场景设计的桌面工作台，强调批量效率、参数可控、结果可预览、错误可追踪。
+> Imvix 不是只做“格式改后缀”的轻量小工具，而是围绕高频图片处理场景设计的桌面工作台，强调批量效率、参数可控、结果可预览、错误可追踪。
 
 ## 项目概览
 
-Imvix Pro 是一个桌面端图片转换器，适合需要批量导入、压缩、缩放、重命名、预览、记录历史和自动监听目录的工作流。它把常用操作放在主界面中，同时保留压缩质量、尺寸策略、输出目录、覆盖规则、SVG 背景色等细粒度控制。
+Imvix 是一个桌面端图片转换器，适合需要批量导入、压缩、缩放、重命名、预览、记录历史和自动监听目录的工作流。它把常用操作放在主界面中，同时保留压缩质量、尺寸策略、输出目录、覆盖规则、SVG 背景色等细粒度控制。
 
 当前仓库版本：`1.3.3`
 
 ## 核心亮点
 
-| 能力方向 | Imvix Pro 提供的内容 |
+| 能力方向 | Imvix 提供的内容 |
 | --- | --- |
 | 批量导入 | 支持多文件导入、文件夹导入、拖拽导入，以及按需递归导入子目录 |
 | 输出控制 | 支持 PNG、JPEG、WEBP、BMP、GIF、TIFF、ICO、SVG 输出，并可保存到源目录或指定目录 |
@@ -78,7 +78,7 @@ flowchart LR
 ## 仓库结构
 
 ```text
-Imvix Pro/
+Imvix/
 |-- Assets/                  # logo、图标、本地化字典
 |-- Dependencies/Svg/        # 随项目分发的 SVG 相关程序集
 |-- Models/                  # 转换选项、预设、历史、摘要、枚举模型
@@ -87,7 +87,7 @@ Imvix Pro/
 |-- Views/                   # 主窗口与各类对话框
 |-- App.axaml                # 主题资源、图标资源、全局样式
 |-- App.axaml.cs             # 应用启动与主窗口装配
-`-- Imvix Pro.csproj             # .NET 10 桌面项目定义
+`-- Imvix.csproj             # .NET 10 桌面项目定义
 ```
 
 ### 关键实现模块
@@ -116,21 +116,21 @@ Imvix Pro/
 
 ```bash
 dotnet restore
-dotnet build "Imvix Pro.csproj"
-dotnet run --project "Imvix Pro.csproj"
+dotnet build Imvix.csproj
+dotnet run --project Imvix.csproj
 ```
 
 ### 发布 Windows 单文件版本
 
 ```bash
-dotnet publish "Imvix Pro.csproj" -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 ```
 
 仓库中已经包含一个 Windows 发布配置文件：`Properties/PublishProfiles/FolderProfile.pubxml`。
 
 ## 配置与数据存储
 
-在 Windows 上，Imvix Pro 会将应用数据保存到 `%AppData%\Imvix Pro`：
+在 Windows 上，Imvix 会将应用数据保存到 `%AppData%\Imvix`：
 
 | 文件或目录 | 说明 |
 | --- | --- |
@@ -174,4 +174,4 @@ dotnet publish "Imvix Pro.csproj" -c Release -r win-x64 --self-contained true /p
 
 ## 商业使用
 
-如果你希望将 Imvix Pro 用于商业产品、付费服务、营收型流程或企业内部商业场景，请先获得作者或其他版权持有者的书面授权。
+如果你希望将 Imvix 用于商业产品、付费服务、营收型流程或企业内部商业场景，请先获得作者或其他版权持有者的书面授权。

@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using ImvixPro.ViewModels;
+using Imvix.ViewModels;
 using System.Threading.Tasks;
 
-namespace ImvixPro.Views
+namespace Imvix.Views
 {
     public partial class ContactAuthorWindow : Window
     {

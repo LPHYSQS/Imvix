@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Assets/logo.png" alt="Imvix Pro logo" width="128" />
+  <img src="Assets/logo.png" alt="Imvix logo" width="128" />
 </p>
 
-<h1 align="center">Imvix Pro</h1>
+<h1 align="center">Imvix</h1>
 
 <p align="center">
   A modern desktop image converter built for batch processing, smart format guidance, and controlled output quality.
@@ -25,17 +25,17 @@
   .NET 10 | Avalonia 11 | MVVM | Batch Workflows | Folder Watch
 </p>
 
-> Imvix Pro focuses on repetitive image conversion work: import files or folders, preview results, tune compression and resizing, save presets, and optionally watch a folder for new files.
+> Imvix focuses on repetitive image conversion work: import files or folders, preview results, tune compression and resizing, save presets, and optionally watch a folder for new files.
 
 ## Overview
 
-Imvix Pro is a desktop image converter for people who need more control than a one-click converter but still want a clean, fast interface. The app combines format conversion, batch compression, resizing, rename rules, smart recommendations, history tracking, and failure logging in a single UI.
+Imvix is a desktop image converter for people who need more control than a one-click converter but still want a clean, fast interface. The app combines format conversion, batch compression, resizing, rename rules, smart recommendations, history tracking, and failure logging in a single UI.
 
 Current repository version: `1.3.3`
 
 ## Highlights
 
-| Area | What Imvix Pro provides |
+| Area | What Imvix provides |
 | --- | --- |
 | Batch intake | Multi-file import, folder import, drag-and-drop, and optional recursive folder expansion |
 | Output control | PNG, JPEG, WEBP, BMP, GIF, TIFF, ICO, and SVG output with source-folder or custom-folder routing |
@@ -77,7 +77,7 @@ flowchart LR
 ## Repository Layout
 
 ```text
-Imvix Pro/
+Imvix/
 |-- Assets/                  # logo, icons, localization dictionaries
 |-- Dependencies/Svg/        # bundled SVG-related assemblies
 |-- Models/                  # options, presets, history, summaries, enums
@@ -86,7 +86,7 @@ Imvix Pro/
 |-- Views/                   # main window and dialog windows
 |-- App.axaml                # theme resources, icons, global styles
 |-- App.axaml.cs             # app startup and main window wiring
-`-- Imvix Pro.csproj             # .NET 10 desktop project definition
+`-- Imvix.csproj             # .NET 10 desktop project definition
 ```
 
 ### Key Implementation Pieces
@@ -115,21 +115,21 @@ Imvix Pro/
 
 ```bash
 dotnet restore
-dotnet build "Imvix Pro.csproj"
-dotnet run --project "Imvix Pro.csproj"
+dotnet build Imvix.csproj
+dotnet run --project Imvix.csproj
 ```
 
 ### Publish a Windows Single-File Build
 
 ```bash
-dotnet publish "Imvix Pro.csproj" -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 ```
 
 The repository already includes a Windows publish profile at `Properties/PublishProfiles/FolderProfile.pubxml`.
 
 ## Configuration and Data
 
-On Windows, Imvix Pro stores application data under `%AppData%\Imvix Pro`:
+On Windows, Imvix stores application data under `%AppData%\Imvix`:
 
 | File or folder | Purpose |
 | --- | --- |
@@ -173,4 +173,4 @@ Important: because commercial use is restricted, this license is source-availabl
 
 ## Commercial Use
 
-If you want to use Imvix Pro in a commercial product, paid service, revenue-generating workflow, or internal business operation, you must obtain prior written permission from the author or other copyright holder first.
+If you want to use Imvix in a commercial product, paid service, revenue-generating workflow, or internal business operation, you must obtain prior written permission from the author or other copyright holder first.

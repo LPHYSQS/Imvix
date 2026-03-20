@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        x:Class="ImvixPro.Views.AboutWindow"
+        x:Class="Imvix.Views.AboutWindow"
         x:CompileBindings="False"
         Width="760"
         Height="680"
@@ -79,7 +79,7 @@
 
                 <StackPanel Grid.Column="1" Spacing="10" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding AppDisplayName}" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
+                        <TextBlock Text="Imvix" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
                         <Border Background="{DynamicResource AccentBrush}" CornerRadius="999" Padding="12,4" VerticalAlignment="Center">
                             <TextBlock Text="{Binding AppVersionText}" Foreground="{DynamicResource AccentForegroundBrush}" FontWeight="SemiBold" />
                         </Border>

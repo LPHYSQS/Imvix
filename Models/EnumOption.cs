@@ -1,4 +1,4 @@
-namespace ImvixPro.Models
+namespace Imvix.Models
 {
     public sealed class EnumOption<T>
         where T : struct

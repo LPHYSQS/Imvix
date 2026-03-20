@@ -152,12 +152,12 @@
           "Avalonia.Themes.Simple": "11.3.12"
         },
         "compile": {
-          "lib/net8.0/Avalonia.Diagnostics.dll": {
+          "lib/net8.0/_._": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Avalonia.Diagnostics.dll": {
+          "lib/net8.0/_._": {
             "related": ".xml"
           }
         }
@@ -274,12 +274,12 @@
           "Avalonia": "11.3.12"
         },
         "compile": {
-          "lib/net8.0/Avalonia.Themes.Simple.dll": {
+          "lib/net8.0/_._": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Avalonia.Themes.Simple.dll": {
+          "lib/net8.0/_._": {
             "related": ".xml"
           }
         }
@@ -339,77 +339,6 @@
         },
         "build": {
           "buildTransitive/netstandard2.1/CommunityToolkit.Mvvm.targets": {}
-        }
-      },
-      "Docnet.Core/2.6.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Docnet.Core.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Docnet.Core.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtimeTargets": {
-          "runtimes/linux-arm/native/LICENSE": {
-            "assetType": "native",
-            "rid": "linux-arm"
-          },
-          "runtimes/linux-arm/native/pdfium.so": {
-            "assetType": "native",
-            "rid": "linux-arm"
-          },
-          "runtimes/linux-arm64/native/LICENSE": {
-            "assetType": "native",
-            "rid": "linux-arm64"
-          },
-          "runtimes/linux-arm64/native/pdfium.so": {
-            "assetType": "native",
-            "rid": "linux-arm64"
-          },
-          "runtimes/linux/native/LICENSE": {
-            "assetType": "native",
-            "rid": "linux"
-          },
-          "runtimes/linux/native/pdfium.so": {
-            "assetType": "native",
-            "rid": "linux"
-          },
-          "runtimes/osx-arm64/native/LICENSE": {
-            "assetType": "native",
-            "rid": "osx-arm64"
-          },
-          "runtimes/osx-arm64/native/pdfium.dylib": {
-            "assetType": "native",
-            "rid": "osx-arm64"
-          },
-          "runtimes/osx-x64/native/LICENSE": {
-            "assetType": "native",
-            "rid": "osx-x64"
-          },
-          "runtimes/osx-x64/native/pdfium.dylib": {
-            "assetType": "native",
-            "rid": "osx-x64"
-          },
-          "runtimes/win-x64/native/LICENSE": {
-            "assetType": "native",
-            "rid": "win-x64"
-          },
-          "runtimes/win-x64/native/pdfium.dll": {
-            "assetType": "native",
-            "rid": "win-x64"
-          },
-          "runtimes/win-x86/native/LICENSE": {
-            "assetType": "native",
-            "rid": "win-x86"
-          },
-          "runtimes/win-x86/native/pdfium.dll": {
-            "assetType": "native",
-            "rid": "win-x86"
-          }
         }
       },
       "HarfBuzzSharp/8.3.1.1": {
@@ -1159,35 +1088,6 @@
         "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
       ]
     },
-    "Docnet.Core/2.6.0": {
-      "sha512": "in7fpB16Zbdz7D7Qv+4QrapTKKOU1ub2XOvmVGVDEyEwnEZjlbGIiwmpfO03q/GDDEkDM/gIAumxK0U988qSsQ==",
-      "type": "package",
-      "path": "docnet.core/2.6.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/net45/Docnet.Core.targets",
-        "docnet.core.2.6.0.nupkg.sha512",
-        "docnet.core.nuspec",
-        "icon.png",
-        "lib/netstandard2.0/Docnet.Core.dll",
-        "lib/netstandard2.0/Docnet.Core.xml",
-        "runtimes/linux-arm/native/LICENSE",
-        "runtimes/linux-arm/native/pdfium.so",
-        "runtimes/linux-arm64/native/LICENSE",
-        "runtimes/linux-arm64/native/pdfium.so",
-        "runtimes/linux/native/LICENSE",
-        "runtimes/linux/native/pdfium.so",
-        "runtimes/osx-arm64/native/LICENSE",
-        "runtimes/osx-arm64/native/pdfium.dylib",
-        "runtimes/osx-x64/native/LICENSE",
-        "runtimes/osx-x64/native/pdfium.dylib",
-        "runtimes/win-x64/native/LICENSE",
-        "runtimes/win-x64/native/pdfium.dll",
-        "runtimes/win-x86/native/LICENSE",
-        "runtimes/win-x86/native/pdfium.dll"
-      ]
-    },
     "HarfBuzzSharp/8.3.1.1": {
       "sha512": "tLZN66oe/uiRPTZfrCU4i8ScVGwqHNh5MHrXj0yVf4l7Mz0FhTGnQ71RGySROTmdognAs0JtluHkL41pIabWuQ==",
       "type": "package",
@@ -1636,7 +1536,6 @@
       "Avalonia.Fonts.Inter >= 11.3.12",
       "Avalonia.Themes.Fluent >= 11.3.12",
       "CommunityToolkit.Mvvm >= 8.2.1",
-      "Docnet.Core >= 2.6.0",
       "System.Drawing.Common >= 9.0.2"
     ]
   },
@@ -1647,17 +1546,17 @@
   "project": {
     "version": "1.3.3",
     "restore": {
-      "projectUniqueName": "E:\\净云流枫工作室\\Imvix Pro\\Imvix Pro.csproj",
-      "projectName": "Imvix Pro",
-      "projectPath": "E:\\净云流枫工作室\\Imvix Pro\\Imvix Pro.csproj",
+      "projectUniqueName": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
+      "projectName": "Imvix",
+      "projectPath": "E:\\净云流枫工作室\\Imvix\\Imvix.csproj",
       "packagesPath": "C:\\Users\\30106\\.nuget\\packages\\",
-      "outputPath": "E:\\净云流枫工作室\\Imvix Pro\\obj\\",
+      "outputPath": "E:\\净云流枫工作室\\Imvix\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "E:\\净云流枫工作室\\Imvix Pro\\NuGet.Config",
+        "E:\\净云流枫工作室\\Imvix\\NuGet.Config",
         "C:\\Users\\30106\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -1704,6 +1603,8 @@
             "version": "[11.3.12, )"
           },
           "Avalonia.Diagnostics": {
+            "include": "None",
+            "suppressParent": "All",
             "target": "Package",
             "version": "[11.3.12, )"
           },
@@ -1718,10 +1619,6 @@
           "CommunityToolkit.Mvvm": {
             "target": "Package",
             "version": "[8.2.1, )"
-          },
-          "Docnet.Core": {
-            "target": "Package",
-            "version": "[2.6.0, )"
           },
           "System.Drawing.Common": {
             "target": "Package",

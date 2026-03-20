@@ -1,4 +1,4 @@
-namespace ImvixPro.Models
+namespace Imvix.Models
 {
     public enum OutputDirectoryRule
     {

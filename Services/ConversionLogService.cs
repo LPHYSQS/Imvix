@@ -1,4 +1,4 @@
-using ImvixPro.Models;
+﻿using Imvix.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace ImvixPro.Services
+namespace Imvix.Services
 {
     public sealed class ConversionLogService
     {
@@ -14,7 +14,8 @@ namespace ImvixPro.Services
 
         public ConversionLogService()
         {
-            _logDirectory = Path.Combine(AppIdentity.GetAppDataDirectory(), "Logs");
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            _logDirectory = Path.Combine(appDataPath, "Imvix", "Logs");
             Directory.CreateDirectory(_logDirectory);
         }
 
@@ -35,7 +36,7 @@ namespace ImvixPro.Services
                 $"conversion-{timestamp:yyyyMMdd-HHmmss}.log");
 
             var builder = new StringBuilder();
-            builder.AppendLine($"{AppIdentity.DisplayName} Conversion Error Log");
+            builder.AppendLine("Imvix Conversion Error Log");
             builder.AppendLine($"Timestamp: {timestamp:yyyy-MM-dd HH:mm:ss zzz}");
             builder.AppendLine($"Source: {source}");
             builder.AppendLine($"Output Format: {options.OutputFormat}");

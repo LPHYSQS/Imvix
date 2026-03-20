@@ -1,6 +1,5 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Avalonia.Media.Imaging;
-using ImvixPro.Models;
-using ImvixPro.Services.PdfModule;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using Avalonia.Media.Imaging;
+using Imvix.Models;
 using SkiaSharp;
 using Svg.Skia;
 using System;
@@ -12,17 +11,14 @@ using System.Globalization;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ImvixPro.Services
+namespace Imvix.Services
 {
     public sealed class ImageConversionService
     {
         private const int GifPreviewCacheLimit = 6;
-        private static readonly PdfRenderService PdfRenderService = new();
-        private static readonly PdfExportService PdfExportService = new();
         private static readonly object GifPreviewCacheGate = new();
         private static readonly Dictionary<string, GifPreviewCacheEntry> GifPreviewCache = new(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Task<GifPreviewCacheEntry?>> GifPreviewLoads = new(StringComparer.OrdinalIgnoreCase);
@@ -36,16 +32,13 @@ namespace ImvixPro.Services
             [OutputImageFormat.Gif] = ".gif",
             [OutputImageFormat.Tiff] = ".tiff",
             [OutputImageFormat.Ico] = ".ico",
-            [OutputImageFormat.Svg] = ".svg",
-            [OutputImageFormat.Pdf] = ".pdf"
+            [OutputImageFormat.Svg] = ".svg"
         };
 
         public static IReadOnlyCollection<string> SupportedInputExtensions { get; } =
         [
-            ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg", ".pdf"
+            ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif", ".tif", ".tiff", ".ico", ".svg"
         ];
-
-        private readonly record struct ConversionWorkload(ImageItemViewModel Image, int TotalWorkItems);
 
         public static bool TryGetCachedGifPreview(string filePath, int maxWidth, [NotNullWhen(true)] out GifPreviewHandle? handle)
         {
@@ -133,11 +126,6 @@ namespace ImvixPro.Services
             try
             {
                 var extension = Path.GetExtension(filePath);
-                if (extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-                {
-                    return PdfRenderService.TryCreatePreview(filePath, 0, maxWidth);
-                }
-
                 if (extension.Equals(".svg", StringComparison.OrdinalIgnoreCase))
                 {
                     using var svgBitmap = DecodeSvgToBitmap(filePath, svgUseBackground, svgBackgroundColor);
@@ -149,15 +137,7 @@ namespace ImvixPro.Services
             }
             catch
             {
-                try
-                {
-                    using var fallbackBitmap = DecodeToBitmap(filePath, svgUseBackground, svgBackgroundColor);
-                    return fallbackBitmap is null ? null : CreatePreviewFromBitmap(fallbackBitmap, maxWidth);
-                }
-                catch
-                {
-                    return null;
-                }
+                return null;
             }
         }
 
@@ -407,10 +387,6 @@ namespace ImvixPro.Services
         {
             var normalized = NormalizeOptions(options);
             var stopwatch = Stopwatch.StartNew();
-            var workloads = images
-                .Select(image => new ConversionWorkload(image, EstimateWorkItemCount(image, normalized)))
-                .ToArray();
-            var totalWorkCount = workloads.Sum(workload => workload.TotalWorkItems);
 
             var failures = new ConcurrentBag<ConversionFailure>();
             var outputFolders = new ConcurrentDictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
@@ -418,7 +394,6 @@ namespace ImvixPro.Services
             var reservationGate = new object();
 
             var successCount = 0;
-            var processedWorkCount = 0;
             var processedCount = 0;
             var wasCanceled = false;
 
@@ -447,46 +422,12 @@ namespace ImvixPro.Services
                         cancellationToken.ThrowIfCancellationRequested();
                         pauseController?.WaitIfPaused(cancellationToken);
 
-                        var workload = workloads[index];
-                        var image = workload.Image;
+                        var image = images[index];
                         var folder = ResolveOutputFolder(image.FilePath, normalized);
                         outputFolders.TryAdd(folder, 0);
 
                         var succeeded = false;
                         string? error = null;
-                        var currentFileProcessedCount = 0;
-                        var lastReportedWorkCount = Volatile.Read(ref processedWorkCount);
-
-                        progress?.Report(CreateConversionProgress(
-                            lastReportedWorkCount,
-                            totalWorkCount,
-                            Volatile.Read(ref processedCount),
-                            images.Count,
-                            image.FileName,
-                            0,
-                            workload.TotalWorkItems,
-                            isFileCompleted: false,
-                            succeeded: false,
-                            error: null));
-
-                        void ReportWorkItemCompleted()
-                        {
-                            var currentFileProcessed = Interlocked.Increment(ref currentFileProcessedCount);
-                            var processedWork = Interlocked.Increment(ref processedWorkCount);
-                            lastReportedWorkCount = processedWork;
-
-                            progress?.Report(CreateConversionProgress(
-                                processedWork,
-                                totalWorkCount,
-                                Volatile.Read(ref processedCount),
-                                images.Count,
-                                image.FileName,
-                                currentFileProcessed,
-                                workload.TotalWorkItems,
-                                isFileCompleted: false,
-                                succeeded: true,
-                                error: null));
-                        }
 
                         try
                         {
@@ -494,30 +435,13 @@ namespace ImvixPro.Services
                             cancellationToken.ThrowIfCancellationRequested();
                             pauseController?.WaitIfPaused(cancellationToken);
 
-                            var actualOutputFolder = ConvertSingle(
+                            ConvertSingle(
                                 image.FilePath,
                                 folder,
                                 normalized,
                                 index,
                                 reservationGate,
-                                reservedDestinations,
-                                ReportWorkItemCompleted,
-                                pauseController,
-                                cancellationToken);
-
-                            outputFolders.TryAdd(actualOutputFolder, 0);
-
-                            var completedWorkItems = Volatile.Read(ref currentFileProcessedCount);
-                            if (completedWorkItems == 0)
-                            {
-                                completedWorkItems = workload.TotalWorkItems;
-                                Interlocked.Exchange(ref currentFileProcessedCount, completedWorkItems);
-                                lastReportedWorkCount = Interlocked.Add(ref processedWorkCount, completedWorkItems);
-                            }
-                            else
-                            {
-                                lastReportedWorkCount = Volatile.Read(ref processedWorkCount);
-                            }
+                                reservedDestinations);
 
                             Interlocked.Increment(ref successCount);
                             succeeded = true;
@@ -535,38 +459,8 @@ namespace ImvixPro.Services
                         {
                             if (succeeded || error is not null)
                             {
-                                var completedWorkItems = Volatile.Read(ref currentFileProcessedCount);
-                                if (!succeeded && error is not null)
-                                {
-                                    var remainingWorkItems = Math.Max(0, workload.TotalWorkItems - completedWorkItems);
-                                    if (remainingWorkItems > 0)
-                                    {
-                                        completedWorkItems += remainingWorkItems;
-                                        Interlocked.Exchange(ref currentFileProcessedCount, completedWorkItems);
-                                        lastReportedWorkCount = Interlocked.Add(ref processedWorkCount, remainingWorkItems);
-                                    }
-                                    else
-                                    {
-                                        lastReportedWorkCount = Volatile.Read(ref processedWorkCount);
-                                    }
-                                }
-                                else if (completedWorkItems > 0)
-                                {
-                                    lastReportedWorkCount = Volatile.Read(ref processedWorkCount);
-                                }
-
-                                var processedFiles = Interlocked.Increment(ref processedCount);
-                                progress?.Report(CreateConversionProgress(
-                                    lastReportedWorkCount,
-                                    totalWorkCount,
-                                    processedFiles,
-                                    images.Count,
-                                    image.FileName,
-                                    Math.Max(completedWorkItems, workload.TotalWorkItems),
-                                    workload.TotalWorkItems,
-                                    isFileCompleted: true,
-                                    succeeded,
-                                    error));
+                                var processed = Interlocked.Increment(ref processedCount);
+                                progress?.Report(new ConversionProgress(processed, images.Count, image.FileName, succeeded, error));
                             }
                         }
                     }
@@ -595,104 +489,21 @@ namespace ImvixPro.Services
             return new ConversionSummary(images.Count, processedCount, successCount, failureList, folderList, stopwatch.Elapsed, wasCanceled);
         }
 
-        private static void ThrowIfInterrupted(ConversionPauseController? pauseController, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            pauseController?.WaitIfPaused(cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-        }
-
-        private static string ConvertSingle(
+        private static void ConvertSingle(
             string inputPath,
             string outputFolder,
             ConversionOptions options,
             int index,
             object reservationGate,
-            HashSet<string> reservedDestinations,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
+            HashSet<string> reservedDestinations)
         {
-            ThrowIfInterrupted(pauseController, cancellationToken);
             var extension = Path.GetExtension(inputPath);
-            if (extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
-            {
-                return ConvertPdfInput(
-                    inputPath,
-                    outputFolder,
-                    options,
-                    index,
-                    reservationGate,
-                    reservedDestinations,
-                    onWorkItemCompleted,
-                    pauseController,
-                    cancellationToken);
-            }
-
-            if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
-                options.OutputFormat == OutputImageFormat.Pdf &&
-                TryGetGifFrameCount(inputPath, out var gifFrameCount) &&
-                gifFrameCount > 1)
-            {
-                if (options.GifHandlingMode == GifHandlingMode.AllFrames)
-                {
-                    return ConvertGifToPdfFrames(
-                        inputPath,
-                        outputFolder,
-                        options,
-                        index,
-                        gifFrameCount,
-                        reservationGate,
-                        reservedDestinations,
-                        onWorkItemCompleted,
-                        pauseController,
-                        cancellationToken);
-                }
-
-                if (options.GifHandlingMode == GifHandlingMode.SpecificFrame)
-                {
-                    return ConvertGifSpecificFrameToPdf(
-                        inputPath,
-                        outputFolder,
-                        options,
-                        index,
-                        gifFrameCount,
-                        reservationGate,
-                        reservedDestinations,
-                        pauseController,
-                        cancellationToken);
-                }
-            }
-
-            if (options.OutputFormat == OutputImageFormat.Pdf)
-            {
-                var pdfDestinationPath = BuildDestinationPath(
-                    inputPath,
-                    outputFolder,
-                    options,
-                    index,
-                    reservationGate,
-                    reservedDestinations);
-                ConvertSourceToPdf(inputPath, pdfDestinationPath, options, pauseController, cancellationToken);
-                return outputFolder;
-            }
-
             if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
                 options.GifHandlingMode == GifHandlingMode.AllFrames &&
-                TryGetGifFrameCount(inputPath, out var gifFrameCountForImages) &&
-                gifFrameCountForImages > 1 &&
                 options.OutputFormat != OutputImageFormat.Gif)
             {
-                return ConvertGifToFrames(
-                    inputPath,
-                    outputFolder,
-                    options,
-                    index,
-                    reservationGate,
-                    reservedDestinations,
-                    onWorkItemCompleted,
-                    pauseController,
-                    cancellationToken);
+                ConvertGifToFrames(inputPath, outputFolder, options, index, reservationGate, reservedDestinations);
+                return;
             }
 
             var destinationPath = BuildDestinationPath(
@@ -703,29 +514,17 @@ namespace ImvixPro.Services
                 reservationGate,
                 reservedDestinations);
 
-            if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
-                options.GifHandlingMode == GifHandlingMode.SpecificFrame &&
-                options.OutputFormat != OutputImageFormat.Gif)
-            {
-                var gifSpecificFrameIndex = options.GifSpecificFrameSelections.TryGetValue(inputPath, out var cachedFrameIndex)
-                    ? Math.Max(0, cachedFrameIndex)
-                    : Math.Max(0, options.GifSpecificFrameIndex);
-                ConvertGifToSpecificFrame(inputPath, destinationPath, options, gifSpecificFrameIndex, pauseController, cancellationToken);
-                return outputFolder;
-            }
-
             if (options.OutputFormat == OutputImageFormat.Svg)
             {
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 ConvertToSvg(inputPath, destinationPath, options);
-                return outputFolder;
+                return;
             }
 
             if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
                 options.OutputFormat == OutputImageFormat.Gif)
             {
-                ConvertGifToAnimatedGif(inputPath, destinationPath, options, pauseController, cancellationToken);
-                return outputFolder;
+                ConvertGifToAnimatedGif(inputPath, destinationPath, options);
+                return;
             }
 
             var forceWhiteForJpeg = options.OutputFormat == OutputImageFormat.Jpeg && !options.SvgUseBackground;
@@ -738,368 +537,18 @@ namespace ImvixPro.Services
                 throw new InvalidOperationException("Unsupported or corrupted image file.");
             }
 
-            ThrowIfInterrupted(pauseController, cancellationToken);
             using var preparedBitmap = CreatePreparedBitmap(sourceBitmap, options);
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            SaveBitmap(preparedBitmap, destinationPath, options);
-            return outputFolder;
-        }
-
-        private static string ConvertPdfInput(
-            string inputPath,
-            string outputFolder,
-            ConversionOptions options,
-            int index,
-            object reservationGate,
-            HashSet<string> reservedDestinations,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            if (!PdfRenderService.TryReadDocumentInfo(inputPath, out var documentInfo, out var error))
-            {
-                throw new InvalidOperationException(error ?? "Unable to read PDF document.");
-            }
-
-            if (options.OutputFormat == OutputImageFormat.Pdf)
-            {
-                var exportMode = ResolvePdfDocumentExportMode(documentInfo.PageCount, options);
-                if (exportMode == PdfDocumentExportMode.SplitSinglePages)
-                {
-                    var splitFolder = ReservePdfDerivedFolder(inputPath, outputFolder, options, index, reservationGate, reservedDestinations);
-                    Directory.CreateDirectory(splitFolder);
-                    ThrowIfInterrupted(pauseController, cancellationToken);
-                    ConvertPdfToSinglePageDocuments(inputPath, splitFolder, documentInfo, onWorkItemCompleted, pauseController, cancellationToken);
-                    return splitFolder;
-                }
-
-                var destinationPath = BuildDestinationPath(
-                    inputPath,
-                    outputFolder,
-                    options,
-                    index,
-                    reservationGate,
-                    reservedDestinations);
-
-                var selectedPageIndex = ResolvePdfPageIndex(inputPath, documentInfo.PageCount, options);
-                var selectedRange = ResolvePdfPageRange(inputPath, documentInfo.PageCount, options);
-                var pdfBytes = PdfExportService.ExportPdfDocument(
-                    inputPath,
-                    exportMode,
-                    selectedPageIndex,
-                    selectedRange,
-                    documentInfo.PageCount);
-
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                File.WriteAllBytes(destinationPath, pdfBytes);
-                return outputFolder;
-            }
-
-            if (documentInfo.PageCount > 1 &&
-                ResolvePdfImageExportMode(documentInfo.PageCount, options) == PdfImageExportMode.AllPages)
-            {
-                var pagesFolder = ReservePdfDerivedFolder(inputPath, outputFolder, options, index, reservationGate, reservedDestinations);
-                Directory.CreateDirectory(pagesFolder);
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                ConvertPdfToImages(
-                    inputPath,
-                    pagesFolder,
-                    options,
-                    documentInfo,
-                    onWorkItemCompleted,
-                    pauseController,
-                    cancellationToken);
-                return pagesFolder;
-            }
-
-            var destination = BuildDestinationPath(
-                inputPath,
-                outputFolder,
-                options,
-                index,
-                reservationGate,
-                reservedDestinations);
-
-            var pageIndex = ResolvePdfPageIndex(inputPath, documentInfo.PageCount, options);
-            ConvertPdfPageToOutput(inputPath, pageIndex, destination, options, documentInfo, pauseController, cancellationToken);
-            return outputFolder;
-        }
-
-        private static void ConvertPdfToImages(
-            string inputPath,
-            string outputFolder,
-            ConversionOptions options,
-            PdfDocumentInfo documentInfo,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            for (var pageIndex = 0; pageIndex < documentInfo.PageCount; pageIndex++)
-            {
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                var destinationPath = Path.Combine(outputFolder, $"page_{pageIndex + 1}{Extensions[options.OutputFormat]}");
-
-                ConvertPdfPageToOutput(inputPath, pageIndex, destinationPath, options, documentInfo, pauseController, cancellationToken);
-                onWorkItemCompleted?.Invoke();
-            }
-        }
-
-        private static void ConvertPdfToSinglePageDocuments(
-            string inputPath,
-            string outputFolder,
-            PdfDocumentInfo documentInfo,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            for (var pageIndex = 0; pageIndex < documentInfo.PageCount; pageIndex++)
-            {
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                var pdfBytes = PdfExportService.ExportPdfDocument(
-                    inputPath,
-                    PdfDocumentExportMode.CurrentPage,
-                    pageIndex,
-                    new PdfPageRangeSelection(pageIndex, pageIndex),
-                    documentInfo.PageCount);
-
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                var destinationPath = Path.Combine(outputFolder, $"page_{pageIndex + 1}.pdf");
-                File.WriteAllBytes(destinationPath, pdfBytes);
-                onWorkItemCompleted?.Invoke();
-            }
-        }
-
-        private static void ConvertPdfPageToOutput(
-            string inputPath,
-            int pageIndex,
-            string destinationPath,
-            ConversionOptions options,
-            PdfDocumentInfo documentInfo,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var pageBitmap = RenderPdfPageBitmapForOutput(inputPath, pageIndex, options, documentInfo);
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var preparedBitmap = CreatePreparedBitmap(pageBitmap, options);
-
-            if (options.OutputFormat == OutputImageFormat.Svg)
-            {
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                ConvertBitmapToSvg(preparedBitmap, destinationPath);
-                return;
-            }
-
-            ThrowIfInterrupted(pauseController, cancellationToken);
             SaveBitmap(preparedBitmap, destinationPath, options);
         }
 
-        private static SKBitmap RenderPdfPageBitmapForOutput(
-            string inputPath,
-            int pageIndex,
-            ConversionOptions options,
-            PdfDocumentInfo documentInfo)
-        {
-            var (targetWidth, _) = CalculateTargetDimensions(
-                Math.Max(1, documentInfo.FirstPageWidth),
-                Math.Max(1, documentInfo.FirstPageHeight),
-                options);
-
-            var minimumWidth = Math.Max(targetWidth, Math.Max(1, documentInfo.FirstPageWidth * 2));
-            return PdfRenderService.RenderPageForExport(inputPath, pageIndex, minimumWidth);
-        }
-
-        private static void ConvertSourceToPdf(
-            string inputPath,
-            string destinationPath,
-            ConversionOptions options,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            var extension = Path.GetExtension(inputPath);
-            if (extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
-                options.GifHandlingMode == GifHandlingMode.SpecificFrame)
-            {
-                var gifSpecificFrameIndex = options.GifSpecificFrameSelections.TryGetValue(inputPath, out var cachedFrameIndex)
-                    ? Math.Max(0, cachedFrameIndex)
-                    : Math.Max(0, options.GifSpecificFrameIndex);
-                try
-                {
-                    using var frameBitmap = DecodeGifFrame(inputPath, gifSpecificFrameIndex);
-                    ThrowIfInterrupted(pauseController, cancellationToken);
-                    using var preparedBitmap = CreatePreparedBitmap(frameBitmap, options);
-                    ConvertBitmapToPdf(preparedBitmap, destinationPath, options, pauseController, cancellationToken);
-                    return;
-                }
-                catch (InvalidOperationException)
-                {
-                    // Fall back to the static image path if per-frame extraction is unavailable.
-                }
-            }
-
-            using var sourceBitmap = DecodeToBitmap(inputPath, svgUseBackground: true, svgBackgroundColor: "#FFFFFFFF");
-            if (sourceBitmap is null)
-            {
-                throw new InvalidOperationException("Unsupported or corrupted image file.");
-            }
-
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var prepared = CreatePreparedBitmap(sourceBitmap, options);
-            ConvertBitmapToPdf(prepared, destinationPath, options, pauseController, cancellationToken);
-        }
-
-        private static void ConvertGifToSpecificFrame(
-            string inputPath,
-            string destinationPath,
-            ConversionOptions options,
-            int gifSpecificFrameIndex,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var frameBitmap = DecodeGifFrame(inputPath, gifSpecificFrameIndex);
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var preparedBitmap = CreatePreparedBitmap(frameBitmap, options);
-
-            if (options.OutputFormat == OutputImageFormat.Svg)
-            {
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                ConvertBitmapToSvg(preparedBitmap, destinationPath);
-                return;
-            }
-
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            SaveBitmap(preparedBitmap, destinationPath, options);
-        }
-
-        private static void ConvertBitmapToPdf(
-            SKBitmap preparedBitmap,
-            string destinationPath,
-            ConversionOptions options,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            var jpegPage = CreateRenderedJpegPage(preparedBitmap, ResolveQuality(options));
-            var pdfBytes = PdfExportService.CreatePdfFromJpegs([jpegPage]);
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            File.WriteAllBytes(destinationPath, pdfBytes);
-        }
-
-        private static string ConvertGifToPdfFrames(
-            string inputPath,
-            string outputFolder,
-            ConversionOptions options,
-            int index,
-            int frameCount,
-            object reservationGate,
-            HashSet<string> reservedDestinations,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var stream = File.OpenRead(inputPath);
-            using var codec = SKCodec.Create(stream);
-            if (codec is null)
-            {
-                throw new InvalidOperationException("Unsupported or corrupted image file.");
-            }
-
-            var actualFrameCount = Math.Max(1, codec.FrameInfo.Length);
-            if (actualFrameCount <= 1)
-            {
-                var fallbackDestinationPath = BuildDestinationPath(
-                    inputPath,
-                    outputFolder,
-                    options,
-                    index,
-                    reservationGate,
-                    reservedDestinations);
-                ConvertSourceToPdf(inputPath, fallbackDestinationPath, options, pauseController, cancellationToken);
-                return outputFolder;
-            }
-
-            var baseName = ResolveGifPdfBaseFolderName(inputPath, options, index);
-            var pdfFolder = ReserveGifPdfFolder(outputFolder, baseName, reservationGate, reservedDestinations);
-            Directory.CreateDirectory(pdfFolder);
-
-            var info = codec.Info;
-            for (var frameIndex = 0; frameIndex < actualFrameCount; frameIndex++)
-            {
-                ThrowIfInterrupted(pauseController, cancellationToken);
-                using var frameBitmap = new SKBitmap(info);
-                var decodeOptions = new SKCodecOptions(frameIndex)
-                {
-                    PriorFrame = -1
-                };
-
-                var result = codec.GetPixels(info, frameBitmap.GetPixels(), decodeOptions);
-                if (result is not SKCodecResult.Success and not SKCodecResult.IncompleteInput)
-                {
-                    throw new InvalidOperationException("Failed to decode GIF frame.");
-                }
-
-                using var preparedBitmap = CreatePreparedBitmap(frameBitmap, options);
-                var destinationPath = Path.Combine(pdfFolder, $"frame_{frameIndex + 1}.pdf");
-                ConvertBitmapToPdf(preparedBitmap, destinationPath, options, pauseController, cancellationToken);
-                onWorkItemCompleted?.Invoke();
-            }
-
-            return pdfFolder;
-        }
-
-        private static string ConvertGifSpecificFrameToPdf(
-            string inputPath,
-            string outputFolder,
-            ConversionOptions options,
-            int index,
-            int frameCount,
-            object reservationGate,
-            HashSet<string> reservedDestinations,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
-        {
-            var resolvedFrameIndex = ResolveGifSpecificFrameIndex(inputPath, frameCount, options);
-            var baseName = ResolveGifPdfBaseFolderName(inputPath, options, index);
-            var pdfFolder = ReserveGifPdfFolder(outputFolder, baseName, reservationGate, reservedDestinations);
-            Directory.CreateDirectory(pdfFolder);
-
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var frameBitmap = DecodeGifFrame(inputPath, resolvedFrameIndex);
-            ThrowIfInterrupted(pauseController, cancellationToken);
-            using var preparedBitmap = CreatePreparedBitmap(frameBitmap, options);
-            var destinationPath = Path.Combine(pdfFolder, $"frame_{resolvedFrameIndex + 1}.pdf");
-            ConvertBitmapToPdf(preparedBitmap, destinationPath, options, pauseController, cancellationToken);
-            return pdfFolder;
-        }
-
-        private static PdfExportService.RenderedJpegPage CreateRenderedJpegPage(SKBitmap bitmap, int quality)
-        {
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Jpeg, Math.Clamp(quality, 60, 100));
-            if (data is null)
-            {
-                throw new InvalidOperationException("Failed to encode JPEG page for PDF output.");
-            }
-
-            return new PdfExportService.RenderedJpegPage(data.ToArray(), bitmap.Width, bitmap.Height);
-        }
-
-        private static string ConvertGifToFrames(
+        private static void ConvertGifToFrames(
             string inputPath,
             string outputFolder,
             ConversionOptions options,
             int index,
             object reservationGate,
-            HashSet<string> reservedDestinations,
-            Action? onWorkItemCompleted,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
+            HashSet<string> reservedDestinations)
         {
-            ThrowIfInterrupted(pauseController, cancellationToken);
             using var stream = File.OpenRead(inputPath);
             using var codec = SKCodec.Create(stream);
             if (codec is null)
@@ -1110,7 +559,8 @@ namespace ImvixPro.Services
             var frameInfos = codec.FrameInfo;
             var frameCount = Math.Max(1, frameInfos.Length);
             var baseName = BuildBaseName(inputPath, options, index);
-            var framesFolder = ReserveGifFramesFolder(outputFolder, baseName, reservationGate, reservedDestinations);
+            var frameDigits = Math.Max(4, frameCount.ToString(CultureInfo.InvariantCulture).Length);
+            var framesFolder = ReserveGifFramesFolder(outputFolder, baseName, options, reservationGate, reservedDestinations);
 
             Directory.CreateDirectory(framesFolder);
 
@@ -1119,7 +569,6 @@ namespace ImvixPro.Services
 
             for (var frameIndex = 0; frameIndex < frameCount; frameIndex++)
             {
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 using var frameBitmap = new SKBitmap(info);
                 var decodeOptions = new SKCodecOptions(frameIndex)
                 {
@@ -1133,85 +582,25 @@ namespace ImvixPro.Services
                 }
 
                 using var preparedBitmap = CreatePreparedBitmap(frameBitmap, options);
-                var frameName = $"frame_{frameIndex + 1}{extension}";
+                var frameName = $"{baseName}_{(frameIndex + 1).ToString($"D{frameDigits}", CultureInfo.InvariantCulture)}{extension}";
                 var destinationPath = Path.Combine(framesFolder, frameName);
 
                 if (options.OutputFormat == OutputImageFormat.Svg)
                 {
-                    ThrowIfInterrupted(pauseController, cancellationToken);
                     ConvertBitmapToSvg(preparedBitmap, destinationPath);
                 }
                 else
                 {
-                    ThrowIfInterrupted(pauseController, cancellationToken);
                     SaveBitmap(preparedBitmap, destinationPath, options);
                 }
-
-                onWorkItemCompleted?.Invoke();
-            }
-
-            return framesFolder;
-        }
-
-        private static SKBitmap DecodeGifFrame(string inputPath, int requestedFrameIndex)
-        {
-            using var stream = File.OpenRead(inputPath);
-            using var codec = SKCodec.Create(stream);
-            if (codec is null)
-            {
-                throw new InvalidOperationException("Unsupported or corrupted image file.");
-            }
-
-            var info = codec.Info;
-            var frameCount = Math.Max(1, codec.FrameInfo.Length);
-            var frameIndex = Math.Clamp(requestedFrameIndex, 0, frameCount - 1);
-            var frameBitmap = new SKBitmap(info);
-            var decodeOptions = new SKCodecOptions(frameIndex)
-            {
-                PriorFrame = -1
-            };
-
-            var result = codec.GetPixels(info, frameBitmap.GetPixels(), decodeOptions);
-            if (result is SKCodecResult.Success or SKCodecResult.IncompleteInput)
-            {
-                return frameBitmap;
-            }
-
-            frameBitmap.Dispose();
-            throw new InvalidOperationException("Failed to decode GIF frame.");
-        }
-
-        private static bool TryGetGifFrameCount(string inputPath, out int frameCount)
-        {
-            frameCount = 1;
-
-            try
-            {
-                using var stream = File.OpenRead(inputPath);
-                using var codec = SKCodec.Create(stream);
-                if (codec is null)
-                {
-                    return false;
-                }
-
-                frameCount = Math.Max(1, codec.FrameInfo.Length);
-                return true;
-            }
-            catch
-            {
-                frameCount = 1;
-                return false;
             }
         }
 
         private static void ConvertGifToAnimatedGif(
             string inputPath,
             string destinationPath,
-            ConversionOptions options,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
+            ConversionOptions options)
         {
-            ThrowIfInterrupted(pauseController, cancellationToken);
             using var stream = File.OpenRead(inputPath);
             using var codec = SKCodec.Create(stream);
             if (codec is null)
@@ -1221,7 +610,6 @@ namespace ImvixPro.Services
 
             var frameInfos = codec.FrameInfo;
             var frameCount = Math.Max(1, frameInfos.Length);
-            var selectedRange = ResolveGifFrameRange(inputPath, options, frameCount);
             var gifQuality = ResolveGifQuality(options);
             var shouldApplyGifQuality = gifQuality < 100;
 
@@ -1232,9 +620,7 @@ namespace ImvixPro.Services
                 {
                     throw new InvalidOperationException("Failed to decode static GIF.");
                 }
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 using var preparedBitmap = CreatePreparedBitmap(sourceBitmap, options);
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 SaveBitmap(preparedBitmap, destinationPath, options);
                 return;
             }
@@ -1246,31 +632,16 @@ namespace ImvixPro.Services
 
             var (targetWidth, targetHeight) = CalculateTargetDimensions(firstFrame.Width, firstFrame.Height, options);
             var needsResize = targetWidth != firstFrame.Width || targetHeight != firstFrame.Height;
-            var isFullFrameRange = selectedRange.StartIndex == 0 && selectedRange.EndIndex == frameCount - 1;
 
-            if (!needsResize && options.ResizeMode == ResizeMode.None && !shouldApplyGifQuality && isFullFrameRange)
+            if (!needsResize && options.ResizeMode == ResizeMode.None && !shouldApplyGifQuality)
             {
                 stream.Position = 0;
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 using var outputStream = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
                 stream.CopyTo(outputStream);
                 return;
             }
 
-            ConvertGifToAnimatedGifWithSkia(
-                inputPath,
-                destinationPath,
-                options,
-                codec,
-                frameInfos,
-                frameCount,
-                info,
-                targetWidth,
-                targetHeight,
-                gifQuality,
-                selectedRange,
-                pauseController,
-                cancellationToken);
+            ConvertGifToAnimatedGifWithSkia(inputPath, destinationPath, options, codec, frameInfos, frameCount, info, targetWidth, targetHeight, gifQuality);
         }
 
         private static void ConvertGifToAnimatedGifWithSkia(
@@ -1283,10 +654,7 @@ namespace ImvixPro.Services
             SKImageInfo info,
             int targetWidth,
             int targetHeight,
-            int gifQuality,
-            GifFrameRangeSelection selectedRange,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
+            int gifQuality)
         {
             var tempDir = Path.Combine(Path.GetTempPath(), $"Imvix_Gif_{Guid.NewGuid():N}");
             Directory.CreateDirectory(tempDir);
@@ -1303,7 +671,6 @@ namespace ImvixPro.Services
 
                 for (var frameIndex = 0; frameIndex < frameCount; frameIndex++)
                 {
-                    ThrowIfInterrupted(pauseController, cancellationToken);
                     var frameInfo = frameInfos[frameIndex];
                     var disposeMethod = frameInfo.DisposalMethod;
 
@@ -1337,27 +704,23 @@ namespace ImvixPro.Services
                         ? QuantizeGifColors(preparedFrame, quantizationTable)
                         : null;
                     var frameOutputBitmap = quantizedFrame ?? preparedFrame;
-                    if (frameIndex >= selectedRange.StartIndex && frameIndex <= selectedRange.EndIndex)
+                    var framePath = Path.Combine(tempDir, $"frame_{frameIndex:D4}.png");
+
+                    using (var pngData = frameOutputBitmap.Encode(SKEncodedImageFormat.Png, 100))
+                    using (var fileStream = File.OpenWrite(framePath))
                     {
-                        var framePath = Path.Combine(tempDir, $"frame_{frameIndex:D4}.png");
+                        pngData.SaveTo(fileStream);
+                    }
 
-                        ThrowIfInterrupted(pauseController, cancellationToken);
-                        using (var pngData = frameOutputBitmap.Encode(SKEncodedImageFormat.Png, 100))
-                        using (var fileStream = File.OpenWrite(framePath))
-                        {
-                            pngData.SaveTo(fileStream);
-                        }
+                    framePaths.Add(framePath);
 
-                        framePaths.Add(framePath);
-
-                        if (frameIndex < frameDurations.Count)
-                        {
-                            durations.Add(frameDurations[frameIndex]);
-                        }
-                        else
-                        {
-                            durations.Add(Math.Max(20, frameInfo.Duration));
-                        }
+                    if (frameIndex < frameDurations.Count)
+                    {
+                        durations.Add(frameDurations[frameIndex]);
+                    }
+                    else
+                    {
+                        durations.Add(Math.Max(20, frameInfo.Duration));
                     }
 
                     if (disposeMethod == SKCodecAnimationDisposalMethod.RestoreBackgroundColor)
@@ -1372,11 +735,7 @@ namespace ImvixPro.Services
                     throw new InvalidOperationException("No frames could be decoded from the GIF.");
                 }
 
-                var loopCount = OperatingSystem.IsWindows() && TryReadGifLoopCount(inputPath, out var originalLoopCount)
-                    ? originalLoopCount
-                    : (ushort?)null;
-
-                CreateAnimatedGifFromFrames(framePaths, durations, destinationPath, loopCount, pauseController, cancellationToken);
+                CreateAnimatedGifFromFrames(framePaths, durations, destinationPath);
             }
             finally
             {
@@ -1391,24 +750,6 @@ namespace ImvixPro.Services
                     }
                 }
             }
-        }
-
-        private static GifFrameRangeSelection ResolveGifFrameRange(string inputPath, ConversionOptions options, int frameCount)
-        {
-            if (frameCount <= 1)
-            {
-                return new GifFrameRangeSelection(0, 0);
-            }
-
-            if (!options.GifFrameRanges.TryGetValue(inputPath, out var selection))
-            {
-                selection = new GifFrameRangeSelection(0, frameCount - 1);
-            }
-
-            var maxIndex = frameCount - 1;
-            var start = Math.Clamp(selection.StartIndex, 0, maxIndex);
-            var end = Math.Clamp(selection.EndIndex, start, maxIndex);
-            return new GifFrameRangeSelection(start, end);
         }
 
         private static List<int> BuildGifFrameDurationsMs(
@@ -1496,36 +837,6 @@ namespace ImvixPro.Services
             }
         }
 
-        private static bool TryReadGifLoopCount(string inputPath, out ushort loopCount)
-        {
-            loopCount = 0;
-
-            try
-            {
-                using var stream = File.OpenRead(inputPath);
-                using var image = System.Drawing.Image.FromStream(stream, useEmbeddedColorManagement: false, validateImageData: false);
-
-                if (!image.PropertyIdList.Contains(GifPropertyTagLoopCount))
-                {
-                    return false;
-                }
-
-                var item = image.GetPropertyItem(GifPropertyTagLoopCount);
-                if (item?.Value is null || item.Value.Length < 2)
-                {
-                    return false;
-                }
-
-                loopCount = BitConverter.ToUInt16(item.Value, 0);
-                return true;
-            }
-            catch
-            {
-                loopCount = 0;
-                return false;
-            }
-        }
-
         private static SKBitmap ResizeImage(SKImage source, int targetWidth, int targetHeight)
         {
             var info = new SKImageInfo(targetWidth, targetHeight, SKColorType.Bgra8888, SKAlphaType.Premul);
@@ -1562,12 +873,8 @@ namespace ImvixPro.Services
         private static void CreateAnimatedGifFromFrames(
             List<string> framePaths,
             List<int> durations,
-            string destinationPath,
-            ushort? loopCount,
-            ConversionPauseController? pauseController,
-            CancellationToken cancellationToken)
+            string destinationPath)
         {
-            ThrowIfInterrupted(pauseController, cancellationToken);
             if (framePaths.Count == 0)
             {
                 throw new InvalidOperationException("No frames to encode.");
@@ -1581,7 +888,7 @@ namespace ImvixPro.Services
             var gifEncoder = GetGifEncoder();
 
             using var firstFrame = new System.Drawing.Bitmap(framePaths[0]);
-            ApplyGifFrameMetadata(firstFrame, durations, loopCount);
+            ApplyGifFrameMetadata(firstFrame, durations);
 
             using var encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
@@ -1590,12 +897,10 @@ namespace ImvixPro.Services
             encoderParameters.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.FrameDimensionTime);
             for (var i = 1; i < framePaths.Count; i++)
             {
-                ThrowIfInterrupted(pauseController, cancellationToken);
                 using var frame = new System.Drawing.Bitmap(framePaths[i]);
                 firstFrame.SaveAdd(frame, encoderParameters);
             }
 
-            ThrowIfInterrupted(pauseController, cancellationToken);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.Flush);
             firstFrame.SaveAdd(encoderParameters);
         }
@@ -1613,7 +918,7 @@ namespace ImvixPro.Services
             return encoder;
         }
 
-        private static void ApplyGifFrameMetadata(System.Drawing.Image image, List<int> durations, ushort? loopCount)
+        private static void ApplyGifFrameMetadata(System.Drawing.Image image, List<int> durations)
         {
             var delayBytes = new byte[durations.Count * 4];
 
@@ -1631,10 +936,7 @@ namespace ImvixPro.Services
             try
             {
                 image.SetPropertyItem(CreateGifPropertyItem(GifPropertyTagFrameDelay, GifPropertyTypeLong, delayBytes));
-                if (loopCount.HasValue)
-                {
-                    image.SetPropertyItem(CreateGifPropertyItem(GifPropertyTagLoopCount, GifPropertyTypeShort, BitConverter.GetBytes(loopCount.Value)));
-                }
+                image.SetPropertyItem(CreateGifPropertyItem(GifPropertyTagLoopCount, GifPropertyTypeShort, BitConverter.GetBytes((ushort)0)));
             }
             catch
             {
@@ -1665,101 +967,25 @@ namespace ImvixPro.Services
         private static string ReserveGifFramesFolder(
             string outputFolder,
             string baseName,
-            object reservationGate,
-            HashSet<string> reservedDestinations)
-        {
-            return ReserveUniqueFolderPathWithParentheses(outputFolder, baseName, reservationGate, reservedDestinations);
-        }
-
-        private static string ReserveGifPdfFolder(
-            string outputFolder,
-            string baseName,
-            object reservationGate,
-            HashSet<string> reservedDestinations)
-        {
-            return ReserveUniqueFolderPathWithParentheses(outputFolder, baseName, reservationGate, reservedDestinations);
-        }
-
-        private static string ReservePdfDerivedFolder(
-            string inputPath,
-            string outputFolder,
             ConversionOptions options,
-            int index,
             object reservationGate,
             HashSet<string> reservedDestinations)
         {
-            var baseName = BuildBaseName(inputPath, options, index);
-            if (string.IsNullOrWhiteSpace(baseName))
-            {
-                baseName = "PDF";
-            }
+            var baseFolderName = $"{baseName}_frames";
 
-            return ReserveUniqueFolderPathWithParentheses(outputFolder, baseName, reservationGate, reservedDestinations);
-        }
-
-        private static string ResolveGifPdfBaseFolderName(string inputPath, ConversionOptions options, int index)
-        {
-            var baseName = BuildBaseName(inputPath, options, index);
-            if (!string.IsNullOrWhiteSpace(baseName))
-            {
-                return baseName;
-            }
-
-            var originalName = Path.GetFileNameWithoutExtension(inputPath);
-            return string.IsNullOrWhiteSpace(originalName) ? "GIF" : originalName;
-        }
-
-        private static string ReserveUniqueFolderPath(
-            string outputFolder,
-            string baseFolderName,
-            bool allowOverwrite,
-            object reservationGate,
-            HashSet<string> reservedDestinations)
-        {
             lock (reservationGate)
             {
                 var folderPath = Path.Combine(outputFolder, baseFolderName);
-                if (allowOverwrite &&
-                    !File.Exists(folderPath) &&
-                    !reservedDestinations.Contains(folderPath))
+                if (options.AllowOverwrite)
                 {
                     reservedDestinations.Add(folderPath);
                     return folderPath;
                 }
 
                 var suffix = 1;
-                while (File.Exists(folderPath) || Directory.Exists(folderPath) || reservedDestinations.Contains(folderPath))
+                while (Directory.Exists(folderPath) || reservedDestinations.Contains(folderPath))
                 {
                     folderPath = Path.Combine(outputFolder, $"{baseFolderName}_{suffix}");
-                    suffix++;
-                }
-
-                reservedDestinations.Add(folderPath);
-                return folderPath;
-            }
-        }
-
-        private static string ReserveUniqueFolderPathWithParentheses(
-            string outputFolder,
-            string baseFolderName,
-            object reservationGate,
-            HashSet<string> reservedDestinations)
-        {
-            lock (reservationGate)
-            {
-                var folderPath = Path.Combine(outputFolder, baseFolderName);
-                if (!File.Exists(folderPath) &&
-                    !Directory.Exists(folderPath) &&
-                    !reservedDestinations.Contains(folderPath))
-                {
-                    reservedDestinations.Add(folderPath);
-                    return folderPath;
-                }
-
-                var suffix = 1;
-                while (File.Exists(folderPath) || Directory.Exists(folderPath) || reservedDestinations.Contains(folderPath))
-                {
-                    folderPath = Path.Combine(outputFolder, $"{baseFolderName}({suffix})");
                     suffix++;
                 }
 
@@ -1866,14 +1092,6 @@ namespace ImvixPro.Services
                     ? "#FFFFFFFF"
                     : options.SvgBackgroundColor,
                 GifHandlingMode = options.GifHandlingMode,
-                GifSpecificFrameIndex = Math.Max(0, options.GifSpecificFrameIndex),
-                GifSpecificFrameSelections = new Dictionary<string, int>(options.GifSpecificFrameSelections ?? [], StringComparer.OrdinalIgnoreCase),
-                GifFrameRanges = new Dictionary<string, GifFrameRangeSelection>(options.GifFrameRanges ?? [], StringComparer.OrdinalIgnoreCase),
-                PdfImageExportMode = options.PdfImageExportMode,
-                PdfDocumentExportMode = options.PdfDocumentExportMode,
-                PdfPageIndex = Math.Max(0, options.PdfPageIndex),
-                PdfPageSelections = new Dictionary<string, int>(options.PdfPageSelections ?? [], StringComparer.OrdinalIgnoreCase),
-                PdfPageRanges = new Dictionary<string, PdfPageRangeSelection>(options.PdfPageRanges ?? [], StringComparer.OrdinalIgnoreCase),
                 MaxDegreeOfParallelism = Math.Max(1, options.MaxDegreeOfParallelism)
             };
         }
@@ -2199,8 +1417,7 @@ namespace ImvixPro.Services
                 return DecodeSvgToBitmap(inputPath, svgUseBackground, svgBackgroundColor);
             }
 
-            var decoded = SKBitmap.Decode(inputPath);
-            return decoded ?? TryDecodeWithSystemDrawing(inputPath);
+            return SKBitmap.Decode(inputPath);
         }
 
         private static SKBitmap DecodeSvgToBitmap(string inputPath, bool svgUseBackground, string? svgBackgroundColor)
@@ -2270,162 +1487,29 @@ namespace ImvixPro.Services
             object reservationGate,
             HashSet<string> reservedDestinations)
         {
-            var baseName = BuildBaseName(inputPath, options, index);
-            return BuildDestinationPathForBaseName(baseName, outputFolder, options, reservationGate, reservedDestinations);
-        }
-
-        private static string BuildDestinationPathForBaseName(
-            string baseName,
-            string outputFolder,
-            ConversionOptions options,
-            object reservationGate,
-            HashSet<string> reservedDestinations)
-        {
             var extension = Extensions[options.OutputFormat];
+            var baseName = BuildBaseName(inputPath, options, index);
 
             lock (reservationGate)
             {
                 var destinationPath = Path.Combine(outputFolder, $"{baseName}{extension}");
 
-                if (options.AllowOverwrite && !Directory.Exists(destinationPath))
+                if (options.AllowOverwrite)
                 {
                     reservedDestinations.Add(destinationPath);
                     return destinationPath;
                 }
 
                 var suffix = 1;
-                while (File.Exists(destinationPath) || Directory.Exists(destinationPath) || reservedDestinations.Contains(destinationPath))
+                while (File.Exists(destinationPath) || reservedDestinations.Contains(destinationPath))
                 {
-                    destinationPath = Path.Combine(outputFolder, $"{baseName}({suffix}){extension}");
+                    destinationPath = Path.Combine(outputFolder, $"{baseName}_{suffix}{extension}");
                     suffix++;
                 }
 
                 reservedDestinations.Add(destinationPath);
                 return destinationPath;
             }
-        }
-
-        private static SKBitmap? TryDecodeWithSystemDrawing(string inputPath)
-        {
-            if (!OperatingSystem.IsWindows())
-            {
-                return null;
-            }
-
-            try
-            {
-                using var stream = File.OpenRead(inputPath);
-                using var image = System.Drawing.Image.FromStream(stream, useEmbeddedColorManagement: false, validateImageData: false);
-                using var memory = new MemoryStream();
-                image.Save(memory, ImageFormat.Png);
-                memory.Position = 0;
-                return SKBitmap.Decode(memory);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static int EstimateWorkItemCount(ImageItemViewModel image, ConversionOptions options)
-        {
-            if (image.IsPdfDocument)
-            {
-                var pageCount = Math.Max(1, image.PdfPageCount);
-                if (options.OutputFormat == OutputImageFormat.Pdf)
-                {
-                    return ResolvePdfDocumentExportMode(pageCount, options) == PdfDocumentExportMode.SplitSinglePages
-                        ? pageCount
-                        : 1;
-                }
-
-                return ResolvePdfImageExportMode(pageCount, options) == PdfImageExportMode.AllPages
-                    ? pageCount
-                    : 1;
-            }
-
-            if (image.IsAnimatedGif &&
-                options.GifHandlingMode == GifHandlingMode.AllFrames &&
-                options.OutputFormat != OutputImageFormat.Gif)
-            {
-                return Math.Max(1, image.GifFrameCount);
-            }
-
-            return 1;
-        }
-
-        private static ConversionProgress CreateConversionProgress(
-            int processedCount,
-            int totalCount,
-            int processedFileCount,
-            int totalFileCount,
-            string fileName,
-            int currentFileProcessedCount,
-            int currentFileTotalCount,
-            bool isFileCompleted,
-            bool succeeded,
-            string? error)
-        {
-            return new ConversionProgress(
-                processedCount,
-                totalCount,
-                processedFileCount,
-                totalFileCount,
-                fileName,
-                currentFileProcessedCount,
-                currentFileTotalCount,
-                isFileCompleted,
-                succeeded,
-                error);
-        }
-
-        private static PdfImageExportMode ResolvePdfImageExportMode(int pageCount, ConversionOptions options)
-        {
-            if (pageCount <= 1)
-            {
-                return PdfImageExportMode.CurrentPage;
-            }
-
-            return options.PdfImageExportMode;
-        }
-
-        private static PdfDocumentExportMode ResolvePdfDocumentExportMode(int pageCount, ConversionOptions options)
-        {
-            if (pageCount <= 1)
-            {
-                return PdfDocumentExportMode.AllPages;
-            }
-
-            return options.PdfDocumentExportMode;
-        }
-
-        private static int ResolvePdfPageIndex(string inputPath, int pageCount, ConversionOptions options)
-        {
-            var maxIndex = Math.Max(0, pageCount - 1);
-            var pageIndex = options.PdfPageSelections.TryGetValue(inputPath, out var cachedPageIndex)
-                ? cachedPageIndex
-                : options.PdfPageIndex;
-            return Math.Clamp(pageIndex, 0, maxIndex);
-        }
-
-        private static PdfPageRangeSelection ResolvePdfPageRange(string inputPath, int pageCount, ConversionOptions options)
-        {
-            var maxIndex = Math.Max(0, pageCount - 1);
-            if (!options.PdfPageRanges.TryGetValue(inputPath, out var selection))
-            {
-                selection = new PdfPageRangeSelection(0, maxIndex);
-            }
-
-            return PdfExportService.ClampRange(selection, maxIndex);
-        }
-
-        private static int ResolveGifSpecificFrameIndex(string inputPath, int frameCount, ConversionOptions options)
-        {
-            var maxIndex = Math.Max(0, frameCount - 1);
-            var frameIndex = options.GifSpecificFrameSelections.TryGetValue(inputPath, out var cachedFrameIndex)
-                ? cachedFrameIndex
-                : options.GifSpecificFrameIndex;
-            return Math.Clamp(frameIndex, 0, maxIndex);
         }
 
         private static string BuildBaseName(string inputPath, ConversionOptions options, int index)

@@ -2,11 +2,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="using:ImvixPro.ViewModels"
-        xmlns:controls="using:ImvixPro.Views.Controls"
+        xmlns:vm="using:Imvix.ViewModels"
         xmlns:cp="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.ColorPicker"
         mc:Ignorable="d"
-        x:Class="ImvixPro.Views.MainWindow"
+        x:Class="Imvix.Views.MainWindow"
         x:CompileBindings="False"
         Width="1280"
         Height="760"
@@ -222,175 +221,11 @@
                                     Padding="8"
                                     Height="240"
                                     PointerPressed="OnPreviewPointerPressed">
-                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                                    <Button Grid.Column="0"
-                                            Classes="icon-only pdf-nav"
-                                            Width="44"
-                                            Height="44"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
-                                            IsVisible="{Binding IsPdfNavigationVisible}"
-                                            IsEnabled="{Binding CanGoToPreviousPdfPage}"
-                                            Command="{Binding GoToPreviousPdfPageCommand}"
-                                            ToolTip.Tip="{Binding PdfPreviousPageText}">
-                                        <Path Width="14"
-                                              Height="14"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Stretch="Uniform"
-                                              Stroke="{DynamicResource TextPrimaryBrush}"
-                                              StrokeThickness="2"
-                                              StrokeLineCap="Round"
-                                              Data="M 10 2 L 4 7 L 10 12" />
-                                    </Button>
-
-                                    <Image Grid.Column="1" Source="{Binding SelectedPreview}" Stretch="Uniform" />
-
-                                    <Button Grid.Column="2"
-                                            Classes="icon-only pdf-nav"
-                                            Width="44"
-                                            Height="44"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
-                                            IsVisible="{Binding IsPdfNavigationVisible}"
-                                            IsEnabled="{Binding CanGoToNextPdfPage}"
-                                            Command="{Binding GoToNextPdfPageCommand}"
-                                            ToolTip.Tip="{Binding PdfNextPageText}">
-                                        <Path Width="14"
-                                              Height="14"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Stretch="Uniform"
-                                              Stroke="{DynamicResource TextPrimaryBrush}"
-                                              StrokeThickness="2"
-                                              StrokeLineCap="Round"
-                                              Data="M 4 2 L 10 7 L 4 12" />
-                                    </Button>
-                                </Grid>
+                                <Image Source="{Binding SelectedPreview}" Stretch="Uniform" />
                             </Border>
 
                             <TextBlock Text="{Binding NoPreviewText}" Classes="secondary" />
                             <TextBlock Text="{Binding CurrentFile, StringFormat='{}{0}'}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock IsVisible="{Binding IsPdfSelected}"
-                                       Text="{Binding PdfPageIndicatorText}"
-                                       Classes="secondary"
-                                       FontWeight="SemiBold" />
-
-                            <Border IsVisible="{Binding IsPdfImageExportVisible}"
-                                    Background="{DynamicResource SurfaceAltBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="10">
-                                <StackPanel Spacing="8">
-                                    <StackPanel Classes="icon-label">
-                                        <Border Classes="icon-badge">
-                                            <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
-                                        </Border>
-                                        <TextBlock Text="{Binding PdfImageExportTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    </StackPanel>
-
-                                    <TextBlock IsVisible="{Binding IsSinglePagePdf}"
-                                               Text="{Binding PdfSinglePageHintText}"
-                                               Classes="secondary"
-                                               TextWrapping="Wrap" />
-
-                                    <StackPanel IsVisible="{Binding IsPdfImageModeSelectorVisible}" Orientation="Horizontal" Spacing="14">
-                                        <RadioButton GroupName="PdfImageMode"
-                                                     IsChecked="{Binding IsPdfImageAllPagesMode}"
-                                                     Checked="OnPdfImageAllPagesChecked"
-                                                     Content="{Binding PdfExportAllPagesText}" />
-                                        <RadioButton GroupName="PdfImageMode"
-                                                     IsChecked="{Binding IsPdfImageCurrentPageMode}"
-                                                     Checked="OnPdfImageCurrentPageChecked"
-                                                     Content="{Binding PdfExportCurrentPageText}" />
-                                    </StackPanel>
-
-                                    <Grid IsVisible="{Binding IsPdfImagePageSliderVisible}"
-                                          ColumnDefinitions="Auto,*,Auto"
-                                          ColumnSpacing="8">
-                                        <TextBlock Grid.Column="0" Text="{Binding PdfPageText}" VerticalAlignment="Center" />
-                                        <Slider Grid.Column="1"
-                                                Minimum="{Binding PdfPageMinimum}"
-                                                Maximum="{Binding PdfPageMaximum}"
-                                                Value="{Binding SelectedPdfPageIndex, Mode=OneWay}"
-                                                TickFrequency="1"
-                                                IsSnapToTickEnabled="True"
-                                                ValueChanged="OnPdfPageSliderValueChanged" />
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{Binding PdfPageIndicatorText}"
-                                                   VerticalAlignment="Center"
-                                                   FontWeight="SemiBold" />
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-
-                            <Border IsVisible="{Binding IsPdfDocumentExportVisible}"
-                                    Background="{DynamicResource SurfaceAltBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="10">
-                                <StackPanel Spacing="8">
-                                    <StackPanel Classes="icon-label">
-                                        <Border Classes="icon-badge">
-                                            <Path Classes="line-icon" Data="{StaticResource IconSaveGeometry}" />
-                                        </Border>
-                                        <TextBlock Text="{Binding PdfDocumentExportTitleText}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    </StackPanel>
-
-                                    <TextBlock IsVisible="{Binding IsSinglePagePdf}"
-                                               Text="{Binding PdfSinglePageHintText}"
-                                               Classes="secondary"
-                                               TextWrapping="Wrap" />
-
-                                    <StackPanel IsVisible="{Binding IsPdfDocumentModeSelectorVisible}" Orientation="Horizontal" Spacing="14">
-                                        <RadioButton GroupName="PdfDocumentMode"
-                                                     IsChecked="{Binding IsPdfDocumentAllPagesMode}"
-                                                     Checked="OnPdfDocumentAllPagesChecked"
-                                                     Content="{Binding PdfExportAllPagesText}" />
-                                        <RadioButton GroupName="PdfDocumentMode"
-                                                     IsChecked="{Binding IsPdfDocumentCurrentPageMode}"
-                                                     Checked="OnPdfDocumentCurrentPageChecked"
-                                                     Content="{Binding PdfExportCurrentPageText}" />
-                                        <RadioButton GroupName="PdfDocumentMode"
-                                                     IsChecked="{Binding IsPdfDocumentPageRangeMode}"
-                                                     Checked="OnPdfDocumentRangeChecked"
-                                                     Content="{Binding PdfExportPageRangeText}" />
-                                        <RadioButton GroupName="PdfDocumentMode"
-                                                     IsChecked="{Binding IsPdfDocumentSplitSinglePagesMode}"
-                                                     Checked="OnPdfDocumentSplitSinglePagesChecked"
-                                                     Content="{Binding PdfSplitSinglePagesText}" />
-                                    </StackPanel>
-
-                                    <Grid IsVisible="{Binding IsPdfDocumentPageSliderVisible}"
-                                          ColumnDefinitions="Auto,*,Auto"
-                                          ColumnSpacing="8">
-                                        <TextBlock Grid.Column="0" Text="{Binding PdfPageText}" VerticalAlignment="Center" />
-                                        <Slider Grid.Column="1"
-                                                Minimum="{Binding PdfPageMinimum}"
-                                                Maximum="{Binding PdfPageMaximum}"
-                                                Value="{Binding SelectedPdfPageIndex, Mode=OneWay}"
-                                                TickFrequency="1"
-                                                IsSnapToTickEnabled="True"
-                                                ValueChanged="OnPdfPageSliderValueChanged" />
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{Binding PdfPageIndicatorText}"
-                                                   VerticalAlignment="Center"
-                                                   FontWeight="SemiBold" />
-                                    </Grid>
-
-                                    <StackPanel IsVisible="{Binding IsPdfDocumentRangeSliderVisible}" Spacing="6">
-                                        <TextBlock Text="{Binding PdfExportPageRangeText}" />
-                                        <controls:PageRangeSelector Minimum="{Binding PdfRangeMinimum}"
-                                                                    Maximum="{Binding PdfRangeMaximum}"
-                                                                    StartValue="{Binding SelectedPdfRangeStartIndex, Mode=OneWay}"
-                                                                    EndValue="{Binding SelectedPdfRangeEndIndex, Mode=OneWay}"
-                                                                    RangeChanged="OnPdfRangeChanged" />
-                                        <TextBlock Text="{Binding PdfPageRangeIndicatorText}" Classes="secondary" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
 
                             <Border IsVisible="{Binding IsGifPreviewVisible}"
                                     Background="{DynamicResource SurfaceAltBrush}"
@@ -405,62 +240,13 @@
                                         </Border>
                                         <TextBlock Text="{Binding GifHandlingText}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     </StackPanel>
-                                    <ComboBox IsVisible="{Binding IsGifHandlingSelectorVisible}"
-                                              ItemsSource="{Binding GifHandlingModes}"
-                                              SelectedItem="{Binding SelectedGifHandlingModeOption}">
+                                    <ComboBox ItemsSource="{Binding GifHandlingModes}" SelectedItem="{Binding SelectedGifHandlingModeOption}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding DisplayName}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                    <StackPanel IsVisible="{Binding IsGifPdfModeSelectorVisible}" Orientation="Horizontal" Spacing="14">
-                                        <RadioButton GroupName="GifPdfMode"
-                                                     IsChecked="{Binding IsGifPdfExportAllFramesMode}"
-                                                     Checked="OnGifPdfAllFramesChecked"
-                                                     Content="{Binding GifPdfExportAllFramesText}" />
-                                        <RadioButton GroupName="GifPdfMode"
-                                                     IsChecked="{Binding IsGifPdfExportCurrentFrameMode}"
-                                                     Checked="OnGifPdfCurrentFrameChecked"
-                                                     Content="{Binding GifPdfExportCurrentFrameText}" />
-                                    </StackPanel>
-                                    <TextBlock IsVisible="{Binding IsGifPdfModeSelectorVisible}"
-                                               Text="{Binding GifPdfOutputDirectoryNoteText}"
-                                               Classes="secondary"
-                                               TextWrapping="Wrap" />
-                                    <Grid IsVisible="{Binding IsGifSpecificFrameControlsVisible}"
-                                          ColumnDefinitions="Auto,*,Auto"
-                                          ColumnSpacing="8">
-                                        <Button Grid.Column="0"
-                                                Classes="icon-only"
-                                                Command="{Binding ToggleGifSpecificFramePlaybackCommand}"
-                                                IsEnabled="{Binding CanAdjustGifSpecificFrame}"
-                                                ToolTip.Tip="{Binding GifSpecificFramePlaybackButtonText}">
-                                            <Grid Width="16" Height="16">
-                                                <Path IsVisible="{Binding IsGifSpecificFramePlaybackPaused}"
-                                                      Classes="line-icon"
-                                                      Data="{StaticResource IconPlayGeometry}" />
-                                                <Path IsVisible="{Binding IsGifSpecificFramePlaying}"
-                                                      Classes="line-icon"
-                                                      Data="{StaticResource IconPauseGeometry}" />
-                                            </Grid>
-                                        </Button>
-                                        <Slider Grid.Column="1"
-                                                Minimum="0"
-                                                Maximum="{Binding GifSpecificFrameMaximum}"
-                                                Value="{Binding GifSpecificFrameSliderValue, Mode=OneWay}"
-                                                ValueChanged="OnGifSpecificFrameSliderValueChanged"
-                                                TickFrequency="1"
-                                                IsSnapToTickEnabled="True"
-                                                IsEnabled="{Binding CanAdjustGifSpecificFrame}" />
-                                        <TextBlock Grid.Column="2"
-                                                   MinWidth="28"
-                                                   FontWeight="SemiBold"
-                                                   HorizontalAlignment="Right"
-                                                   TextAlignment="Right"
-                                                   VerticalAlignment="Center"
-                                                   Text="{Binding GifSpecificFrameCountdownText}" />
-                                    </Grid>
                                 </StackPanel>
                             </Border>
 
@@ -498,27 +284,6 @@
                                                       IsComponentTextInputVisible="False" />
                                     </Grid>
                                     <TextBlock IsVisible="{Binding IsSvgBackgroundColorVisible}" Text="{Binding SvgBackgroundColorHintText}" Classes="secondary" TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Border>
-
-                            <Border IsVisible="{Binding IsGifTrimRangeVisible}"
-                                    Background="{DynamicResource SurfaceAltBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="10">
-                                <StackPanel Spacing="8">
-                                    <StackPanel Classes="icon-label">
-                                        <Border Classes="icon-badge">
-                                            <Path Classes="line-icon" Data="{StaticResource IconResizeGeometry}" />
-                                        </Border>
-                                        <TextBlock Text="{Binding GifTrimRangeText}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <controls:GifFrameRangeSelector Minimum="{Binding GifTrimRangeMinimum}"
-                                                                    Maximum="{Binding GifTrimRangeMaximum}"
-                                                                    StartValue="{Binding SelectedGifTrimStartIndex, Mode=OneWay}"
-                                                                    EndValue="{Binding SelectedGifTrimEndIndex, Mode=OneWay}"
-                                                                    RangeChanged="OnGifTrimRangeChanged" />
                                 </StackPanel>
                             </Border>
 

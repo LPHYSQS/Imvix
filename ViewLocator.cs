@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using ImvixPro.ViewModels;
+using Imvix.ViewModels;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ImvixPro
+namespace Imvix
 {
     /// <summary>
     /// Given a view model, returns the corresponding view if possible.

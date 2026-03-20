@@ -1,10 +1,10 @@
-using ImvixPro.Models;
+﻿using Imvix.Models;
 using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ImvixPro.Services
+namespace Imvix.Services
 {
     public sealed class SettingsService
     {
@@ -18,7 +18,8 @@ namespace ImvixPro.Services
 
         public SettingsService()
         {
-            var settingsDirectory = AppIdentity.GetAppDataDirectory();
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var settingsDirectory = Path.Combine(appDataPath, "Imvix");
             Directory.CreateDirectory(settingsDirectory);
             _settingsPath = Path.Combine(settingsDirectory, "settings.json");
         }

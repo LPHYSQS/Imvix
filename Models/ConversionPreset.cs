@@ -1,4 +1,4 @@
-namespace ImvixPro.Models
+namespace Imvix.Models
 {
     public sealed class ConversionPreset
     {
@@ -41,7 +41,5 @@ namespace ImvixPro.Models
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
 
         public GifHandlingMode GifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
-
-        public int GifSpecificFrameIndex { get; set; }
     }
 }
