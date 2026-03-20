@@ -1,8 +1,8 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
-using Imvix.Services;
+using ImvixPro.Services;
 
-namespace Imvix
+namespace ImvixPro
 {
     internal sealed class Program
     {
@@ -12,7 +12,7 @@ namespace Imvix
         [STAThread]
         public static void Main(string[] args)
         {
-            using var singleInstance = new SingleInstanceService("Imvix");
+            using var singleInstance = new SingleInstanceService(AppIdentity.InternalName);
             if (!singleInstance.IsFirstInstance)
             {
                 singleInstance.SignalExistingInstance();

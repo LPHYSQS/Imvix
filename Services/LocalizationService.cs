@@ -1,10 +1,10 @@
-﻿﻿using Avalonia.Platform;
+﻿using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class LocalizationService
     {
@@ -56,7 +56,7 @@ namespace Imvix.Services
 
             try
             {
-                var uri = new Uri($"avares://Imvix/Assets/Localization/{languageCode}.json");
+                var uri = AppIdentity.GetAssetUri($"Assets/Localization/{languageCode}.json");
                 if (!AssetLoader.Exists(uri))
                 {
                     return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

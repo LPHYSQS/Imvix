@@ -1,7 +1,7 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed class AppSettings
     {
@@ -58,6 +58,8 @@ namespace Imvix.Models
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
 
         public GifHandlingMode DefaultGifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
+
+        public int DefaultGifSpecificFrameIndex { get; set; }
 
         public List<ConversionPreset> Presets { get; set; } = [];
 

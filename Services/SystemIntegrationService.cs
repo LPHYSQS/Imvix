@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class SystemIntegrationService
     {
-        private const string AppShortcutName = "Imvix";
         private const string ShortcutExtension = ".lnk";
 
         public bool SetRunOnStartup(bool enabled)
@@ -72,7 +71,7 @@ namespace Imvix.Services
                 return string.Empty;
             }
 
-            return Path.Combine(startup, $"{AppShortcutName}{ShortcutExtension}");
+            return Path.Combine(startup, $"{AppIdentity.ShortcutName}{ShortcutExtension}");
         }
 
         private static string GetDesktopShortcutPath()
@@ -83,7 +82,7 @@ namespace Imvix.Services
                 return string.Empty;
             }
 
-            return Path.Combine(desktop, $"{AppShortcutName}{ShortcutExtension}");
+            return Path.Combine(desktop, $"{AppIdentity.ShortcutName}{ShortcutExtension}");
         }
 
         private static void TryDelete(string path)

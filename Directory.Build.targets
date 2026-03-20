@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <UsedAvaloniaProducts></UsedAvaloniaProducts>
+  </PropertyGroup>
+
+  <Target Name="AvaloniaStats" />
+</Project>

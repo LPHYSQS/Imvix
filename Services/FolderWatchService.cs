@@ -5,11 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class FolderWatchService : IDisposable
     {
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _pendingFiles = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, FileReadyState> _lastSignaledFiles = new(StringComparer.OrdinalIgnoreCase);
 
         private FileSystemWatcher? _watcher;
 
@@ -57,6 +58,7 @@ namespace Imvix.Services
             }
 
             _pendingFiles.Clear();
+            _lastSignaledFiles.Clear();
             WatchedDirectory = string.Empty;
         }
 
@@ -101,22 +103,37 @@ namespace Imvix.Services
 
         private async Task WaitForReadyAsync(string path, CancellationTokenSource cancellation)
         {
+            FileReadyState? previousReadyState = null;
+
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(1.2), cancellation.Token);
 
-                for (var attempt = 0; attempt < 10; attempt++)
+                for (var attempt = 0; attempt < 12; attempt++)
                 {
                     cancellation.Token.ThrowIfCancellationRequested();
 
-                    if (File.Exists(path) && CanOpenForRead(path))
+                    if (TryGetReadyState(path, out var currentReadyState))
                     {
-                        if (_pendingFiles.TryRemove(path, out var pending))
+                        if (previousReadyState.HasValue && previousReadyState.Value.Equals(currentReadyState))
                         {
-                            pending.Dispose();
+                            if (TryRememberSignaledState(path, currentReadyState))
+                            {
+                                FileReady?.Invoke(this, path);
+                            }
+
+                            return;
                         }
 
-                        FileReady?.Invoke(this, path);
+                        previousReadyState = currentReadyState;
+                    }
+                    else
+                    {
+                        previousReadyState = null;
+                    }
+
+                    if (attempt == 11)
+                    {
                         return;
                     }
 
@@ -138,12 +155,15 @@ namespace Imvix.Services
             }
         }
 
-        private static bool CanOpenForRead(string path)
+        private static bool TryGetReadyState(string path, out FileReadyState state)
         {
+            state = default;
+
             try
             {
-                using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                return stream.Length >= 0;
+                using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                state = new FileReadyState(stream.Length, File.GetLastWriteTimeUtc(path));
+                return true;
             }
             catch
             {
@@ -151,11 +171,37 @@ namespace Imvix.Services
             }
         }
 
+        private bool TryRememberSignaledState(string path, FileReadyState state)
+        {
+            while (true)
+            {
+                if (_lastSignaledFiles.TryGetValue(path, out var existing))
+                {
+                    if (existing.Equals(state))
+                    {
+                        return false;
+                    }
+
+                    if (_lastSignaledFiles.TryUpdate(path, state, existing))
+                    {
+                        return true;
+                    }
+
+                    continue;
+                }
+
+                if (_lastSignaledFiles.TryAdd(path, state))
+                {
+                    return true;
+                }
+            }
+        }
+
         public void Dispose()
         {
             Stop();
         }
+
+        private readonly record struct FileReadyState(long Length, DateTime LastWriteTimeUtc);
     }
 }
-
-

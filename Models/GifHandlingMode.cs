@@ -1,8 +1,9 @@
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public enum GifHandlingMode
     {
         FirstFrame,
-        AllFrames
+        AllFrames,
+        SpecificFrame
     }
 }

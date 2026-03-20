@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed class ConversionOptions
     {
@@ -41,6 +42,22 @@ namespace Imvix.Models
         public string SvgBackgroundColor { get; set; } = "#FFFFFFFF";
 
         public GifHandlingMode GifHandlingMode { get; set; } = GifHandlingMode.FirstFrame;
+
+        public int GifSpecificFrameIndex { get; set; }
+
+        public Dictionary<string, int> GifSpecificFrameSelections { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public Dictionary<string, GifFrameRangeSelection> GifFrameRanges { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public PdfImageExportMode PdfImageExportMode { get; set; } = PdfImageExportMode.AllPages;
+
+        public PdfDocumentExportMode PdfDocumentExportMode { get; set; } = PdfDocumentExportMode.AllPages;
+
+        public int PdfPageIndex { get; set; }
+
+        public Dictionary<string, int> PdfPageSelections { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public Dictionary<string, PdfPageRangeSelection> PdfPageRanges { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
         public int MaxDegreeOfParallelism { get; set; } = Math.Max(1, Environment.ProcessorCount);
     }

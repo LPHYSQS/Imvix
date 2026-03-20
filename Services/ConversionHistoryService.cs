@@ -1,4 +1,4 @@
-﻿using Imvix.Models;
+using ImvixPro.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class ConversionHistoryService
     {
@@ -23,8 +23,7 @@ namespace Imvix.Services
 
         public ConversionHistoryService()
         {
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var settingsDirectory = Path.Combine(appDataPath, "Imvix");
+            var settingsDirectory = AppIdentity.GetAppDataDirectory();
             Directory.CreateDirectory(settingsDirectory);
             _historyPath = Path.Combine(settingsDirectory, "history.json");
         }

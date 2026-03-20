@@ -1,16 +1,17 @@
-﻿﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SkiaSharp;
 using Svg.Skia;
 using System;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed partial class ImageItemViewModel : ObservableObject, IDisposable
     {
-        private ImageItemViewModel(string filePath, long fileSize, int pixelWidth, int pixelHeight, Bitmap? thumbnail, int gifFrameCount)
+        private ImageItemViewModel(string filePath, long fileSize, int pixelWidth, int pixelHeight, Bitmap? thumbnail, int gifFrameCount, int pdfPageCount)
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
@@ -21,6 +22,8 @@ namespace Imvix.Models
             PixelHeight = Math.Max(0, pixelHeight);
             GifFrameCount = Math.Max(1, gifFrameCount);
             IsAnimatedGif = GifFrameCount > 1;
+            PdfPageCount = Math.Max(0, pdfPageCount);
+            IsPdfDocument = PdfPageCount > 0;
             ResolutionText = PixelWidth > 0 && PixelHeight > 0
                 ? string.Create(CultureInfo.InvariantCulture, $"{PixelWidth} x {PixelHeight}")
                 : "-";
@@ -46,6 +49,10 @@ namespace Imvix.Models
         public int GifFrameCount { get; }
 
         public bool IsAnimatedGif { get; }
+
+        public int PdfPageCount { get; }
+
+        public bool IsPdfDocument { get; }
 
         public string ResolutionText { get; }
 
@@ -85,7 +92,24 @@ namespace Imvix.Models
                     }
                     catch
                     {
-                        // Keep import usable when thumbnail generation fails.
+                        try
+                        {
+                            using var fallback = TryDecodeWithSystemDrawing(filePath);
+                            if (fallback is not null)
+                            {
+                                using var image = SKImage.FromBitmap(fallback);
+                                using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+                                if (data is not null)
+                                {
+                                    using var memory = new MemoryStream(data.ToArray());
+                                    thumbnail = Bitmap.DecodeToWidth(memory, 140);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Keep import usable when thumbnail generation fails.
+                        }
                     }
                 }
 
@@ -94,7 +118,7 @@ namespace Imvix.Models
                     ? frameCount
                     : 1;
 
-                item = new ImageItemViewModel(filePath, fileInfo.Length, width, height, thumbnail, gifFrameCount);
+                item = CreateImported(filePath, fileInfo.Length, width, height, thumbnail, gifFrameCount);
                 return true;
             }
             catch (Exception ex)
@@ -107,6 +131,18 @@ namespace Imvix.Models
         public void Dispose()
         {
             Thumbnail?.Dispose();
+        }
+
+        internal static ImageItemViewModel CreateImported(
+            string filePath,
+            long fileSize,
+            int pixelWidth,
+            int pixelHeight,
+            Bitmap? thumbnail,
+            int gifFrameCount,
+            int pdfPageCount = 0)
+        {
+            return new ImageItemViewModel(filePath, fileSize, pixelWidth, pixelHeight, thumbnail, gifFrameCount, pdfPageCount);
         }
 
         private static bool TryReadImageInfo(string filePath, out int width, out int height, out int frameCount)
@@ -137,7 +173,7 @@ namespace Imvix.Models
                 using var codec = SKCodec.Create(stream);
                 if (codec is null)
                 {
-                    return false;
+                    return TryReadImageInfoWithSystemDrawing(filePath, out width, out height, out frameCount);
                 }
 
                 width = Math.Max(0, codec.Info.Width);
@@ -147,7 +183,66 @@ namespace Imvix.Models
             }
             catch
             {
+                return TryReadImageInfoWithSystemDrawing(filePath, out width, out height, out frameCount);
+            }
+        }
+
+        private static bool TryReadImageInfoWithSystemDrawing(string filePath, out int width, out int height, out int frameCount)
+        {
+            width = 0;
+            height = 0;
+            frameCount = 1;
+
+            if (!OperatingSystem.IsWindows())
+            {
                 return false;
+            }
+
+            try
+            {
+                using var stream = File.OpenRead(filePath);
+                using var image = System.Drawing.Image.FromStream(stream, useEmbeddedColorManagement: false, validateImageData: false);
+
+                width = Math.Max(1, image.Width);
+                height = Math.Max(1, image.Height);
+
+                if (Path.GetExtension(filePath).Equals(".gif", StringComparison.OrdinalIgnoreCase) &&
+                    image.FrameDimensionsList.Length > 0)
+                {
+                    var dimension = new FrameDimension(image.FrameDimensionsList[0]);
+                    frameCount = Math.Max(1, image.GetFrameCount(dimension));
+                }
+
+                return true;
+            }
+            catch
+            {
+                width = 0;
+                height = 0;
+                frameCount = 1;
+                return false;
+            }
+        }
+
+        private static SKBitmap? TryDecodeWithSystemDrawing(string filePath)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                return null;
+            }
+
+            try
+            {
+                using var stream = File.OpenRead(filePath);
+                using var image = System.Drawing.Image.FromStream(stream, useEmbeddedColorManagement: false, validateImageData: false);
+                using var memory = new MemoryStream();
+                image.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                return SKBitmap.Decode(memory);
+            }
+            catch
+            {
+                return null;
             }
         }
 

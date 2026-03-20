@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed class ConversionHistoryEntry
     {

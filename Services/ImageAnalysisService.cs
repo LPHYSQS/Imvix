@@ -1,4 +1,4 @@
-﻿using Imvix.Models;
+using ImvixPro.Models;
 using SkiaSharp;
 using System;
 using System.Collections.Concurrent;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class ImageAnalysisService
     {

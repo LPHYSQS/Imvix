@@ -4,7 +4,7 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class SingleInstanceService : IDisposable
     {

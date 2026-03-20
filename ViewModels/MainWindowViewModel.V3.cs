@@ -1,7 +1,8 @@
-﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Imvix.Models;
-using Imvix.Services;
+using Avalonia.Threading;
+using ImvixPro.Models;
+using ImvixPro.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,10 +13,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Imvix.ViewModels
+namespace ImvixPro.ViewModels
 {
     public partial class MainWindowViewModel
     {
+        private const int GifPdfLargeFrameWarningThreshold = 500;
         private readonly ImageAnalysisService _imageAnalysisService = new();
         private readonly ConversionHistoryService _conversionHistoryService = new();
         private readonly ConversionLogService _conversionLogService = new();
@@ -230,9 +232,13 @@ namespace Imvix.ViewModels
             {
                 var progress = new Progress<ConversionProgress>(p =>
                 {
-                    CurrentFile = p.FileName;
-                    RemainingCount = Math.Max(0, p.TotalCount - p.ProcessedCount);
-                    ProgressPercent = p.TotalCount == 0 ? 0 : 100d * p.ProcessedCount / p.TotalCount;
+                    CurrentFile = BuildProgressFileText(p, options);
+                    StatusText = ShouldShowGifPdfFrameProgress(p, options)
+                        ? T("StatusProcessingGifFrames")
+                        : T(_statusKey);
+                    RemainingCount = Math.Min(RemainingCount, Math.Max(0, p.TotalFileCount - p.ProcessedFileCount));
+                    var nextPercent = p.TotalCount == 0 ? 0 : 100d * p.ProcessedCount / p.TotalCount;
+                    ProgressPercent = Math.Max(ProgressPercent, nextPercent);
                 });
 
                 var summary = await _imageConversionService.ConvertAsync(
@@ -317,8 +323,37 @@ namespace Imvix.ViewModels
                 SvgUseBackground = SvgUseBackground,
                 SvgBackgroundColor = EffectiveSvgBackgroundColor,
                 GifHandlingMode = SelectedGifHandlingMode,
+                GifSpecificFrameIndex = SelectedGifSpecificFrameIndex,
+                GifSpecificFrameSelections = new Dictionary<string, int>(_gifSpecificFrameSelections, StringComparer.OrdinalIgnoreCase),
+                GifFrameRanges = new Dictionary<string, GifFrameRangeSelection>(_gifTrimSelections, StringComparer.OrdinalIgnoreCase),
+                PdfImageExportMode = SelectedPdfImageExportMode,
+                PdfDocumentExportMode = SelectedPdfDocumentExportMode,
+                PdfPageIndex = SelectedPdfPageIndex,
+                PdfPageSelections = new Dictionary<string, int>(_pdfPageSelections, StringComparer.OrdinalIgnoreCase),
+                PdfPageRanges = new Dictionary<string, PdfPageRangeSelection>(_pdfPageRanges, StringComparer.OrdinalIgnoreCase),
                 MaxDegreeOfParallelism = _maxParallelism
             };
+        }
+
+        private static void ApplyWatchContentAwareOptions(ImageItemViewModel item, ConversionOptions options)
+        {
+            if (item.IsAnimatedGif &&
+                item.GifFrameCount > 1 &&
+                options.OutputFormat != OutputImageFormat.Gif)
+            {
+                options.GifHandlingMode = GifHandlingMode.AllFrames;
+                options.GifSpecificFrameIndex = 0;
+                options.GifSpecificFrameSelections.Clear();
+            }
+
+            if (item.IsPdfDocument &&
+                item.PdfPageCount > 1 &&
+                options.OutputFormat != OutputImageFormat.Pdf)
+            {
+                options.PdfImageExportMode = PdfImageExportMode.AllPages;
+                options.PdfPageIndex = 0;
+                options.PdfPageSelections.Clear();
+            }
         }
 
         private async Task<List<string>> BuildPreflightWarningsAsync()
@@ -339,12 +374,21 @@ namespace Imvix.ViewModels
                 warnings.Add(T("WarningHighCompression"));
             }
 
+            var gifPdfFrameCount = GetLargeGifPdfFrameCount(Images.ToList());
+            if (gifPdfFrameCount > 0)
+            {
+                warnings.Add(string.Format(
+                    CultureInfo.CurrentCulture,
+                    T("WarningGifFramesTooManyTemplate"),
+                    gifPdfFrameCount));
+            }
+
             return warnings.Distinct(StringComparer.Ordinal).ToList();
         }
 
         private void RefreshConversionInsights()
         {
-            if (SelectedImage is null)
+            if (SelectedImage is null || SelectedImage.IsPdfDocument)
             {
                 FormatRecommendationText = string.Empty;
                 FormatRecommendationReasonText = string.Empty;
@@ -389,6 +433,58 @@ namespace Imvix.ViewModels
             {
                 ActiveWarnings.Add(T("WarningHighCompression"));
             }
+
+            var gifPdfFrameCount = GetLargeGifPdfFrameCount(SelectedImage is null
+                ? []
+                : [SelectedImage]);
+            if (gifPdfFrameCount > 0)
+            {
+                ActiveWarnings.Add(string.Format(
+                    CultureInfo.CurrentCulture,
+                    T("WarningGifFramesTooManyTemplate"),
+                    gifPdfFrameCount));
+            }
+        }
+
+        private int GetLargeGifPdfFrameCount(IReadOnlyList<ImageItemViewModel> images)
+        {
+            if (SelectedOutputFormat != OutputImageFormat.Pdf ||
+                SelectedGifHandlingMode != GifHandlingMode.AllFrames)
+            {
+                return 0;
+            }
+
+            return images
+                .Where(image => image.IsAnimatedGif && image.GifFrameCount > GifPdfLargeFrameWarningThreshold)
+                .Select(image => image.GifFrameCount)
+                .DefaultIfEmpty(0)
+                .Max();
+        }
+
+        private bool ShouldShowGifPdfFrameProgress(ConversionProgress progress, ConversionOptions options)
+        {
+            return options.OutputFormat == OutputImageFormat.Pdf &&
+                   progress.CurrentFileTotalCount > 1 &&
+                   Path.GetExtension(progress.FileName).Equals(".gif", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string BuildProgressFileText(ConversionProgress progress, ConversionOptions options)
+        {
+            if (!ShouldShowGifPdfFrameProgress(progress, options))
+            {
+                return progress.FileName;
+            }
+
+            var frameNumber = progress.CurrentFileProcessedCount <= 0
+                ? 1
+                : Math.Min(progress.CurrentFileProcessedCount, progress.CurrentFileTotalCount);
+
+            return string.Format(
+                CultureInfo.CurrentCulture,
+                T("GifPdfProgressTemplate"),
+                progress.FileName,
+                frameNumber,
+                progress.CurrentFileTotalCount);
         }
 
         private bool IsHighCompressionSelection()
@@ -438,6 +534,17 @@ namespace Imvix.ViewModels
         }
 
         private void ReplaceHistory(IReadOnlyList<ConversionHistoryEntry> entries)
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                ReplaceHistoryCore(entries);
+                return;
+            }
+
+            Dispatcher.UIThread.Post(() => ReplaceHistoryCore(entries));
+        }
+
+        private void ReplaceHistoryCore(IReadOnlyList<ConversionHistoryEntry> entries)
         {
             _historyCache.Clear();
             _historyCache.AddRange(entries.OrderByDescending(entry => entry.Timestamp));
@@ -523,6 +630,7 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(SelectWatchOutputFolderDialogTitle));
             OnPropertyChanged(nameof(PauseText));
             OnPropertyChanged(nameof(ResumeText));
+            OnPropertyChanged(nameof(GifSpecificFramePlaybackButtonText));
             OnPropertyChanged(nameof(CancelTaskText));
             OnPropertyChanged(nameof(FailureLogLabelText));
             OnPropertyChanged(nameof(ContinueActionText));
@@ -651,7 +759,10 @@ namespace Imvix.ViewModels
 
         private void OnWatchedFileReady(object? sender, string path)
         {
-            _ = ProcessWatchedFileAsync(path);
+            Dispatcher.UIThread.Post(() =>
+            {
+                _ = ProcessWatchedFileAsync(path);
+            });
         }
 
         private async Task ProcessWatchedFileAsync(string path)
@@ -674,7 +785,7 @@ namespace Imvix.ViewModels
                     await Task.Delay(350, cancellation.Token);
                 }
 
-                if (!ImageItemViewModel.TryCreate(path, out item, out var error, generateThumbnail: false) || item is null)
+                if (!TryCreateInputItem(path, out item, out var error, generateThumbnail: false) || item is null)
                 {
                     WatchFailureCount++;
                     WatchStatusText = string.Format(CultureInfo.CurrentCulture, T("WatchStatusSingleFailureTemplate"), Path.GetFileName(path), error ?? T("UnknownReason"));
@@ -687,6 +798,7 @@ namespace Imvix.ViewModels
 
                 var snapshot = new List<ImageItemViewModel> { item };
                 var options = BuildCurrentConversionOptions(forWatch: true);
+                ApplyWatchContentAwareOptions(item, options);
                 var estimate = _imageAnalysisService.Estimate(snapshot, options);
                 var progress = new Progress<ConversionProgress>(p =>
                 {
@@ -940,7 +1052,3 @@ namespace Imvix.ViewModels
         }
     }
 }
-
-
-
-

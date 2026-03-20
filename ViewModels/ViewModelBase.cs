@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Imvix.ViewModels
+namespace ImvixPro.ViewModels
 {
     public abstract class ViewModelBase : ObservableObject
     {

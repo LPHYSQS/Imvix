@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ImvixPro.Views.Controls.GifFrameRangeSelector"
+             MinHeight="34">
+    <Canvas x:Name="TrackCanvas"
+            Height="34"
+            PointerMoved="OnTrackPointerMoved"
+            PointerReleased="OnTrackPointerReleased"
+            PointerCaptureLost="OnTrackPointerCaptureLost">
+        <Border x:Name="TrackBackground"
+                Height="6"
+                CornerRadius="999"
+                Background="{DynamicResource BorderBrush}" />
+        <Border x:Name="SelectionRange"
+                Height="6"
+                CornerRadius="999"
+                Background="{DynamicResource AccentBrush}" />
+        <Border x:Name="StartThumb"
+                Width="14"
+                Height="24"
+                CornerRadius="7"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource AccentBrush}"
+                BorderThickness="2"
+                PointerPressed="OnStartThumbPointerPressed" />
+        <Border x:Name="EndThumb"
+                Width="14"
+                Height="24"
+                CornerRadius="7"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource AccentBrush}"
+                BorderThickness="2"
+                PointerPressed="OnEndThumbPointerPressed" />
+    </Canvas>
+</UserControl>

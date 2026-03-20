@@ -1,6 +1,6 @@
-﻿using System.Threading;
+using System.Threading;
 
-namespace Imvix.Services
+namespace ImvixPro.Services
 {
     public sealed class ConversionPauseController
     {

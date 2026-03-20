@@ -1,20 +1,23 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Imvix.Models;
-using Imvix.Services;
-using Imvix.ViewModels;
+using Avalonia.VisualTree;
+using ImvixPro.Models;
+using ImvixPro.Services;
+using ImvixPro.ViewModels;
+using ImvixPro.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Imvix.Views
+namespace ImvixPro.Views
 {
     public partial class MainWindow : Window
     {
@@ -22,7 +25,7 @@ namespace Imvix.Views
         [
             new FilePickerFileType("Image Files")
             {
-                Patterns = ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp", "*.gif", "*.tif", "*.tiff", "*.ico", "*.svg"]
+                Patterns = ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp", "*.gif", "*.tif", "*.tiff", "*.ico", "*.svg", "*.pdf"]
             }
         ];
 
@@ -364,7 +367,7 @@ namespace Imvix.Views
 
             try
             {
-                using var stream = AssetLoader.Open(new Uri("avares://Imvix/Assets/logo.ico"));
+                using var stream = AssetLoader.Open(AppIdentity.GetAssetUri("Assets/logo.ico"));
 
                 _restoreTrayMenuItem = new NativeMenuItem();
                 _restoreTrayMenuItem.Click += OnTrayRestoreClick;
@@ -406,7 +409,7 @@ namespace Imvix.Views
             }
 
             var vm = ViewModel;
-            _trayIcon.ToolTipText = vm?.WindowTitle ?? "Imvix";
+            _trayIcon.ToolTipText = vm?.WindowTitle ?? AppIdentity.DisplayName;
             _trayIcon.IsVisible = vm?.KeepRunningInTray == true;
 
             if (_restoreTrayMenuItem is not null)
@@ -416,7 +419,7 @@ namespace Imvix.Views
 
             if (_exitTrayMenuItem is not null)
             {
-                _exitTrayMenuItem.Header = vm?.TrayExitText ?? "Exit Imvix";
+                _exitTrayMenuItem.Header = vm?.TrayExitText ?? $"Exit {AppIdentity.DisplayName}";
             }
         }
 
@@ -779,22 +782,97 @@ namespace Imvix.Views
                 return;
             }
 
+            if (e.Source is Visual source &&
+                source.GetSelfAndVisualAncestors().OfType<Button>().Any())
+            {
+                return;
+            }
+
             var vm = ViewModel;
             if (vm?.SelectedImage is null)
             {
                 return;
             }
 
+            GifFrameRangeSelection? gifTrimRange = null;
+            if (vm.IsGifTrimRangeVisible)
+            {
+                gifTrimRange = new GifFrameRangeSelection(vm.SelectedGifTrimStartIndex, vm.SelectedGifTrimEndIndex);
+            }
+
             var previewWindow = new ImagePreviewWindow(
                 vm.SelectedImage.FilePath,
                 vm.SvgUseBackground,
-                vm.SvgBackgroundColor)
+                vm.SvgBackgroundColor,
+                gifTrimRange,
+                vm.SelectedImage.IsPdfDocument ? vm.SelectedPdfPageIndex : 0,
+                vm.SelectedImage.IsPdfDocument ? vm.SelectedImage.PdfPageCount : 0)
             {
                 FlowDirection = this.FlowDirection
             };
 
             previewWindow.Show(this);
             e.Handled = true;
+        }
+
+        private void OnGifSpecificFrameSliderValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+        {
+            ViewModel?.HandleGifSpecificFrameSliderChanged(e.NewValue);
+        }
+
+        private void OnGifTrimRangeChanged(object? sender, GifFrameRangeChangedEventArgs e)
+        {
+            ViewModel?.HandleGifTrimRangeChanged(e.StartValue, e.EndValue);
+        }
+
+        private void OnGifPdfAllFramesChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetGifPdfExportMode(GifHandlingMode.AllFrames);
+        }
+
+        private void OnGifPdfCurrentFrameChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetGifPdfExportMode(GifHandlingMode.SpecificFrame);
+        }
+
+        private void OnPdfPageSliderValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+        {
+            ViewModel?.HandlePdfPageSliderChanged(e.NewValue);
+        }
+
+        private void OnPdfRangeChanged(object? sender, PageRangeChangedEventArgs e)
+        {
+            ViewModel?.HandlePdfRangeChanged(e.StartValue, e.EndValue);
+        }
+
+        private void OnPdfImageAllPagesChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfImageExportMode(PdfImageExportMode.AllPages);
+        }
+
+        private void OnPdfImageCurrentPageChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfImageExportMode(PdfImageExportMode.CurrentPage);
+        }
+
+        private void OnPdfDocumentAllPagesChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfDocumentExportMode(PdfDocumentExportMode.AllPages);
+        }
+
+        private void OnPdfDocumentCurrentPageChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfDocumentExportMode(PdfDocumentExportMode.CurrentPage);
+        }
+
+        private void OnPdfDocumentRangeChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfDocumentExportMode(PdfDocumentExportMode.PageRange);
+        }
+
+        private void OnPdfDocumentSplitSinglePagesChecked(object? sender, RoutedEventArgs e)
+        {
+            ViewModel?.SetPdfDocumentExportMode(PdfDocumentExportMode.SplitSinglePages);
         }
 
         private void OnImageItemDoubleTapped(object? sender, TappedEventArgs e)
@@ -810,10 +888,16 @@ namespace Imvix.Views
             }
 
             var vm = ViewModel;
+            var pdfPageIndex = vm?.SelectedImage?.FilePath.Equals(image.FilePath, StringComparison.OrdinalIgnoreCase) == true
+                ? vm.SelectedPdfPageIndex
+                : 0;
             var previewWindow = new ImagePreviewWindow(
                 image.FilePath,
                 vm?.SvgUseBackground ?? false,
-                vm?.SvgBackgroundColor ?? "#FFFFFFFF")
+                vm?.SvgBackgroundColor ?? "#FFFFFFFF",
+                gifFrameRange: null,
+                initialPdfPageIndex: image.IsPdfDocument ? pdfPageIndex : 0,
+                pdfPageCount: image.IsPdfDocument ? image.PdfPageCount : 0)
             {
                 FlowDirection = this.FlowDirection
             };

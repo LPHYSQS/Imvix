@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Imvix.Views
+namespace ImvixPro.Views
 {
     public partial class RunningInstanceWarningWindow : Window
     {

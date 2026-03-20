@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        x:Class="Imvix.Views.ImagePreviewWindow"
+        x:Class="ImvixPro.Views.ImagePreviewWindow"
         Width="1100"
         Height="760"
         MinWidth="680"
@@ -17,12 +17,20 @@
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="10">
-            <StackPanel Classes="icon-label">
-                <Border Classes="icon-badge">
-                    <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
-                </Border>
-                <TextBlock x:Name="FileNameText" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
-            </StackPanel>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <StackPanel Grid.Column="0" Classes="icon-label">
+                    <Border Classes="icon-badge">
+                        <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                    </Border>
+                    <TextBlock x:Name="FileNameText" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1"
+                           x:Name="PageIndicatorText"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"
+                           IsVisible="False"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+            </Grid>
         </Border>
 
         <Border Grid.Row="1"
@@ -31,7 +39,49 @@
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="8">
-            <Image x:Name="PreviewImage" Stretch="Uniform" />
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        x:Name="PreviousPageButton"
+                        Classes="icon-only pdf-nav"
+                        Width="44"
+                        Height="44"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        IsVisible="False"
+                        Click="OnPreviousPageClick">
+                    <Path Width="14"
+                          Height="14"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Stretch="Uniform"
+                          Stroke="{DynamicResource TextPrimaryBrush}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          Data="M 10 2 L 4 7 L 10 12" />
+                </Button>
+
+                <Image Grid.Column="1" x:Name="PreviewImage" Stretch="Uniform" />
+
+                <Button Grid.Column="2"
+                        x:Name="NextPageButton"
+                        Classes="icon-only pdf-nav"
+                        Width="44"
+                        Height="44"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        IsVisible="False"
+                        Click="OnNextPageClick">
+                    <Path Width="14"
+                          Height="14"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Stretch="Uniform"
+                          Stroke="{DynamicResource TextPrimaryBrush}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          Data="M 4 2 L 10 7 L 4 12" />
+                </Button>
+            </Grid>
         </Border>
     </Grid>
 </Window>

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed class ConversionSummary
     {

@@ -1,0 +1,397 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Docnet.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Docnet.Core.Bindings.fpdf_save">
+            <summary>
+            Flags:
+            1 - Incremental
+            2 - NoIncremental
+            3 - RemoveSecurity.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Converters.IImageBytesConverter.Convert(System.Byte[])">
+            <summary>
+            Input is in B-G-R-A format.
+            </summary>
+            <param name="bytes">Image bytes.</param>
+        </member>
+        <member name="M:Docnet.Core.Converters.NaiveTransparencyRemover.#ctor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Specify background RGB.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Converters.NaiveTransparencyRemover.Convert(System.Byte[])">
+            <summary>
+            Removes full alpha transparency in a very naive way.
+            </summary>
+            <param name="bytes">Image bytes.</param>
+            <returns>Same B-G-R-A array with alpha filled with white color.</returns>
+        </member>
+        <member name="F:Docnet.Core.DocLib.Lock">
+            <summary>
+            PDFium is not thread-safe
+            so we need to lock every native
+            call. We might implement
+            Command patter or something similar
+            to get around this in the future.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.DocLib.GetDocReader(System.String,Docnet.Core.Models.PageDimensions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.GetDocReader(System.String,System.String,Docnet.Core.Models.PageDimensions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.GetDocReader(System.Byte[],Docnet.Core.Models.PageDimensions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.GetDocReader(System.Byte[],System.String,Docnet.Core.Models.PageDimensions)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Merge(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Merge(System.Byte[],System.Byte[])">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Merge(System.Collections.Generic.IReadOnlyList{System.Byte[]})">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Split(System.String,System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Split(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Split(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Split(System.Byte[],System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Unlock(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.DocLib.Unlock(System.Byte[],System.String)">
+            <inheritdoc />
+        </member>
+        <member name="T:Docnet.Core.IDocLib">
+            <inheritdoc />
+            <summary>
+            DocNet library object.
+            Should be long lived and only
+            disposed once.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.GetDocReader(System.String,Docnet.Core.Models.PageDimensions)">
+            <summary>
+            Get document reader for this particular document.
+            </summary>
+            <param name="filePath">Full file path.</param>
+            <param name="dimensionOptions">Page scaling options.</param>
+            <returns>Document reader object.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.GetDocReader(System.String,System.String,Docnet.Core.Models.PageDimensions)">
+            <summary>
+            Get document reader for this particular document.
+            </summary>
+            <param name="filePath">Full file path.</param>
+            <param name="password">File password.</param>
+            <param name="dimensionOptions">Page scaling options.</param>
+            <returns>Document reader object.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.GetDocReader(System.Byte[],Docnet.Core.Models.PageDimensions)">
+            <summary>
+            Get document reader for this particular document.
+            </summary>
+            <param name="bytes">File bytes.</param>
+            <param name="dimensionOptions">Page scaling options.</param>
+            <returns>Document reader object.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.GetDocReader(System.Byte[],System.String,Docnet.Core.Models.PageDimensions)">
+            <summary>
+            Get document reader for this particular document.
+            </summary>
+            <param name="bytes">File bytes.</param>
+            <param name="password">File password.</param>
+            <param name="dimensionOptions">Page scaling options.</param>
+            <returns>Document reader object.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Merge(System.String,System.String)">
+            <summary>
+            Merge two documents into one.
+            </summary>
+            <param name="fileOne">Full file path one.</param>
+            <param name="fileTwo">Full file path two.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Merge(System.Byte[],System.Byte[])">
+            <summary>
+            Merge two documents into one.
+            </summary>
+            <param name="fileOne">File one bytes.</param>
+            <param name="fileTwo">File two bytes.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Merge(System.Collections.Generic.IReadOnlyList{System.Byte[]})">
+            <summary>
+            Merge documents into one.
+            </summary>
+            <param name="files">Files to merge to fileOne.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Split(System.String,System.Int32,System.Int32)">
+            <summary>
+            Split a range of pages into a separate document.
+            </summary>
+            <param name="filePath">Full file path.</param>
+            <param name="pageFromIndex">Zero based page start index.</param>
+            <param name="pageToIndex">Zero based page end index.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Split(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Split a range of pages into a separate document.
+            </summary>
+            <param name="bytes">File bytes.</param>
+            <param name="pageFromIndex">Zero based page start index.</param>
+            <param name="pageToIndex">Zero based page end index.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Split(System.String,System.String)">
+            <summary>
+            Split a range(s) of pages into a separate document.
+            </summary>
+            <param name="filePath">Full file path.</param>
+            <param name="pageRange">NOT 0-based! i.e. 1,3,5-7. String 1,1,1 - will generate 3-page document.</param>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Split(System.Byte[],System.String)">
+            <summary>
+            Split a range(s) of pages into a separate document.
+            </summary>
+            <param name="bytes">File bytes.</param>
+            <param name="pageRange">NOT 0-based! i.e. 1,3,5-7. String 1,1,1 - will generate 3-page document.</param>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Unlock(System.String,System.String)">
+            <summary>
+            Unlock a given document.
+            </summary>
+            <param name="filePath">Full file path.</param>
+            <param name="password">File password.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.Unlock(System.Byte[],System.String)">
+            <summary>
+            Unlock a given document.
+            </summary>
+            <param name="bytes">File bytes.</param>
+            <param name="password">File password.</param>
+            <returns>New file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.JpegToPdf(System.Collections.Generic.IReadOnlyList{Docnet.Core.Editors.JpegImage})">
+            <summary>
+            Convert JPEG files to PDF.
+            </summary>
+            <param name="files">JPEG byte arrays.</param>
+            <returns>New PDF file bytes.</returns>
+        </member>
+        <member name="M:Docnet.Core.IDocLib.GetLastError">
+            <summary>
+            Get a description of the last error
+            that has occured.
+            </summary>
+            <returns>Error message.</returns>
+        </member>
+        <member name="T:Docnet.Core.Models.PageDimensions">
+            <summary>
+            Page dimension options. Configures how
+            rendered page images should scale and be
+            transformed in a pixel space.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Models.PageDimensions.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Get page dimension options for this particular document.
+            dimOne x dimTwo represents a viewport to which
+            the document gets scaled to fit without modifying
+            it's aspect ratio.
+            </summary>
+            <param name="dimOne">Smaller dimension.</param>
+            <param name="dimTwo">Larger dimension.</param>
+        </member>
+        <member name="M:Docnet.Core.Models.PageDimensions.#ctor(System.Double)">
+            <summary>
+            Get page dimension options for this particular document.
+            scalingFactor represents a value to which physical page
+            dimensions should scale in a pixel space.
+            </summary>
+            <param name="scalingFactor">Page scaling factor in pixels-per-point. Convert PPI to scaling factor as PPI/72.</param>
+        </member>
+        <member name="M:Docnet.Core.Models.PageDimensions.GetScalingFactor(Docnet.Core.Bindings.FpdfPageT)">
+             <summary>
+             Gets rescaling factor for native width x height of the page
+             so it maximizes the dimOne x dimTwo rectangle
+            
+             Note: make sure that the semaphore is locked before access.
+             </summary>
+             <param name="page">Page object.</param>
+             <returns>Scaling factor.</returns>
+        </member>
+        <member name="M:Docnet.Core.Readers.DocReader.GetPdfVersion">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.DocReader.GetPageCount">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.DocReader.GetPageReader(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.IDocReader.GetPdfVersion">
+            <summary>
+            PDF document version e.g. 1.7.
+            </summary>
+            <returns>Version.</returns>
+        </member>
+        <member name="M:Docnet.Core.Readers.IDocReader.GetPageCount">
+            <summary>
+            Reads page count.
+            </summary>
+            <returns>Page count.</returns>
+        </member>
+        <member name="M:Docnet.Core.Readers.IDocReader.GetPageReader(System.Int32)">
+            <summary>
+            Get page reader.
+            </summary>
+            <param name="pageIndex">Page index.</param>
+            <returns>Page reader.</returns>
+        </member>
+        <member name="P:Docnet.Core.Readers.IPageReader.PageIndex">
+            <summary>
+            Gets page index.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetPageWidth">
+            <summary>
+            Get scaled page width.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetPageHeight">
+            <summary>
+            Get scaled page high.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetText">
+            <summary>
+            Get page text.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetCharacters">
+            <summary>
+            Get all page characters with
+            their bounding boxes.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetImage(Docnet.Core.Models.RenderFlags)">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetImage">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetImage(Docnet.Core.Converters.IImageBytesConverter)">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list. Then it
+            applies a predefined byte transformation
+            to modify the image.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.GetImage(Docnet.Core.Converters.IImageBytesConverter,Docnet.Core.Models.RenderFlags)">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list. Then it
+            applies a predefined byte transformation
+            to modify the image.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.WriteImageToBuffer(Docnet.Core.Models.RenderFlags,System.Byte[])">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list.
+            Use result if you create the array before
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.WriteImageToBuffer(Docnet.Core.Converters.IImageBytesConverter,Docnet.Core.Models.RenderFlags,System.Byte[])">
+            <summary>
+            Return a byte representation
+            of the page image.
+            Byte array is formatted as
+            B-G-R-A ordered list. Then it
+            applies a predefined byte transformation
+            to modify the image.
+            Use result if you create the array before
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.RenderDeviceContext(System.IntPtr,System.Drawing.Rectangle)">
+            <summary>
+            Renders the page onto a device context.
+            </summary>
+        </member>
+        <member name="M:Docnet.Core.Readers.IPageReader.RenderDeviceContext(System.IntPtr,System.Drawing.Rectangle,Docnet.Core.Models.RenderFlags)">
+            <summary>
+            Renders the page onto a device context.
+            </summary>
+        </member>
+        <member name="P:Docnet.Core.Readers.PageReader.PageIndex">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetPageWidth">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetPageHeight">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetText">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetCharacters">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetImage">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetImage(Docnet.Core.Models.RenderFlags)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetImage(Docnet.Core.Converters.IImageBytesConverter)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.GetImage(Docnet.Core.Converters.IImageBytesConverter,Docnet.Core.Models.RenderFlags)">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.WriteImageToBuffer(Docnet.Core.Models.RenderFlags,System.Byte[])">
+            <inheritdoc />
+        </member>
+        <member name="M:Docnet.Core.Readers.PageReader.WriteImageToBuffer(Docnet.Core.Converters.IImageBytesConverter,Docnet.Core.Models.RenderFlags,System.Byte[])">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Imvix.Models
+namespace ImvixPro.Models
 {
     public sealed partial class LanguageOption : ObservableObject
     {

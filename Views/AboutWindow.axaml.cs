@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Imvix.ViewModels;
+using ImvixPro.ViewModels;
 using System;
 using System.Diagnostics;
 
-namespace Imvix.Views
+namespace ImvixPro.Views
 {
     public partial class AboutWindow : Window
     {

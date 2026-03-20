@@ -1,15 +1,15 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Imvix.Services;
-using Imvix.ViewModels;
-using Imvix.Views;
+using ImvixPro.Services;
+using ImvixPro.ViewModels;
+using ImvixPro.Views;
 using System.Linq;
 
-namespace Imvix
+namespace ImvixPro
 {
     public partial class App : Application
     {
