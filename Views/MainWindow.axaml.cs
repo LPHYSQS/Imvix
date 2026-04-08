@@ -180,6 +180,22 @@ namespace Imvix.Views
             await dialog.ShowDialog(this);
         }
 
+        private async void OnShowGetProClick(object? sender, RoutedEventArgs e)
+        {
+            var vm = ViewModel;
+            if (vm is null || !IsVisible)
+            {
+                return;
+            }
+
+            var dialog = new GetProWindow(vm)
+            {
+                FlowDirection = this.FlowDirection
+            };
+
+            await dialog.ShowDialog(this);
+        }
+
         private async void OnShowContactAuthorClick(object? sender, RoutedEventArgs e)
         {
             var vm = ViewModel;

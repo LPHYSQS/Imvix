@@ -24,6 +24,29 @@
                     <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#FFF1F1" />
                     <SolidColorBrush x:Key="DangerBorderBrush" Color="#E4A8A8" />
                     <SolidColorBrush x:Key="DangerTextBrush" Color="#8D1D1D" />
+                    <SolidColorBrush x:Key="ProAccentBrush" Color="#B86E12" />
+                    <SolidColorBrush x:Key="ProAccentForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="ProSurfaceBrush" Color="#FFF4DF" />
+                    <SolidColorBrush x:Key="ProBorderBrush" Color="#E0B76D" />
+                    <LinearGradientBrush x:Key="ProCtaBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#FFF8EC" />
+                        <GradientStop Offset="0.58" Color="#F6D89F" />
+                        <GradientStop Offset="1" Color="#E8BB67" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaForegroundBrush" Color="#5A3508" />
+                    <SolidColorBrush x:Key="ProCtaBorderBrush" Color="#D4A04C" />
+                    <LinearGradientBrush x:Key="ProCtaHoverBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#D99831" />
+                        <GradientStop Offset="1" Color="#B66C14" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaHoverForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="ProCtaHoverBorderBrush" Color="#B36C14" />
+                    <LinearGradientBrush x:Key="ProCtaPressedBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#C98722" />
+                        <GradientStop Offset="1" Color="#9D5C0C" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaPressedForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="ProCtaPressedBorderBrush" Color="#9D5C0C" />
                 </ResourceDictionary>
 
                 <ResourceDictionary x:Key="Dark">
@@ -40,6 +63,29 @@
                     <SolidColorBrush x:Key="DangerBackgroundBrush" Color="#3A1F24" />
                     <SolidColorBrush x:Key="DangerBorderBrush" Color="#8A4A53" />
                     <SolidColorBrush x:Key="DangerTextBrush" Color="#FFBFC5" />
+                    <SolidColorBrush x:Key="ProAccentBrush" Color="#F2C36F" />
+                    <SolidColorBrush x:Key="ProAccentForegroundBrush" Color="#2C1B05" />
+                    <SolidColorBrush x:Key="ProSurfaceBrush" Color="#3A2A14" />
+                    <SolidColorBrush x:Key="ProBorderBrush" Color="#8F6A34" />
+                    <LinearGradientBrush x:Key="ProCtaBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#5A3A16" />
+                        <GradientStop Offset="0.58" Color="#724E20" />
+                        <GradientStop Offset="1" Color="#8B632B" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaForegroundBrush" Color="#FEEBCC" />
+                    <SolidColorBrush x:Key="ProCtaBorderBrush" Color="#D09D51" />
+                    <LinearGradientBrush x:Key="ProCtaHoverBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#F1C56B" />
+                        <GradientStop Offset="1" Color="#D89632" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaHoverForegroundBrush" Color="#2C1B05" />
+                    <SolidColorBrush x:Key="ProCtaHoverBorderBrush" Color="#E3B25B" />
+                    <LinearGradientBrush x:Key="ProCtaPressedBackgroundBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Offset="0" Color="#D8A64C" />
+                        <GradientStop Offset="1" Color="#B87A20" />
+                    </LinearGradientBrush>
+                    <SolidColorBrush x:Key="ProCtaPressedForegroundBrush" Color="#2C1B05" />
+                    <SolidColorBrush x:Key="ProCtaPressedBorderBrush" Color="#CA8F34" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 

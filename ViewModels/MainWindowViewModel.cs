@@ -30,19 +30,21 @@ namespace Imvix.ViewModels
         private const string FallbackLanguageCode = "en-US";
         private const string ContactAuthorEmail = "3261296352@qq.com";
 
-        private static readonly (string Code, string DisplayName)[] SupportedLanguageSeeds =
-        [
-            ("zh-CN", "\u7B80\u4F53\u4E2D\u6587"),
-            ("zh-TW", "\u7E41\u9AD4\u4E2D\u6587"),
-            ("en-US", "English"),
-            ("ja-JP", "\u65E5\u672C\u8A9E"),
-            ("ko-KR", "\uD55C\uAD6D\uC5B4"),
-            ("fr-FR", "Fran\u00E7ais"),
-            ("de-DE", "Deutsch"),
-            ("it-IT", "Italiano"),
-            ("ru-RU", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"),
-            ("ar-SA", "\u0627\u0644\u0639\u0631\u0628\u064A\u0629")
-        ];
+         private static readonly (string Code, string DisplayName)[] SupportedLanguageSeeds =
+         [
+             ("zh-CN", "\u7B80\u4F53\u4E2D\u6587"),
+             ("zh-TW", "\u7E41\u9AD4\u4E2D\u6587"),
+             ("en-US", "English"),
+             ("ja-JP", "\u65E5\u672C\u8A9E"),
+             ("ko-KR", "\uD55C\uAD6D\uC5B4"),
+             ("fr-FR", "Fran\u00E7ais"),
+             ("de-DE", "Deutsch"),
+             ("it-IT", "Italiano"),
+             ("ru-RU", "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"),
+             ("ar-SA", "\u0627\u0644\u0639\u0631\u0628\u064A\u0629"),
+             ("vi-VN", "Ti\u1EBFng Vi\u1EC7t"),
+             ("th-TH", "\u0E44\u0E17\u0E22")
+         ];
 
         private readonly SettingsService _settingsService = new();
         private readonly LocalizationService _localizationService = new();
@@ -216,6 +218,8 @@ namespace Imvix.ViewModels
 
         public string StartConversionButtonText => T("StartConversion");
 
+        public string GetProButtonText => T("GetProButton");
+
         public string SettingsButtonText => T("Settings");
 
         public string ImageListText => T("ImageList");
@@ -365,7 +369,34 @@ namespace Imvix.ViewModels
         public string AboutRepositoryLabelText => T("AboutRepositoryLabel");
         public string AboutRepositoryButtonText => T("AboutRepositoryButton");
         public string AboutAuthorNameText => "\u5DF2\u901D\u60C5\u6B87";
-        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.3"}";
+        public string GetProWindowTitleText => T("GetProWindowTitle");
+        public string GetProHeroLabelText => T("GetProHeroLabel");
+        public string GetProHeadlineText => T("GetProHeadline");
+        public string GetProSummaryText => T("GetProSummary");
+        public string GetProStandardTitleText => T("GetProStandardTitle");
+        public string GetProStandardBodyText => T("GetProStandardBody");
+        public string GetProProTitleText => T("GetProProTitle");
+        public string GetProProBodyText => T("GetProProBody");
+        public string GetProMatrixTitleText => T("GetProMatrixTitle");
+        public string GetProMatrixSummaryText => T("GetProMatrixSummary");
+        public string GetProStandardColumnText => T("GetProStandardColumn");
+        public string GetProProColumnText => T("GetProProColumn");
+        public string GetProDecisionTitleText => T("GetProDecisionTitle");
+        public string GetProDecisionBodyText => T("GetProDecisionBody");
+        public string GetProStoreHintText => T("GetProStoreHint");
+        public string GetProStoreButtonText => T("GetProStoreButton");
+        public IReadOnlyList<EditionComparisonRow> GetProComparisonRows =>
+        [
+            CreateGetProComparisonRow("GetProRowCoreTitle", "GetProRowCoreBody", isStandardIncluded: true, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowInsightTitle", "GetProRowInsightBody", isStandardIncluded: true, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowWorkflowTitle", "GetProRowWorkflowBody", isStandardIncluded: true, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowPdfTitle", "GetProRowPdfBody", isStandardIncluded: false, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowAssetTitle", "GetProRowAssetBody", isStandardIncluded: false, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowAiTitle", "GetProRowAiBody", isStandardIncluded: false, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowRecognitionTitle", "GetProRowRecognitionBody", isStandardIncluded: false, isProIncluded: true),
+            CreateGetProComparisonRow("GetProRowWindowsTitle", "GetProRowWindowsBody", isStandardIncluded: false, isProIncluded: true)
+        ];
+        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.4"}";
         public string VersionBadgeHoverText => T("VersionBadgeHover");
         public string VersionBadgeToolTipText => FormatT("VersionBadgeToolTipFormat", AppVersionText);
         public string FooterVersionBadgeText => _isVersionBadgeHovered ? VersionBadgeHoverText : AppVersionText;
@@ -1455,6 +1486,20 @@ namespace Imvix.ViewModels
                 options.Add(new EnumOption<T>(value, textFactory(value)));
             }
         }
+
+        private EditionComparisonRow CreateGetProComparisonRow(string titleKey, string descriptionKey, bool isStandardIncluded, bool isProIncluded)
+        {
+            return new EditionComparisonRow
+            {
+                Title = T(titleKey),
+                Description = T(descriptionKey),
+                IsStandardIncluded = isStandardIncluded,
+                IsProIncluded = isProIncluded,
+                StandardStatus = isStandardIncluded ? T("GetProIncluded") : T("GetProNotIncluded"),
+                ProStatus = isProIncluded ? T("GetProIncluded") : T("GetProNotIncluded")
+            };
+        }
+
         private void SetStatus(string key)
         {
             _statusKey = key;
@@ -1719,6 +1764,7 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(OutputDirectoryHintText));
             OnPropertyChanged(nameof(ChooseFolderButtonText));
             OnPropertyChanged(nameof(StartConversionButtonText));
+            OnPropertyChanged(nameof(GetProButtonText));
             OnPropertyChanged(nameof(SettingsButtonText));
             OnPropertyChanged(nameof(ImageListText));
             OnPropertyChanged(nameof(DropHintTitleText));
@@ -1805,6 +1851,23 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(AboutRepositoryLabelText));
             OnPropertyChanged(nameof(AboutRepositoryButtonText));
             OnPropertyChanged(nameof(AboutAuthorNameText));
+            OnPropertyChanged(nameof(GetProWindowTitleText));
+            OnPropertyChanged(nameof(GetProHeroLabelText));
+            OnPropertyChanged(nameof(GetProHeadlineText));
+            OnPropertyChanged(nameof(GetProSummaryText));
+            OnPropertyChanged(nameof(GetProStandardTitleText));
+            OnPropertyChanged(nameof(GetProStandardBodyText));
+            OnPropertyChanged(nameof(GetProProTitleText));
+            OnPropertyChanged(nameof(GetProProBodyText));
+            OnPropertyChanged(nameof(GetProMatrixTitleText));
+            OnPropertyChanged(nameof(GetProMatrixSummaryText));
+            OnPropertyChanged(nameof(GetProStandardColumnText));
+            OnPropertyChanged(nameof(GetProProColumnText));
+            OnPropertyChanged(nameof(GetProDecisionTitleText));
+            OnPropertyChanged(nameof(GetProDecisionBodyText));
+            OnPropertyChanged(nameof(GetProStoreHintText));
+            OnPropertyChanged(nameof(GetProStoreButtonText));
+            OnPropertyChanged(nameof(GetProComparisonRows));
             OnPropertyChanged(nameof(AppVersionText));
             OnPropertyChanged(nameof(VersionBadgeHoverText));
             OnPropertyChanged(nameof(VersionBadgeToolTipText));

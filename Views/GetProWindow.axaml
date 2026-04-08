@@ -1,0 +1,467 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Imvix.Views.GetProWindow"
+        x:CompileBindings="False"
+        Width="920"
+        Height="760"
+        MinWidth="860"
+        MinHeight="680"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}">
+  <Window.Styles>
+        <Style Selector="Window TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.secondary">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.pro-section-body">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="23" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="Border.pro-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style Selector="Border.pro-card-highlight">
+            <Setter Property="Background" Value="{DynamicResource ProSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+        </Style>
+
+        <Style Selector="Border.pro-hero-badge">
+            <Setter Property="Background" Value="{DynamicResource ProSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="12,4" />
+        </Style>
+
+        <Style Selector="TextBlock.pro-hero-badge-text">
+            <Setter Property="Foreground" Value="{DynamicResource ProAccentBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Border.compare-header-cell">
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="10,12" />
+        </Style>
+
+        <Style Selector="Border.compare-header-cell.pro-column">
+            <Setter Property="Background" Value="{DynamicResource ProSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <Style Selector="Border.compare-row-card.shared">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-card.proonly">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-card.standardonly">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-accent">
+            <Setter Property="Width" Value="6" />
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,2,2,2" />
+        </Style>
+
+        <Style Selector="Border.compare-row-accent.shared">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-accent.proonly">
+            <Setter Property="Background" Value="{DynamicResource ProAccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-row-accent.standardonly">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-status">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="12,10" />
+        </Style>
+
+        <Style Selector="Border.compare-status.available.shared">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-status.available.proonly">
+            <Setter Property="Background" Value="{DynamicResource ProAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProAccentBrush}" />
+        </Style>
+
+        <Style Selector="Border.compare-status.available.standardonly">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="StackPanel.compare-status-content">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Spacing" Value="8" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Path.compare-status-icon">
+            <Setter Property="Width" Value="15" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Stroke" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="StrokeThickness" Value="1.9" />
+            <Setter Property="StrokeLineCap" Value="Round" />
+            <Setter Property="StrokeJoin" Value="Round" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Path.compare-status-icon.available.shared">
+            <Setter Property="Stroke" Value="{DynamicResource AccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="Path.compare-status-icon.available.proonly">
+            <Setter Property="Stroke" Value="{DynamicResource ProAccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="Path.compare-status-icon.available.standardonly">
+            <Setter Property="Stroke" Value="{DynamicResource AccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.compare-status-text">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.compare-status-text.available.shared">
+            <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.compare-status-text.available.proonly">
+            <Setter Property="Foreground" Value="{DynamicResource ProAccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.compare-status-text.available.standardonly">
+            <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="Border.decision-card">
+            <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Offset="0" Color="#3F5068" />
+                    <GradientStop Offset="1" Color="#5B7190" />
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#6F86A5" />
+        </Style>
+
+        <Style Selector="TextBlock.decision-card-title">
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="TextBlock.decision-card-body">
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="23" />
+        </Style>
+
+        <Style Selector="Button.pro-store-button:pointerover">
+            <Setter Property="Background" Value="#8F580B" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#8F580B" />
+        </Style>
+
+        <Style Selector="Button.pro-store-button:pressed">
+            <Setter Property="Background" Value="#734608" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#734608" />
+        </Style>
+
+        <Style Selector="Button.pro-store-button">
+            <Setter Property="Background" Value="{DynamicResource ProSurfaceBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+            <Setter Property="Padding" Value="18,10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
+        <Border Grid.Row="0" Classes="pro-card">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                <Border Width="88"
+                        Height="88"
+                        Background="{DynamicResource ProSurfaceBrush}"
+                        BorderBrush="{DynamicResource ProBorderBrush}"
+                        BorderThickness="1.5"
+                        CornerRadius="22"
+                        Padding="18">
+                    <Path Data="{StaticResource IconLayersGeometry}"
+                          Stretch="Uniform"
+                          Stroke="{DynamicResource ProAccentBrush}"
+                          StrokeThickness="1.8"
+                          StrokeLineCap="Round"
+                          StrokeJoin="Round" />
+                </Border>
+
+                <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
+                    <Border Classes="pro-hero-badge" HorizontalAlignment="Left">
+                        <TextBlock Classes="pro-hero-badge-text" Text="{Binding GetProHeroLabelText}" />
+                    </Border>
+
+                    <TextBlock Text="{Binding GetProHeadlineText}"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding GetProSummaryText}"
+                               Classes="secondary"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      AllowAutoHide="False">
+            <StackPanel Spacing="12" Margin="0,0,4,0">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" Classes="pro-card">
+                        <StackPanel Spacing="10">
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconImageGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding GetProStandardTitleText}"
+                                           FontSize="17"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Classes="pro-section-body" Text="{Binding GetProStandardBodyText}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Classes="pro-card pro-card-highlight">
+                        <StackPanel Spacing="10">
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge"
+                                        Background="{DynamicResource ProAccentBrush}"
+                                        BorderBrush="{DynamicResource ProAccentBrush}">
+                                    <Path Data="{StaticResource IconLayersGeometry}"
+                                          Stretch="Uniform"
+                                          Stroke="{DynamicResource ProAccentForegroundBrush}"
+                                          StrokeThickness="1.8"
+                                          StrokeLineCap="Round"
+                                          StrokeJoin="Round" />
+                                </Border>
+                                <TextBlock Text="{Binding GetProProTitleText}"
+                                           FontSize="17"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Classes="pro-section-body" Text="{Binding GetProProBodyText}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Classes="pro-card">
+                    <StackPanel Spacing="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding GetProMatrixTitleText}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding GetProMatrixSummaryText}"
+                                       Classes="secondary"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="2.3*,0.9*,0.9*" ColumnSpacing="10">
+                            <Border Grid.Column="1" Classes="compare-header-cell">
+                                <TextBlock Text="{Binding GetProStandardColumnText}"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" />
+                            </Border>
+                            <Border Grid.Column="2" Classes="compare-header-cell pro-column">
+                                <TextBlock Text="{Binding GetProProColumnText}"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" />
+                            </Border>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding GetProComparisonRows}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="compare-row-card"
+                                            Classes.shared="{Binding IsShared}"
+                                            Classes.proonly="{Binding IsProOnly}"
+                                            Classes.standardonly="{Binding IsStandardOnly}"
+                                            Margin="0,0,0,10">
+                                        <Grid ColumnDefinitions="Auto,2.3*,0.9*,0.9*" ColumnSpacing="10">
+                                            <Border Grid.Column="0"
+                                                    Classes="compare-row-accent"
+                                                    Classes.shared="{Binding IsShared}"
+                                                    Classes.proonly="{Binding IsProOnly}"
+                                                    Classes.standardonly="{Binding IsStandardOnly}" />
+
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Description}"
+                                                            Classes="secondary"
+                                                            TextWrapping="Wrap" />
+                                            </StackPanel>
+
+                                            <Border Grid.Column="2"
+                                                    Classes="compare-status"
+                                                    Classes.available="{Binding IsStandardIncluded}"
+                                                    Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                    Classes.shared="{Binding IsShared}"
+                                                    Classes.proonly="{Binding IsProOnly}"
+                                                    Classes.standardonly="{Binding IsStandardOnly}">
+                                                <StackPanel Classes="compare-status-content">
+                                                    <Path Classes="compare-status-icon"
+                                                          Classes.available="{Binding IsStandardIncluded}"
+                                                          Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                          Classes.shared="{Binding IsShared}"
+                                                          Classes.proonly="{Binding IsProOnly}"
+                                                          Classes.standardonly="{Binding IsStandardOnly}"
+                                                          Data="{StaticResource IconCheckGeometry}"
+                                                          IsVisible="{Binding IsStandardIncluded}" />
+                                                    <Path Classes="compare-status-icon"
+                                                          Classes.available="{Binding IsStandardIncluded}"
+                                                          Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                          Classes.shared="{Binding IsShared}"
+                                                          Classes.proonly="{Binding IsProOnly}"
+                                                          Classes.standardonly="{Binding IsStandardOnly}"
+                                                          Data="{StaticResource IconCloseGeometry}"
+                                                          IsVisible="{Binding IsStandardUnavailable}" />
+                                                    <TextBlock Text="{Binding StandardStatus}"
+                                                               Classes="compare-status-text"
+                                                               Classes.available="{Binding IsStandardIncluded}"
+                                                               Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                               Classes.shared="{Binding IsShared}"
+                                                               Classes.proonly="{Binding IsProOnly}"
+                                                               Classes.standardonly="{Binding IsStandardOnly}" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border Grid.Column="3"
+                                                    Classes="compare-status"
+                                                    Classes.available="{Binding IsProIncluded}"
+                                                    Classes.unavailable="{Binding IsProUnavailable}"
+                                                    Classes.shared="{Binding IsShared}"
+                                                    Classes.proonly="{Binding IsProOnly}"
+                                                    Classes.standardonly="{Binding IsStandardOnly}">
+                                                <StackPanel Classes="compare-status-content">
+                                                    <Path Classes="compare-status-icon"
+                                                          Classes.available="{Binding IsProIncluded}"
+                                                          Classes.unavailable="{Binding IsProUnavailable}"
+                                                          Classes.shared="{Binding IsShared}"
+                                                          Classes.proonly="{Binding IsProOnly}"
+                                                          Classes.standardonly="{Binding IsStandardOnly}"
+                                                          Data="{StaticResource IconCheckGeometry}"
+                                                          IsVisible="{Binding IsProIncluded}" />
+                                                    <Path Classes="compare-status-icon"
+                                                          Classes.available="{Binding IsProIncluded}"
+                                                          Classes.unavailable="{Binding IsProUnavailable}"
+                                                          Classes.shared="{Binding IsShared}"
+                                                          Classes.proonly="{Binding IsProOnly}"
+                                                          Classes.standardonly="{Binding IsStandardOnly}"
+                                                          Data="{StaticResource IconCloseGeometry}"
+                                                          IsVisible="{Binding IsProUnavailable}" />
+                                                    <TextBlock Text="{Binding ProStatus}"
+                                                               Classes="compare-status-text"
+                                                               Classes.available="{Binding IsProIncluded}"
+                                                               Classes.unavailable="{Binding IsProUnavailable}"
+                                                               Classes.shared="{Binding IsShared}"
+                                                               Classes.proonly="{Binding IsProOnly}"
+                                                               Classes.standardonly="{Binding IsStandardOnly}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="pro-card decision-card">
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="decision-card-title" Text="{Binding GetProDecisionTitleText}" />
+                        <TextBlock Classes="decision-card-body" Text="{Binding GetProDecisionBodyText}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0"
+                       Text="{Binding GetProStoreHintText}"
+                       Classes="secondary"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center" />
+
+            <Button Grid.Column="1"
+                    Classes="pro-store-button"
+                    MinWidth="280"
+                    Click="OnOpenMicrosoftStoreClick">
+                <StackPanel Classes="icon-label">
+                    <Path Data="{StaticResource IconLayersGeometry}"
+                          Width="18"
+                          Height="18"
+                          Stretch="Uniform"
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                          StrokeThickness="1.8"
+                          StrokeLineCap="Round"
+                          StrokeJoin="Round" />
+                    <TextBlock Text="{Binding GetProStoreButtonText}" />
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="2" MinWidth="108" Click="OnCloseClick">
+                <StackPanel Classes="icon-label">
+                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                    <TextBlock Text="{Binding CloseText}" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

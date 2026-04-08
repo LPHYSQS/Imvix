@@ -31,7 +31,9 @@
 
 Imvix is a desktop image converter for people who need more control than a one-click converter but still want a clean, fast interface. The app combines format conversion, batch compression, resizing, rename rules, smart recommendations, history tracking, and failure logging in a single UI.
 
-Current repository version: `1.3.3`
+Current repository version: `1.3.4`
+
+Version `1.3.4` adds Vietnamese and Thai UI support and refreshes the contact-author copy across all 12 supported languages.
 
 ## Highlights
 
@@ -125,7 +127,7 @@ dotnet run --project Imvix.csproj
 dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 ```
 
-The repository already includes a Windows publish profile at `Properties/PublishProfiles/FolderProfile.pubxml`.
+The repository already includes a Windows publish profile at `Properties/PublishProfiles/FolderProfile1.pubxml`.
 
 ## Configuration and Data
 
@@ -139,7 +141,7 @@ On Windows, Imvix stores application data under `%AppData%\Imvix`:
 
 ## Localization
 
-The app includes built-in localization assets for:
+The app includes built-in localization assets for 12 UI languages:
 
 - `zh-CN`
 - `zh-TW`
@@ -151,6 +153,8 @@ The app includes built-in localization assets for:
 - `it-IT`
 - `ru-RU`
 - `ar-SA`
+- `vi-VN`
+- `th-TH`
 
 Arabic uses right-to-left layout support in the UI.
 

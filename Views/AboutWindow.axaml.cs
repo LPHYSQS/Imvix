@@ -1,8 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Imvix.Services;
 using Imvix.ViewModels;
-using System;
-using System.Diagnostics;
 
 namespace Imvix.Views
 {
@@ -30,42 +29,12 @@ namespace Imvix.Views
 
         private void OnOpenOfficialWebsiteClick(object? sender, RoutedEventArgs e)
         {
-            OpenExternalUrl(OfficialWebsiteUrl);
+            ExternalNavigationService.Open(OfficialWebsiteUrl);
         }
 
         private void OnOpenRepositoryClick(object? sender, RoutedEventArgs e)
         {
-            OpenExternalUrl(RepositoryUrl);
-        }
-
-        private static void OpenExternalUrl(string url)
-        {
-            try
-            {
-                if (OperatingSystem.IsWindows())
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = url,
-                        UseShellExecute = true
-                    });
-                    return;
-                }
-
-                if (OperatingSystem.IsMacOS())
-                {
-                    Process.Start("open", url);
-                    return;
-                }
-
-                if (OperatingSystem.IsLinux())
-                {
-                    Process.Start("xdg-open", url);
-                }
-            }
-            catch
-            {
-            }
+            ExternalNavigationService.Open(RepositoryUrl);
         }
     }
 }

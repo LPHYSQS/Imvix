@@ -1,8 +1,8 @@
 # Privacy Policy for Imvix
 
-**Last Updated: March 2026**
+**Last Updated: April 2026**
 
-**Version: 1.3.3**
+**Version: 1.3.4**
 
 ---
 

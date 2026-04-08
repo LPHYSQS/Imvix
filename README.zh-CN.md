@@ -31,7 +31,9 @@
 
 Imvix 是一个桌面端图片转换器，适合需要批量导入、压缩、缩放、重命名、预览、记录历史和自动监听目录的工作流。它把常用操作放在主界面中，同时保留压缩质量、尺寸策略、输出目录、覆盖规则、SVG 背景色等细粒度控制。
 
-当前仓库版本：`1.3.3`
+当前仓库版本：`1.3.4`
+
+`1.3.4` 新增了越南语与泰语界面支持，并同步更新了 12 种支持语言中的联系作者提示文案。
 
 ## 核心亮点
 
@@ -126,7 +128,7 @@ dotnet run --project Imvix.csproj
 dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 ```
 
-仓库中已经包含一个 Windows 发布配置文件：`Properties/PublishProfiles/FolderProfile.pubxml`。
+仓库中已经包含一个 Windows 发布配置文件：`Properties/PublishProfiles/FolderProfile1.pubxml`。
 
 ## 配置与数据存储
 
@@ -140,7 +142,7 @@ dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:Publi
 
 ## 本地化支持
 
-当前内置了以下界面语言资源：
+当前内置了以下 12 种界面语言资源：
 
 - `zh-CN`
 - `zh-TW`
@@ -152,6 +154,8 @@ dotnet publish Imvix.csproj -c Release -r win-x64 --self-contained true /p:Publi
 - `it-IT`
 - `ru-RU`
 - `ar-SA`
+- `vi-VN`
+- `th-TH`
 
 其中阿拉伯语界面支持从右向左布局。
 

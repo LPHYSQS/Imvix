@@ -63,6 +63,29 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
+
+        <Style Selector="Button.pro-cta">
+            <Setter Property="Background" Value="{DynamicResource ProCtaBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ProCtaForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProCtaBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="17,8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Button.pro-cta:pointerover">
+            <Setter Property="Background" Value="{DynamicResource ProCtaHoverBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ProCtaHoverForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProCtaHoverBorderBrush}" />
+        </Style>
+
+        <Style Selector="Button.pro-cta:pressed">
+            <Setter Property="Background" Value="{DynamicResource ProCtaPressedBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ProCtaPressedForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ProCtaPressedBorderBrush}" />
+        </Style>
+
         <Style Selector="Border.version-badge-surface">
             <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
             <Setter Property="CornerRadius" Value="999" />
@@ -127,6 +150,23 @@
                     <StackPanel Classes="icon-label">
                         <Path Classes="line-icon inverse" Data="{StaticResource IconPlayGeometry}" />
                         <TextBlock Text="{Binding StartConversionButtonText}" />
+                    </StackPanel>
+                </Button>
+                <Button MinWidth="170"
+                        Classes="pro-cta"
+                        Click="OnShowGetProClick"
+                        Margin="0,0,8,8"
+                        ToolTip.Tip="{Binding GetProButtonText}">
+                    <StackPanel Classes="icon-label">
+                        <Path Data="{StaticResource IconLayersGeometry}"
+                              Width="18"
+                              Height="18"
+                              Stretch="Uniform"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.8"
+                              StrokeLineCap="Round"
+                              StrokeJoin="Round" />
+                        <TextBlock Text="{Binding GetProButtonText}" />
                     </StackPanel>
                 </Button>
             </WrapPanel>
