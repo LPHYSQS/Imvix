@@ -24,6 +24,7 @@ namespace Imvix.Views
         public ImagePreviewWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
             _gifPreviewTimer.Tick += OnGifPreviewTick;
         }
 
@@ -181,4 +182,3 @@ namespace Imvix.Views
         }
     }
 }
-

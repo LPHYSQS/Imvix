@@ -17,33 +17,35 @@
                 BorderThickness="1"
                 CornerRadius="10"
                 Padding="12">
-            <StackPanel Spacing="10">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Border Classes="icon-badge"
-                            Background="{DynamicResource DangerBackgroundBrush}"
-                            BorderBrush="{DynamicResource DangerBorderBrush}">
-                        <Path Classes="line-icon danger" Data="{StaticResource IconInfoGeometry}" />
-                    </Border>
-                    <TextBlock x:Name="TitleText"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource DangerTextBrush}"
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+                <StackPanel Spacing="10">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Border Classes="icon-badge"
+                                Background="{DynamicResource DangerBackgroundBrush}"
+                                BorderBrush="{DynamicResource DangerBorderBrush}">
+                            <Path Classes="line-icon danger" Data="{StaticResource IconInfoGeometry}" />
+                        </Border>
+                        <TextBlock x:Name="TitleText"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource DangerTextBrush}"
+                                   TextWrapping="Wrap"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock x:Name="MessageText"
                                TextWrapping="Wrap"
-                               VerticalAlignment="Center" />
+                               Foreground="{DynamicResource TextPrimaryBrush}" />
                 </StackPanel>
-                <TextBlock x:Name="MessageText"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextPrimaryBrush}" />
-            </StackPanel>
+            </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button x:Name="CloseButton" MinWidth="108" Click="OnCloseClick">
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right">
+            <Button x:Name="CloseButton" MinWidth="108" Click="OnCloseClick" Margin="0,0,0,8">
                 <StackPanel Classes="icon-label">
                     <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
                     <TextBlock x:Name="CloseButtonText" />
                 </StackPanel>
             </Button>
-        </StackPanel>
+        </WrapPanel>
     </Grid>
 </Window>

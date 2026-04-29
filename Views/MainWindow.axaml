@@ -136,7 +136,7 @@
 
                 <TextBlock Classes="toolbar-label" Text="{Binding OutputFolderText}" Margin="0,0,8,8" />
                 <TextBox Classes="toolbar-control"
-                         Width="300"
+                         Width="240"
                          Text="{Binding OutputDirectory}"
                          Watermark="{Binding OutputDirectoryHintText}"
                          Background="{DynamicResource SurfaceSubtleBrush}"
@@ -198,7 +198,12 @@
                             DragDrop.Drop="OnDropZoneDrop">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
                             <TextBlock Text="{Binding DropHintTitleText}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                            <TextBlock Text="{Binding DropHintDescriptionText}" Classes="secondary" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding DropHintDescriptionText}"
+                                       Classes="secondary"
+                                       HorizontalAlignment="Center"
+                                       MaxWidth="340"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center" />
                         </StackPanel>
                     </Border>
 
@@ -264,8 +269,10 @@
                                 <Image Source="{Binding SelectedPreview}" Stretch="Uniform" />
                             </Border>
 
-                            <TextBlock Text="{Binding NoPreviewText}" Classes="secondary" />
-                            <TextBlock Text="{Binding CurrentFile, StringFormat='{}{0}'}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding NoPreviewText}" Classes="secondary" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding CurrentFile, StringFormat='{}{0}'}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="Wrap" />
 
                             <Border IsVisible="{Binding IsGifPreviewVisible}"
                                     Background="{DynamicResource SurfaceAltBrush}"
@@ -760,7 +767,11 @@
                 <WrapPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="{Binding StatusLabelText}" FontWeight="SemiBold" VerticalAlignment="Center" />
                     <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0,4,0" />
-                    <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding StatusText}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"
+                               MaxWidth="240"
+                               TextWrapping="Wrap" />
 
                     <TextBlock Text="{Binding CurrentFileLabelText}" VerticalAlignment="Center" />
                     <TextBlock Text=":" VerticalAlignment="Center" Margin="4,0,4,0" />

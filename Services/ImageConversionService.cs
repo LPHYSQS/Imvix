@@ -601,6 +601,20 @@ namespace Imvix.Services
             string destinationPath,
             ConversionOptions options)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new PlatformNotSupportedException("GIF output is only supported on Windows in this build.");
+            }
+
+            ConvertGifToAnimatedGifWindows(inputPath, destinationPath, options);
+        }
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        private static void ConvertGifToAnimatedGifWindows(
+            string inputPath,
+            string destinationPath,
+            ConversionOptions options)
+        {
             using var stream = File.OpenRead(inputPath);
             using var codec = SKCodec.Create(stream);
             if (codec is null)
@@ -644,6 +658,7 @@ namespace Imvix.Services
             ConvertGifToAnimatedGifWithSkia(inputPath, destinationPath, options, codec, frameInfos, frameCount, info, targetWidth, targetHeight, gifQuality);
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static void ConvertGifToAnimatedGifWithSkia(
             string inputPath,
             string destinationPath,
@@ -757,10 +772,12 @@ namespace Imvix.Services
             SKCodecFrameInfo[] frameInfos,
             int frameCount)
         {
-            if (OperatingSystem.IsWindows() &&
-                TryReadGifFrameDelays(inputPath, frameCount, out var delaysMs))
+            if (OperatingSystem.IsWindows())
             {
-                return delaysMs;
+                if (TryReadGifFrameDelays(inputPath, frameCount, out var delaysMs))
+                {
+                    return delaysMs;
+                }
             }
 
             var durations = new List<int>(frameCount);
@@ -773,6 +790,7 @@ namespace Imvix.Services
             return durations;
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static bool TryReadGifFrameDelays(string inputPath, int frameCount, out List<int> delaysMs)
         {
             delaysMs = [];
@@ -905,6 +923,7 @@ namespace Imvix.Services
             firstFrame.SaveAdd(encoderParameters);
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static ImageCodecInfo GetGifEncoder()
         {
             var encoder = ImageCodecInfo.GetImageEncoders()
@@ -918,6 +937,7 @@ namespace Imvix.Services
             return encoder;
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static void ApplyGifFrameMetadata(System.Drawing.Image image, List<int> durations)
         {
             var delayBytes = new byte[durations.Count * 4];
@@ -943,6 +963,7 @@ namespace Imvix.Services
             }
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static PropertyItem CreateGifPropertyItem(int id, short type, byte[] value)
         {
             var item = CreatePropertyItem();
@@ -953,6 +974,7 @@ namespace Imvix.Services
             return item;
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static PropertyItem CreatePropertyItem()
         {
             var item = (PropertyItem?)Activator.CreateInstance(typeof(PropertyItem), nonPublic: true);
@@ -1020,33 +1042,24 @@ namespace Imvix.Services
 
             if (options.OutputFormat == OutputImageFormat.Gif)
             {
-                if (!OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows())
                 {
-                    throw new PlatformNotSupportedException("GIF output is only supported on Windows in this build.");
+                    SaveBitmapAsWindowsGif(sourceBitmap, destinationPath, options);
+                    return;
                 }
 
-                var gifQuality = ResolveGifQuality(options);
-                if (TryCreateGifQuantizationTable(gifQuality, out var quantizationTable) && quantizationTable is not null)
-                {
-                    using var quantized = QuantizeGifColors(sourceBitmap, quantizationTable);
-                    ConvertToGif(quantized, destinationPath);
-                }
-                else
-                {
-                    ConvertToGif(sourceBitmap, destinationPath);
-                }
-                return;
+                throw new PlatformNotSupportedException("GIF output is only supported on Windows in this build.");
             }
 
             if (options.OutputFormat == OutputImageFormat.Tiff)
             {
-                if (!OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows())
                 {
-                    throw new PlatformNotSupportedException("TIFF output is only supported on Windows in this build.");
+                    ConvertToTiff(sourceBitmap, destinationPath);
+                    return;
                 }
 
-                ConvertToTiff(sourceBitmap, destinationPath);
-                return;
+                throw new PlatformNotSupportedException("TIFF output is only supported on Windows in this build.");
             }
 
             using var image = SKImage.FromBitmap(sourceBitmap);
@@ -1063,6 +1076,20 @@ namespace Imvix.Services
 
             using var stream = File.Open(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
             data.SaveTo(stream);
+        }
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        private static void SaveBitmapAsWindowsGif(SKBitmap sourceBitmap, string destinationPath, ConversionOptions options)
+        {
+            var gifQuality = ResolveGifQuality(options);
+            if (TryCreateGifQuantizationTable(gifQuality, out var quantizationTable) && quantizationTable is not null)
+            {
+                using var quantized = QuantizeGifColors(sourceBitmap, quantizationTable);
+                ConvertToGif(quantized, destinationPath);
+                return;
+            }
+
+            ConvertToGif(sourceBitmap, destinationPath);
         }
 
         private static ConversionOptions NormalizeOptions(ConversionOptions options)

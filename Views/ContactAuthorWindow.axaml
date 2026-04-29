@@ -29,7 +29,7 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="18" RowSpacing="14">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="18" RowSpacing="14">
         <Border Grid.Row="0" Classes="contact-card">
             <TextBlock Text="{Binding ContactAuthorTitleText}"
                        FontSize="24"
@@ -37,36 +37,40 @@
                        TextWrapping="Wrap" />
         </Border>
 
-        <Border Grid.Row="1" Classes="contact-card">
-            <StackPanel Spacing="10">
-                <TextBlock Text="{Binding ContactAuthorEmailLabelText}" FontWeight="SemiBold" />
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                    <TextBox Grid.Column="0"
-                             Text="{Binding ContactAuthorEmailText}"
-                             IsReadOnly="True"
-                             MinHeight="36"
-                             Padding="10,0"
-                             VerticalContentAlignment="Center"
-                             Background="{DynamicResource SurfaceSubtleBrush}"
-                             BorderBrush="{DynamicResource BorderBrush}" />
-                    <Button Grid.Column="1"
-                            MinHeight="36"
-                            Padding="14,6"
-                            VerticalContentAlignment="Center"
-                            Click="OnCopyEmailClick"
-                            ToolTip.Tip="{Binding ContactAuthorCopyText}">
-                        <TextBlock Text="{Binding ContactAuthorCopyText}" />
-                    </Button>
-                </Grid>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+            <StackPanel Spacing="14" Margin="0,0,4,0">
+                <Border Classes="contact-card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="{Binding ContactAuthorEmailLabelText}" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding ContactAuthorEmailText}"
+                                     IsReadOnly="True"
+                                     MinHeight="36"
+                                     Padding="10,0"
+                                     VerticalContentAlignment="Center"
+                                     Background="{DynamicResource SurfaceSubtleBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}" />
+                            <Button Grid.Column="1"
+                                    MinHeight="36"
+                                    Padding="14,6"
+                                    VerticalContentAlignment="Center"
+                                    Click="OnCopyEmailClick"
+                                    ToolTip.Tip="{Binding ContactAuthorCopyText}">
+                                <TextBlock Text="{Binding ContactAuthorCopyText}" />
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="contact-card">
+                    <TextBlock Text="{Binding ContactAuthorNoteText}"
+                               Classes="contact-note" />
+                </Border>
             </StackPanel>
-        </Border>
+        </ScrollViewer>
 
-        <Border Grid.Row="2" Classes="contact-card">
-            <TextBlock Text="{Binding ContactAuthorNoteText}"
-                       Classes="contact-note" />
-        </Border>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
             <Button MinWidth="108" Click="OnCloseClick">
                 <StackPanel Classes="icon-label">
                     <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />

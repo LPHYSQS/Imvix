@@ -13,6 +13,7 @@ namespace Imvix.Views
         public AboutWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
         }
 
         public AboutWindow(MainWindowViewModel viewModel)

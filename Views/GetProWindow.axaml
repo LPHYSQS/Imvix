@@ -259,7 +259,7 @@
         </Border>
 
         <ScrollViewer Grid.Row="1"
-                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
                       AllowAutoHide="False">
             <StackPanel Spacing="12" Margin="0,0,4,0">
@@ -432,36 +432,38 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" VerticalAlignment="Center">
-            <TextBlock Grid.Column="0"
+        <StackPanel Grid.Row="2" Spacing="10">
+            <TextBlock
                        Text="{Binding GetProStoreHintText}"
                        Classes="secondary"
                        TextWrapping="Wrap"
                        VerticalAlignment="Center" />
 
-            <Button Grid.Column="1"
-                    Classes="pro-store-button"
-                    MinWidth="280"
-                    Click="OnOpenMicrosoftStoreClick">
-                <StackPanel Classes="icon-label">
-                    <Path Data="{StaticResource IconLayersGeometry}"
-                          Width="18"
-                          Height="18"
-                          Stretch="Uniform"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.8"
-                          StrokeLineCap="Round"
-                          StrokeJoin="Round" />
-                    <TextBlock Text="{Binding GetProStoreButtonText}" />
-                </StackPanel>
-            </Button>
+            <WrapPanel HorizontalAlignment="Right">
+                <Button Classes="pro-store-button"
+                        MinWidth="280"
+                        Click="OnOpenMicrosoftStoreClick"
+                        Margin="0,0,10,10">
+                    <StackPanel Classes="icon-label">
+                        <Path Data="{StaticResource IconLayersGeometry}"
+                              Width="18"
+                              Height="18"
+                              Stretch="Uniform"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.8"
+                              StrokeLineCap="Round"
+                              StrokeJoin="Round" />
+                        <TextBlock Text="{Binding GetProStoreButtonText}" />
+                    </StackPanel>
+                </Button>
 
-            <Button Grid.Column="2" MinWidth="108" Click="OnCloseClick">
-                <StackPanel Classes="icon-label">
-                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
-                    <TextBlock Text="{Binding CloseText}" />
-                </StackPanel>
-            </Button>
-        </Grid>
+                <Button MinWidth="108" Click="OnCloseClick" Margin="0,0,0,10">
+                    <StackPanel Classes="icon-label">
+                        <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                        <TextBlock Text="{Binding CloseText}" />
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+        </StackPanel>
     </Grid>
 </Window>

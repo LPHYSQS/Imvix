@@ -40,6 +40,7 @@ namespace Imvix.Views
         public MainWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
             InitializeTrayIcon();
             Opened += OnWindowOpened;
             Closing += OnWindowClosing;
@@ -597,13 +598,17 @@ namespace Imvix.Views
         {
             var safeScaling = scaling > 0 ? scaling : 1d;
 
-            var widthDip = Bounds.Width > 0
-                ? Bounds.Width
-                : (double.IsNaN(Width) || Width <= 0 ? MinWidth : Width);
+            var widthDip = FrameSize?.Width > 0
+                ? FrameSize.Value.Width
+                : Bounds.Width > 0
+                    ? Bounds.Width
+                    : (double.IsNaN(Width) || Width <= 0 ? MinWidth : Width);
 
-            var heightDip = Bounds.Height > 0
-                ? Bounds.Height
-                : (double.IsNaN(Height) || Height <= 0 ? MinHeight : Height);
+            var heightDip = FrameSize?.Height > 0
+                ? FrameSize.Value.Height
+                : Bounds.Height > 0
+                    ? Bounds.Height
+                    : (double.IsNaN(Height) || Height <= 0 ? MinHeight : Height);
 
             var widthPx = Math.Max(1, (int)Math.Round(widthDip * safeScaling));
             var heightPx = Math.Max(1, (int)Math.Round(heightDip * safeScaling));
@@ -625,14 +630,14 @@ namespace Imvix.Views
 
             if (WindowState == WindowState.Normal)
             {
-                if (Bounds.Width > 0)
+                if (ClientSize.Width > 0)
                 {
-                    settings.WindowWidth = Bounds.Width;
+                    settings.WindowWidth = ClientSize.Width;
                 }
 
-                if (Bounds.Height > 0)
+                if (ClientSize.Height > 0)
                 {
-                    settings.WindowHeight = Bounds.Height;
+                    settings.WindowHeight = ClientSize.Height;
                 }
             }
 

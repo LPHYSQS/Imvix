@@ -18,22 +18,24 @@
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="12">
-            <TextBlock x:Name="MessageText" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" />
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
+                <TextBlock x:Name="MessageText" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" />
+            </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button x:Name="CancelButton" MinWidth="104" Click="OnCancelClick">
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right">
+            <Button x:Name="CancelButton" MinWidth="104" Click="OnCancelClick" Margin="0,0,8,8">
                 <StackPanel Classes="icon-label">
                     <Path Classes="line-icon" Data="{StaticResource IconCloseGeometry}" />
                     <TextBlock x:Name="CancelButtonText" />
                 </StackPanel>
             </Button>
-            <Button x:Name="ConfirmButton" MinWidth="104" Classes="primary" Click="OnConfirmClick">
+            <Button x:Name="ConfirmButton" MinWidth="104" Classes="primary" Click="OnConfirmClick" Margin="0,0,0,8">
                 <StackPanel Classes="icon-label">
                     <Path Classes="line-icon inverse" Data="{StaticResource IconCheckGeometry}" />
                     <TextBlock x:Name="ConfirmButtonText" />
                 </StackPanel>
             </Button>
-        </StackPanel>
+        </WrapPanel>
     </Grid>
 </Window>

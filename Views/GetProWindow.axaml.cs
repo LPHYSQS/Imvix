@@ -14,6 +14,7 @@ namespace Imvix.Views
         public GetProWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
         }
 
         public GetProWindow(MainWindowViewModel viewModel)

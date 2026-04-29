@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Imvix.Services;
 using Imvix.ViewModels;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace Imvix.Views
         public ContactAuthorWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
         }
 
         public ContactAuthorWindow(MainWindowViewModel viewModel)

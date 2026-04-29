@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Imvix.Services;
 
 namespace Imvix.Views
 {
@@ -8,6 +9,7 @@ namespace Imvix.Views
         public RunningInstanceWarningWindow()
         {
             InitializeComponent();
+            WindowWorkAreaAdapter.Attach(this);
         }
 
         public RunningInstanceWarningWindow(string title, string message, string closeText)

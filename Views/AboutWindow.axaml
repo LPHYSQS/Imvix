@@ -78,12 +78,16 @@
                 </Border>
 
                 <StackPanel Grid.Column="1" Spacing="10" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <WrapPanel VerticalAlignment="Center" ItemHeight="38">
                         <TextBlock Text="Imvix" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
-                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="999" Padding="12,4" VerticalAlignment="Center">
+                        <Border Background="{DynamicResource AccentBrush}"
+                                CornerRadius="999"
+                                Padding="12,4"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center">
                             <TextBlock Text="{Binding AppVersionText}" Foreground="{DynamicResource AccentForegroundBrush}" FontWeight="SemiBold" />
                         </Border>
-                    </StackPanel>
+                    </WrapPanel>
 
                     <TextBlock Text="{Binding AboutTaglineText}" FontSize="16" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding AboutSummaryText}" Classes="secondary" TextWrapping="Wrap" />
@@ -144,25 +148,25 @@
             </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="10">
-            <Border Classes="about-links-strip">
-                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <TextBlock Classes="about-links-title" Text="{Binding AboutLinksLabelText}" />
-                    <Button Classes="about-link-button" Click="OnOpenOfficialWebsiteClick">
+        <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Border Classes="about-links-strip" Margin="0,0,10,10">
+                <WrapPanel VerticalAlignment="Center" ItemHeight="34">
+                    <TextBlock Classes="about-links-title" Text="{Binding AboutLinksLabelText}" Margin="0,0,8,8" />
+                    <Button Classes="about-link-button" Click="OnOpenOfficialWebsiteClick" Margin="0,0,8,8">
                         <TextBlock Text="{Binding AboutWebsiteButtonText}" />
                     </Button>
-                    <Button Classes="about-link-button" Click="OnOpenRepositoryClick">
+                    <Button Classes="about-link-button" Click="OnOpenRepositoryClick" Margin="0,0,0,8">
                         <TextBlock Text="{Binding AboutRepositoryButtonText}" />
                     </Button>
-                </StackPanel>
+                </WrapPanel>
             </Border>
 
-            <Button MinWidth="108" Click="OnCloseClick">
+            <Button MinWidth="108" Click="OnCloseClick" Margin="0,0,0,10">
                 <StackPanel Classes="icon-label">
                     <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
                     <TextBlock Text="{Binding CloseText}" />
                 </StackPanel>
             </Button>
-        </StackPanel>
+        </WrapPanel>
     </Grid>
 </Window>

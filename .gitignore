@@ -1,0 +1,33 @@
+# IDE and editor state
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+TestResults/
+artifacts/
+
+# Publish and packaging outputs
+/Imvix-v*-win-*/
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+
+# Local SDK/cache folders
+.appdata/
+.dotnet/
+.dotnet-home/
+.localappdata/
+.nuget/
+.nuget-user/
+.profile/
+.sandbox-profile/

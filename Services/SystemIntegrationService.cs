@@ -101,6 +101,7 @@ namespace Imvix.Services
             }
         }
 
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         private static bool TryCreateShortcut(string shortcutPath)
         {
             if (!TryResolveAppLaunch(out var targetPath, out var arguments, out var workingDirectory, out var iconPath))
@@ -110,38 +111,49 @@ namespace Imvix.Services
 
             try
             {
-                var shellType = Type.GetTypeFromProgID("WScript.Shell");
-                if (shellType is null)
-                {
-                    return false;
-                }
-
-                dynamic shell = Activator.CreateInstance(shellType)!;
-                dynamic shortcut = shell.CreateShortcut(shortcutPath);
-                shortcut.TargetPath = targetPath;
-
-                if (!string.IsNullOrWhiteSpace(arguments))
-                {
-                    shortcut.Arguments = arguments;
-                }
-
-                if (!string.IsNullOrWhiteSpace(workingDirectory))
-                {
-                    shortcut.WorkingDirectory = workingDirectory;
-                }
-
-                if (!string.IsNullOrWhiteSpace(iconPath))
-                {
-                    shortcut.IconLocation = iconPath;
-                }
-
-                shortcut.Save();
-                return true;
+                return TryCreateWindowsShortcut(shortcutPath, targetPath, arguments, workingDirectory, iconPath);
             }
             catch
             {
                 return false;
             }
+        }
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        private static bool TryCreateWindowsShortcut(
+            string shortcutPath,
+            string targetPath,
+            string arguments,
+            string workingDirectory,
+            string iconPath)
+        {
+            var shellType = Type.GetTypeFromProgID("WScript.Shell");
+            if (shellType is null)
+            {
+                return false;
+            }
+
+            dynamic shell = Activator.CreateInstance(shellType)!;
+            dynamic shortcut = shell.CreateShortcut(shortcutPath);
+            shortcut.TargetPath = targetPath;
+
+            if (!string.IsNullOrWhiteSpace(arguments))
+            {
+                shortcut.Arguments = arguments;
+            }
+
+            if (!string.IsNullOrWhiteSpace(workingDirectory))
+            {
+                shortcut.WorkingDirectory = workingDirectory;
+            }
+
+            if (!string.IsNullOrWhiteSpace(iconPath))
+            {
+                shortcut.IconLocation = iconPath;
+            }
+
+            shortcut.Save();
+            return true;
         }
 
         private static bool TryResolveAppLaunch(

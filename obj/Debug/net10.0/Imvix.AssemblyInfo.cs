@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.3.4.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.4+daedaa420199427141a4394df8ed140abed5bb80")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.3.4+174ee0dd20b49601fbafc6da4ddab9ea367ec706")]
 [assembly: System.Reflection.AssemblyProductAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Imvix")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.3.4.0")]
