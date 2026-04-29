@@ -175,6 +175,8 @@
     "GetProSummary":  "通常版でも日常的な画像変換は十分にこなせます。Imvix Pro では PDF、PSD、AI ツール、OCR、さらに深い Windows 連携が加わり、より広い作業フローに対応します。",
     "GetProStandardTitle":  "通常版",
     "GetProStandardBody":  "日常的な画像変換、圧縮、リサイズ、リネーム、プリセット、フォルダー監視に最適です。",
+    "GetProAccessTitle":  "継続利用とオープンソースについて",
+    "GetProAccessBody":  "Imvix Pro は期限なしで継続的に無料試用でき、引き続きオープンソースとして公開されています。今後の開発と保守を支援したい場合は、Microsoft Store からの購入も選択できます。",
     "GetProProTitle":  "Imvix Pro",
     "GetProProBody":  "通常版の機能をすべて含み、文書処理、AI ツール、認識ワークフロー、より深い Windows 連携まで広げます。",
     "GetProMatrixTitle":  "Pro 版で増える主な違い",

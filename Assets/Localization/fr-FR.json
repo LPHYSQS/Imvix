@@ -175,6 +175,8 @@
     "GetProSummary":  "L’édition standard couvre déjà la conversion d’images au quotidien. Imvix Pro ajoute PDF, PSD, outils IA, OCR et une intégration Windows plus poussée pour les flux de travail plus complets.",
     "GetProStandardTitle":  "Édition standard",
     "GetProStandardBody":  "Idéale pour la conversion d’images, la compression, le redimensionnement, le renommage, les préréglages et la surveillance de dossiers.",
+    "GetProAccessTitle":  "Essai sans limite et open source",
+    "GetProAccessBody":  "Imvix Pro peut être utilisé gratuitement sans limite de durée et continue d’être publié en open source. L’achat via Microsoft Store reste facultatif et constitue un moyen direct de soutenir le développement et la maintenance du projet.",
     "GetProProTitle":  "Imvix Pro",
     "GetProProBody":  "Conserve toutes les fonctions de l’édition standard et ajoute le traitement de documents, des outils IA, des workflows de reconnaissance et une intégration Windows plus poussée.",
     "GetProMatrixTitle":  "Ce que Pro ajoute vraiment",

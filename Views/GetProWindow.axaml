@@ -5,10 +5,10 @@
         mc:Ignorable="d"
         x:Class="Imvix.Views.GetProWindow"
         x:CompileBindings="False"
-        Width="920"
-        Height="760"
-        MinWidth="860"
-        MinHeight="680"
+        Width="860"
+        Height="720"
+        MinWidth="720"
+        MinHeight="620"
         CanResize="False"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource AppBackgroundBrush}">
@@ -38,6 +38,11 @@
         <Style Selector="Border.pro-card-highlight">
             <Setter Property="Background" Value="{DynamicResource ProSurfaceBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ProBorderBrush}" />
+        </Style>
+
+        <Style Selector="Border.pro-card-note">
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
         </Style>
 
         <Style Selector="Border.pro-hero-badge">
@@ -166,6 +171,7 @@
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="TextAlignment" Value="Center" />
         </Style>
 
         <Style Selector="TextBlock.compare-status-text.available.shared">
@@ -259,12 +265,12 @@
         </Border>
 
         <ScrollViewer Grid.Row="1"
-                      HorizontalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       AllowAutoHide="False">
             <StackPanel Spacing="12" Margin="0,0,4,0">
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <Border Grid.Column="0" Classes="pro-card">
+                <StackPanel Spacing="12">
+                    <Border Classes="pro-card">
                         <StackPanel Spacing="10">
                             <StackPanel Classes="icon-label">
                                 <Border Classes="icon-badge">
@@ -279,7 +285,23 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Classes="pro-card pro-card-highlight">
+                    <Border Classes="pro-card pro-card-note">
+                        <StackPanel Spacing="10">
+                            <StackPanel Classes="icon-label">
+                                <Border Classes="icon-badge">
+                                    <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
+                                </Border>
+                                <TextBlock Text="{Binding GetProAccessTitleText}"
+                                           FontSize="17"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <TextBlock Classes="pro-section-body" Text="{Binding GetProAccessBodyText}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="pro-card pro-card-highlight">
                         <StackPanel Spacing="10">
                             <StackPanel Classes="icon-label">
                                 <Border Classes="icon-badge"
@@ -300,7 +322,7 @@
                             <TextBlock Classes="pro-section-body" Text="{Binding GetProProBodyText}" />
                         </StackPanel>
                     </Border>
-                </Grid>
+                </StackPanel>
 
                 <Border Classes="pro-card">
                     <StackPanel Spacing="12">
@@ -313,15 +335,17 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Grid ColumnDefinitions="2.3*,0.9*,0.9*" ColumnSpacing="10">
-                            <Border Grid.Column="1" Classes="compare-header-cell">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Border Grid.Column="0" Classes="compare-header-cell">
                                 <TextBlock Text="{Binding GetProStandardColumnText}"
                                            FontWeight="SemiBold"
+                                           TextWrapping="Wrap"
                                            HorizontalAlignment="Center" />
                             </Border>
-                            <Border Grid.Column="2" Classes="compare-header-cell pro-column">
+                            <Border Grid.Column="1" Classes="compare-header-cell pro-column">
                                 <TextBlock Text="{Binding GetProProColumnText}"
                                            FontWeight="SemiBold"
+                                           TextWrapping="Wrap"
                                            HorizontalAlignment="Center" />
                             </Border>
                         </Grid>
@@ -334,87 +358,95 @@
                                             Classes.proonly="{Binding IsProOnly}"
                                             Classes.standardonly="{Binding IsStandardOnly}"
                                             Margin="0,0,0,10">
-                                        <Grid ColumnDefinitions="Auto,2.3*,0.9*,0.9*" ColumnSpacing="10">
+                                        <Grid RowDefinitions="Auto,Auto"
+                                              ColumnDefinitions="Auto,*"
+                                              ColumnSpacing="10"
+                                              RowSpacing="10">
                                             <Border Grid.Column="0"
+                                                    Grid.RowSpan="2"
                                                     Classes="compare-row-accent"
                                                     Classes.shared="{Binding IsShared}"
                                                     Classes.proonly="{Binding IsProOnly}"
                                                     Classes.standardonly="{Binding IsStandardOnly}" />
 
                                             <StackPanel Grid.Column="1" Spacing="4">
-                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontWeight="SemiBold"
+                                                           TextWrapping="Wrap" />
                                                 <TextBlock Text="{Binding Description}"
                                                             Classes="secondary"
                                                             TextWrapping="Wrap" />
                                             </StackPanel>
 
-                                            <Border Grid.Column="2"
-                                                    Classes="compare-status"
-                                                    Classes.available="{Binding IsStandardIncluded}"
-                                                    Classes.unavailable="{Binding IsStandardUnavailable}"
-                                                    Classes.shared="{Binding IsShared}"
-                                                    Classes.proonly="{Binding IsProOnly}"
-                                                    Classes.standardonly="{Binding IsStandardOnly}">
-                                                <StackPanel Classes="compare-status-content">
-                                                    <Path Classes="compare-status-icon"
-                                                          Classes.available="{Binding IsStandardIncluded}"
-                                                          Classes.unavailable="{Binding IsStandardUnavailable}"
-                                                          Classes.shared="{Binding IsShared}"
-                                                          Classes.proonly="{Binding IsProOnly}"
-                                                          Classes.standardonly="{Binding IsStandardOnly}"
-                                                          Data="{StaticResource IconCheckGeometry}"
-                                                          IsVisible="{Binding IsStandardIncluded}" />
-                                                    <Path Classes="compare-status-icon"
-                                                          Classes.available="{Binding IsStandardIncluded}"
-                                                          Classes.unavailable="{Binding IsStandardUnavailable}"
-                                                          Classes.shared="{Binding IsShared}"
-                                                          Classes.proonly="{Binding IsProOnly}"
-                                                          Classes.standardonly="{Binding IsStandardOnly}"
-                                                          Data="{StaticResource IconCloseGeometry}"
-                                                          IsVisible="{Binding IsStandardUnavailable}" />
-                                                    <TextBlock Text="{Binding StandardStatus}"
-                                                               Classes="compare-status-text"
-                                                               Classes.available="{Binding IsStandardIncluded}"
-                                                               Classes.unavailable="{Binding IsStandardUnavailable}"
-                                                               Classes.shared="{Binding IsShared}"
-                                                               Classes.proonly="{Binding IsProOnly}"
-                                                               Classes.standardonly="{Binding IsStandardOnly}" />
-                                                </StackPanel>
-                                            </Border>
+                                            <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,*" ColumnSpacing="10">
+                                                <Border Grid.Column="0"
+                                                        Classes="compare-status"
+                                                        Classes.available="{Binding IsStandardIncluded}"
+                                                        Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                        Classes.shared="{Binding IsShared}"
+                                                        Classes.proonly="{Binding IsProOnly}"
+                                                        Classes.standardonly="{Binding IsStandardOnly}">
+                                                    <StackPanel Classes="compare-status-content">
+                                                        <Path Classes="compare-status-icon"
+                                                              Classes.available="{Binding IsStandardIncluded}"
+                                                              Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                              Classes.shared="{Binding IsShared}"
+                                                              Classes.proonly="{Binding IsProOnly}"
+                                                              Classes.standardonly="{Binding IsStandardOnly}"
+                                                              Data="{StaticResource IconCheckGeometry}"
+                                                              IsVisible="{Binding IsStandardIncluded}" />
+                                                        <Path Classes="compare-status-icon"
+                                                              Classes.available="{Binding IsStandardIncluded}"
+                                                              Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                              Classes.shared="{Binding IsShared}"
+                                                              Classes.proonly="{Binding IsProOnly}"
+                                                              Classes.standardonly="{Binding IsStandardOnly}"
+                                                              Data="{StaticResource IconCloseGeometry}"
+                                                              IsVisible="{Binding IsStandardUnavailable}" />
+                                                        <TextBlock Text="{Binding StandardStatus}"
+                                                                   Classes="compare-status-text"
+                                                                   Classes.available="{Binding IsStandardIncluded}"
+                                                                   Classes.unavailable="{Binding IsStandardUnavailable}"
+                                                                   Classes.shared="{Binding IsShared}"
+                                                                   Classes.proonly="{Binding IsProOnly}"
+                                                                   Classes.standardonly="{Binding IsStandardOnly}" />
+                                                    </StackPanel>
+                                                </Border>
 
-                                            <Border Grid.Column="3"
-                                                    Classes="compare-status"
-                                                    Classes.available="{Binding IsProIncluded}"
-                                                    Classes.unavailable="{Binding IsProUnavailable}"
-                                                    Classes.shared="{Binding IsShared}"
-                                                    Classes.proonly="{Binding IsProOnly}"
-                                                    Classes.standardonly="{Binding IsStandardOnly}">
-                                                <StackPanel Classes="compare-status-content">
-                                                    <Path Classes="compare-status-icon"
-                                                          Classes.available="{Binding IsProIncluded}"
-                                                          Classes.unavailable="{Binding IsProUnavailable}"
-                                                          Classes.shared="{Binding IsShared}"
-                                                          Classes.proonly="{Binding IsProOnly}"
-                                                          Classes.standardonly="{Binding IsStandardOnly}"
-                                                          Data="{StaticResource IconCheckGeometry}"
-                                                          IsVisible="{Binding IsProIncluded}" />
-                                                    <Path Classes="compare-status-icon"
-                                                          Classes.available="{Binding IsProIncluded}"
-                                                          Classes.unavailable="{Binding IsProUnavailable}"
-                                                          Classes.shared="{Binding IsShared}"
-                                                          Classes.proonly="{Binding IsProOnly}"
-                                                          Classes.standardonly="{Binding IsStandardOnly}"
-                                                          Data="{StaticResource IconCloseGeometry}"
-                                                          IsVisible="{Binding IsProUnavailable}" />
-                                                    <TextBlock Text="{Binding ProStatus}"
-                                                               Classes="compare-status-text"
-                                                               Classes.available="{Binding IsProIncluded}"
-                                                               Classes.unavailable="{Binding IsProUnavailable}"
-                                                               Classes.shared="{Binding IsShared}"
-                                                               Classes.proonly="{Binding IsProOnly}"
-                                                               Classes.standardonly="{Binding IsStandardOnly}" />
-                                                </StackPanel>
-                                            </Border>
+                                                <Border Grid.Column="1"
+                                                        Classes="compare-status"
+                                                        Classes.available="{Binding IsProIncluded}"
+                                                        Classes.unavailable="{Binding IsProUnavailable}"
+                                                        Classes.shared="{Binding IsShared}"
+                                                        Classes.proonly="{Binding IsProOnly}"
+                                                        Classes.standardonly="{Binding IsStandardOnly}">
+                                                    <StackPanel Classes="compare-status-content">
+                                                        <Path Classes="compare-status-icon"
+                                                              Classes.available="{Binding IsProIncluded}"
+                                                              Classes.unavailable="{Binding IsProUnavailable}"
+                                                              Classes.shared="{Binding IsShared}"
+                                                              Classes.proonly="{Binding IsProOnly}"
+                                                              Classes.standardonly="{Binding IsStandardOnly}"
+                                                              Data="{StaticResource IconCheckGeometry}"
+                                                              IsVisible="{Binding IsProIncluded}" />
+                                                        <Path Classes="compare-status-icon"
+                                                              Classes.available="{Binding IsProIncluded}"
+                                                              Classes.unavailable="{Binding IsProUnavailable}"
+                                                              Classes.shared="{Binding IsShared}"
+                                                              Classes.proonly="{Binding IsProOnly}"
+                                                              Classes.standardonly="{Binding IsStandardOnly}"
+                                                              Data="{StaticResource IconCloseGeometry}"
+                                                              IsVisible="{Binding IsProUnavailable}" />
+                                                        <TextBlock Text="{Binding ProStatus}"
+                                                                   Classes="compare-status-text"
+                                                                   Classes.available="{Binding IsProIncluded}"
+                                                                   Classes.unavailable="{Binding IsProUnavailable}"
+                                                                   Classes.shared="{Binding IsShared}"
+                                                                   Classes.proonly="{Binding IsProOnly}"
+                                                                   Classes.standardonly="{Binding IsStandardOnly}" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

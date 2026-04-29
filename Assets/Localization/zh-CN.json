@@ -175,6 +175,8 @@
     "GetProSummary":  "普通版已经覆盖高频图片转换；Imvix Pro 在此基础上进一步加入 PDF、PSD、AI 工具、OCR 与更深度的 Windows 集成，适合更完整的处理链路。",
     "GetProStandardTitle":  "普通版",
     "GetProStandardBody":  "适合日常图片转换、压缩、缩放、重命名、预设和文件夹监听。",
+    "GetProAccessTitle":  "长期试用与开源说明",
+    "GetProAccessBody":  "Imvix Pro 提供无时间限制的长期免费试用，并持续以开源方式发布。如希望支持项目的后续开发与维护，也可选择通过 Microsoft Store 付费获取。",
     "GetProProTitle":  "Imvix Pro",
     "GetProProBody":  "保留普通版全部基础能力，并扩展文档处理、AI 工具、识别流程与更深度的 Windows 集成。",
     "GetProMatrixTitle":  "Pro 版带来的主要差异",

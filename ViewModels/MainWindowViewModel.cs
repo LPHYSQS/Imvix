@@ -381,6 +381,8 @@ namespace Imvix.ViewModels
         public string GetProSummaryText => T("GetProSummary");
         public string GetProStandardTitleText => T("GetProStandardTitle");
         public string GetProStandardBodyText => T("GetProStandardBody");
+        public string GetProAccessTitleText => T("GetProAccessTitle");
+        public string GetProAccessBodyText => T("GetProAccessBody");
         public string GetProProTitleText => T("GetProProTitle");
         public string GetProProBodyText => T("GetProProBody");
         public string GetProMatrixTitleText => T("GetProMatrixTitle");
@@ -1864,6 +1866,8 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(GetProSummaryText));
             OnPropertyChanged(nameof(GetProStandardTitleText));
             OnPropertyChanged(nameof(GetProStandardBodyText));
+            OnPropertyChanged(nameof(GetProAccessTitleText));
+            OnPropertyChanged(nameof(GetProAccessBodyText));
             OnPropertyChanged(nameof(GetProProTitleText));
             OnPropertyChanged(nameof(GetProProBodyText));
             OnPropertyChanged(nameof(GetProMatrixTitleText));
