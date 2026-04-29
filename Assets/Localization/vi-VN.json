@@ -11,6 +11,7 @@
     "ImageList":  "Danh sách ảnh",
     "DropHintTitle":  "Thả ảnh vào đây",
     "DropHintDescription":  "hoặc bấm \"Nhập ảnh\" ở trên",
+    "DropHintSupportedFormatsTemplate":  "(Định dạng nhập được hỗ trợ: {0})",
     "PreviewTab":  "Xem trước",
     "SettingsTab":  "Cài đặt",
     "NoPreview":  "Chọn một ảnh để xem trước",

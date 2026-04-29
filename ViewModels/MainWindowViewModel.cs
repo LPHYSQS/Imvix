@@ -29,6 +29,8 @@ namespace Imvix.ViewModels
         private const string LanguageCodeSystem = "System";
         private const string FallbackLanguageCode = "en-US";
         private const string ContactAuthorEmail = "3261296352@qq.com";
+        private const string LeftToRightIsolate = "\u2066";
+        private const string PopDirectionalIsolate = "\u2069";
 
          private static readonly (string Code, string DisplayName)[] SupportedLanguageSeeds =
          [
@@ -45,6 +47,8 @@ namespace Imvix.ViewModels
              ("vi-VN", "Ti\u1EBFng Vi\u1EC7t"),
              ("th-TH", "\u0E44\u0E17\u0E22")
          ];
+        private static readonly string SupportedImportFormatsListText =
+            $"{LeftToRightIsolate}{string.Join(", ", ImageConversionService.SupportedInputExtensions.Select(static extension => extension.TrimStart('.').ToUpperInvariant()))}{PopDirectionalIsolate}";
 
         private readonly SettingsService _settingsService = new();
         private readonly LocalizationService _localizationService = new();
@@ -227,6 +231,8 @@ namespace Imvix.ViewModels
         public string DropHintTitleText => T("DropHintTitle");
 
         public string DropHintDescriptionText => T("DropHintDescription");
+
+        public string DropHintSupportedFormatsText => FormatT("DropHintSupportedFormatsTemplate", SupportedImportFormatsListText);
 
         public string PreviewTabText => T("PreviewTab");
 
@@ -1769,6 +1775,7 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(ImageListText));
             OnPropertyChanged(nameof(DropHintTitleText));
             OnPropertyChanged(nameof(DropHintDescriptionText));
+            OnPropertyChanged(nameof(DropHintSupportedFormatsText));
             OnPropertyChanged(nameof(PreviewTabText));
             OnPropertyChanged(nameof(SettingsTabText));
             OnPropertyChanged(nameof(NoPreviewText));

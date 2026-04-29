@@ -204,6 +204,13 @@
                                        MaxWidth="340"
                                        TextWrapping="Wrap"
                                        TextAlignment="Center" />
+                            <TextBlock Text="{Binding DropHintSupportedFormatsText}"
+                                       Classes="secondary"
+                                       HorizontalAlignment="Center"
+                                       MaxWidth="560"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center" />
                         </StackPanel>
                     </Border>
 

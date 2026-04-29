@@ -11,6 +11,7 @@
     "ImageList":  "รายการรูปภาพ",
     "DropHintTitle":  "ลากรูปภาพมาวางที่นี่",
     "DropHintDescription":  "หรือคลิก \"นำเข้ารูปภาพ\" ด้านบน",
+    "DropHintSupportedFormatsTemplate":  "(รูปแบบที่รองรับการนำเข้า: {0})",
     "PreviewTab":  "แสดงตัวอย่าง",
     "SettingsTab":  "การตั้งค่า",
     "NoPreview":  "เลือกรูปภาพเพื่อดูตัวอย่าง",

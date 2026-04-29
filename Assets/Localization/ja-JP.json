@@ -11,6 +11,7 @@
     "ImageList":  "画像一覧",
     "DropHintTitle":  "ここに画像をドロップ",
     "DropHintDescription":  "または上の「画像を追加」をクリック",
+    "DropHintSupportedFormatsTemplate":  "（対応インポート形式: {0}）",
     "PreviewTab":  "プレビュー",
     "SettingsTab":  "設定",
     "NoPreview":  "画像を選択してプレビュー",

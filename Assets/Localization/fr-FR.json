@@ -11,6 +11,7 @@
     "ImageList":  "Liste d\u0027images",
     "DropHintTitle":  "Déposez les images ici",
     "DropHintDescription":  "ou cliquez sur \"Importer des images\" ci-dessus",
+    "DropHintSupportedFormatsTemplate":  "(Formats d'import pris en charge : {0})",
     "PreviewTab":  "Aperçu",
     "SettingsTab":  "Paramètres",
     "NoPreview":  "Sélectionnez une image à prévisualiser",

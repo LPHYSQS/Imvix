@@ -22,7 +22,9 @@ namespace Imvix.Views
         [
             new FilePickerFileType("Image Files")
             {
-                Patterns = ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp", "*.gif", "*.tif", "*.tiff", "*.ico", "*.svg"]
+                Patterns = ImageConversionService.SupportedInputExtensions
+                    .Select(static extension => $"*{extension.ToLowerInvariant()}")
+                    .ToArray()
             }
         ];
 

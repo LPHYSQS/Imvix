@@ -11,6 +11,7 @@
     "ImageList":  "قائمة الصور",
     "DropHintTitle":  "أسقط الصور هنا",
     "DropHintDescription":  "أو اضغط \"استيراد الصور\" في الأعلى",
+    "DropHintSupportedFormatsTemplate":  "(تنسيقات الاستيراد المدعومة: {0})",
     "PreviewTab":  "معاينة",
     "SettingsTab":  "الإعدادات",
     "NoPreview":  "اختر صورة للمعاينة",

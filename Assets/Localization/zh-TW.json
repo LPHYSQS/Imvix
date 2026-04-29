@@ -11,6 +11,7 @@
     "ImageList":  "圖片清單",
     "DropHintTitle":  "將圖片拖曳到這裡",
     "DropHintDescription":  "或點擊上方「匯入圖片」按鈕",
+    "DropHintSupportedFormatsTemplate":  "（支援匯入：{0}）",
     "PreviewTab":  "預覽",
     "SettingsTab":  "設定",
     "NoPreview":  "請選擇一張圖片預覽",

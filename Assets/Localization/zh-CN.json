@@ -11,6 +11,7 @@
     "ImageList":  "图片列表",
     "DropHintTitle":  "拖拽图片到这里",
     "DropHintDescription":  "或点击上方“导入图片”按钮",
+    "DropHintSupportedFormatsTemplate":  "（支持导入：{0}）",
     "PreviewTab":  "预览",
     "SettingsTab":  "设置",
     "NoPreview":  "请选择一张图片预览",

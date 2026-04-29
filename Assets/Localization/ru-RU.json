@@ -11,6 +11,7 @@
     "ImageList":  "Список изображений",
     "DropHintTitle":  "Перетащите изображения сюда",
     "DropHintDescription":  "или нажмите \"Импорт изображений\" выше",
+    "DropHintSupportedFormatsTemplate":  "(Поддерживаемые форматы импорта: {0})",
     "PreviewTab":  "Предпросмотр",
     "SettingsTab":  "Настройки",
     "NoPreview":  "Выберите изображение для предпросмотра",

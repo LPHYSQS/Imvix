@@ -11,6 +11,7 @@
     "ImageList":  "Bildliste",
     "DropHintTitle":  "Bilder hier ablegen",
     "DropHintDescription":  "oder oben auf \"Bilder importieren\" klicken",
+    "DropHintSupportedFormatsTemplate":  "(Unterstützte Importformate: {0})",
     "PreviewTab":  "Vorschau",
     "SettingsTab":  "Einstellungen",
     "NoPreview":  "Wählen Sie ein Bild zur Vorschau aus",
