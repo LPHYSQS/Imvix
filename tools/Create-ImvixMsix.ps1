@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$PublishDirectory = "Imvix-v1.3.4-win-x64",
+    [string]$PublishDirectory = "Imvix-v1.3.5-win-x64",
     [string]$PackageIdentityName = "D787ABC4.Imvix",
     [string]$Publisher = "CN=FA0F6293-29B7-43FB-AB9B-49D0FB5F198C",
     [string]$PublisherDisplayName = (([char]0x5DF2) + ([char]0x901D) + ([char]0x60C5) + ([char]0x6B87)),

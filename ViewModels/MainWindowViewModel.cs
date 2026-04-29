@@ -404,7 +404,7 @@ namespace Imvix.ViewModels
             CreateGetProComparisonRow("GetProRowRecognitionTitle", "GetProRowRecognitionBody", isStandardIncluded: false, isProIncluded: true),
             CreateGetProComparisonRow("GetProRowWindowsTitle", "GetProRowWindowsBody", isStandardIncluded: false, isProIncluded: true)
         ];
-        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.4"}";
+        public string AppVersionText => $"v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.3.5"}";
         public string VersionBadgeHoverText => T("VersionBadgeHover");
         public string VersionBadgeToolTipText => FormatT("VersionBadgeToolTipFormat", AppVersionText);
         public string FooterVersionBadgeText => _isVersionBadgeHovered ? VersionBadgeHoverText : AppVersionText;
