@@ -412,10 +412,12 @@ namespace Imvix.ViewModels
         public string VersionNotesWindowTitleText => FormatT("VersionNotesWindowTitleFormat", AppVersionText);
         public string VersionNotesHeaderText => FormatT("VersionNotesHeaderFormat", AppVersionText);
         public string VersionNotesSummaryText => T("VersionNotesSummary");
-        public string VersionNotesFixesTitleText => T("VersionNotesFixesTitle");
-        public string VersionNotesFixesBodyText => T("VersionNotesFixesBody");
-        public string VersionNotesFeaturesTitleText => T("VersionNotesFeaturesTitle");
-        public string VersionNotesFeaturesBodyText => T("VersionNotesFeaturesBody");
+        public string VersionNotesImprovementsTitleText => T("VersionNotesImprovementsTitle");
+        public string VersionNotesImprovementsBodyText => T("VersionNotesImprovementsBody");
+        public string VersionNotesEditionTitleText => T("VersionNotesEditionTitle");
+        public string VersionNotesEditionBodyText => T("VersionNotesEditionBody");
+        public string VersionNotesSupportTitleText => T("VersionNotesSupportTitle");
+        public string VersionNotesSupportBodyText => T("VersionNotesSupportBody");
         public bool IsRightToLeftLayout => UiFlowDirection == FlowDirection.RightToLeft;
         public bool IsLeftToRightLayout => !IsRightToLeftLayout;
 
@@ -1886,10 +1888,12 @@ namespace Imvix.ViewModels
             OnPropertyChanged(nameof(VersionNotesWindowTitleText));
             OnPropertyChanged(nameof(VersionNotesHeaderText));
             OnPropertyChanged(nameof(VersionNotesSummaryText));
-            OnPropertyChanged(nameof(VersionNotesFixesTitleText));
-            OnPropertyChanged(nameof(VersionNotesFixesBodyText));
-            OnPropertyChanged(nameof(VersionNotesFeaturesTitleText));
-            OnPropertyChanged(nameof(VersionNotesFeaturesBodyText));
+            OnPropertyChanged(nameof(VersionNotesImprovementsTitleText));
+            OnPropertyChanged(nameof(VersionNotesImprovementsBodyText));
+            OnPropertyChanged(nameof(VersionNotesEditionTitleText));
+            OnPropertyChanged(nameof(VersionNotesEditionBodyText));
+            OnPropertyChanged(nameof(VersionNotesSupportTitleText));
+            OnPropertyChanged(nameof(VersionNotesSupportBodyText));
             RefreshLocalizedPropertiesV3();
             RefreshGifLabels();
         }

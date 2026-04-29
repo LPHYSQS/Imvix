@@ -255,10 +255,12 @@ namespace Imvix.Views
                 vm.VersionNotesWindowTitleText,
                 vm.VersionNotesHeaderText,
                 vm.VersionNotesSummaryText,
-                vm.VersionNotesFixesTitleText,
-                vm.VersionNotesFixesBodyText,
-                vm.VersionNotesFeaturesTitleText,
-                vm.VersionNotesFeaturesBodyText,
+                vm.VersionNotesImprovementsTitleText,
+                vm.VersionNotesImprovementsBodyText,
+                vm.VersionNotesEditionTitleText,
+                vm.VersionNotesEditionBodyText,
+                vm.VersionNotesSupportTitleText,
+                vm.VersionNotesSupportBodyText,
                 vm.CloseText)
             {
                 FlowDirection = this.FlowDirection

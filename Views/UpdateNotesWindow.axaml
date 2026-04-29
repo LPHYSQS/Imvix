@@ -43,9 +43,9 @@
                             <Border Classes="icon-badge">
                                 <Path Classes="line-icon" Data="{StaticResource IconCheckGeometry}" />
                             </Border>
-                            <TextBlock x:Name="FixesTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <TextBlock x:Name="ImprovementsTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock x:Name="FixesBodyText" Classes="update-section-body" />
+                        <TextBlock x:Name="ImprovementsBodyText" Classes="update-section-body" />
                     </StackPanel>
                 </Border>
 
@@ -55,9 +55,21 @@
                             <Border Classes="icon-badge">
                                 <Path Classes="line-icon" Data="{StaticResource IconLayersGeometry}" />
                             </Border>
-                            <TextBlock x:Name="FeaturesTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <TextBlock x:Name="EditionTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock x:Name="FeaturesBodyText" Classes="update-section-body" />
+                        <TextBlock x:Name="EditionBodyText" Classes="update-section-body" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="update-card">
+                    <StackPanel Spacing="10">
+                        <StackPanel Classes="icon-label">
+                            <Border Classes="icon-badge">
+                                <Path Classes="line-icon" Data="{StaticResource IconInfoGeometry}" />
+                            </Border>
+                            <TextBlock x:Name="SupportTitleText" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock x:Name="SupportBodyText" Classes="update-section-body" />
                     </StackPanel>
                 </Border>
             </StackPanel>

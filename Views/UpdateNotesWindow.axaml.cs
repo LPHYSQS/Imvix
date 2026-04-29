@@ -16,20 +16,24 @@ namespace Imvix.Views
             string title,
             string header,
             string summary,
-            string fixesTitle,
-            string fixesBody,
-            string featuresTitle,
-            string featuresBody,
+            string improvementsTitle,
+            string improvementsBody,
+            string editionTitle,
+            string editionBody,
+            string supportTitle,
+            string supportBody,
             string closeButtonText)
             : this()
         {
             Title = title;
             HeaderText.Text = header;
             SummaryText.Text = summary;
-            FixesTitleText.Text = fixesTitle;
-            FixesBodyText.Text = fixesBody;
-            FeaturesTitleText.Text = featuresTitle;
-            FeaturesBodyText.Text = featuresBody;
+            ImprovementsTitleText.Text = improvementsTitle;
+            ImprovementsBodyText.Text = improvementsBody;
+            EditionTitleText.Text = editionTitle;
+            EditionBodyText.Text = editionBody;
+            SupportTitleText.Text = supportTitle;
+            SupportBodyText.Text = supportBody;
             CloseButtonText.Text = closeButtonText;
         }
 
