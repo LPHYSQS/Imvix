@@ -1,0 +1,21 @@
+* text=auto
+
+# Keep Windows-native script files on CRLF checkouts.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Common binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.dll binary
+*.exe binary
+*.pdb binary
+*.so binary
+*.dylib binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

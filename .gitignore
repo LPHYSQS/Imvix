@@ -1,3 +1,8 @@
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
 # IDE and editor state
 .vs/
 .idea/
@@ -5,7 +10,10 @@
 *.suo
 *.user
 *.userosscache
+*.rsuser
 *.sln.docstates
+_ReSharper*/
+*.DotSettings.user
 
 # Build outputs
 [Bb]in/
@@ -14,13 +22,24 @@
 [Rr]elease/
 TestResults/
 artifacts/
+BenchmarkDotNet.Artifacts/
 
 # Publish and packaging outputs
+publish/
+AppPackages/
+BundleArtifacts/
+Properties/PublishProfiles/*.pubxml
+Properties/PublishProfiles/*.pubxml.user
 /Imvix-v*-win-*/
-*.msix
-*.msixbundle
+*.appinstaller
 *.appx
 *.appxbundle
+*.msix
+*.msixbundle
+*.nupkg
+*.snupkg
+*.pfx
+*.cer
 
 # Local SDK/cache folders
 .appdata/
@@ -31,3 +50,10 @@ artifacts/
 .nuget-user/
 .profile/
 .sandbox-profile/
+
+# Temporary and patch files
+*.log
+*.tmp
+*.temp
+*.orig
+*.rej

@@ -241,7 +241,9 @@ function New-AppxManifestXml {
         [Parameter(Mandatory = $true)]
         [string]$MinVersionValue,
         [Parameter(Mandatory = $true)]
-        [string]$MaxVersionTestedValue
+        [string]$MaxVersionTestedValue,
+        [Parameter(Mandatory = $true)]
+        [string[]]$SupportedLanguages
     )
 
     $xml = New-Object System.Xml.XmlDocument
@@ -278,20 +280,7 @@ function New-AppxManifestXml {
     $resources = $xml.CreateElement("Resources", $package.NamespaceURI)
     [void]$package.AppendChild($resources)
 
-    foreach ($language in @(
-        "zh-Hans",
-        "zh-Hant",
-        "en-US",
-        "ja-JP",
-        "ko-KR",
-        "de-DE",
-        "fr-FR",
-        "it-IT",
-        "ru-RU",
-        "th-TH",
-        "vi-VN",
-        "ar-SA"
-    )) {
+    foreach ($language in $SupportedLanguages) {
         $resource = $xml.CreateElement("Resource", $package.NamespaceURI)
         $resource.SetAttribute("Language", $language)
         [void]$resources.AppendChild($resource)
@@ -371,6 +360,24 @@ $makeAppx = Get-LatestWindowsKitToolPath -ToolName "makeappx.exe"
 $makePri = Get-LatestWindowsKitToolPath -ToolName "makepri.exe"
 $signTool = Get-LatestWindowsKitToolPath -ToolName "signtool.exe"
 
+# Use script-based Chinese tags so Partner Center surfaces Simplified/Traditional Chinese
+# without forcing a region label.
+$supportedManifestLanguages = @(
+    "zh-Hans",
+    "zh-Hant",
+    "en-US",
+    "ja-JP",
+    "ko-KR",
+    "de-DE",
+    "fr-FR",
+    "it-IT",
+    "ru-RU",
+    "th-TH",
+    "vi-VN",
+    "ar-SA"
+)
+$defaultManifestLanguage = $supportedManifestLanguages[0]
+
 $packageFileVersionLabel = Get-PackageFileVersionLabel -VersionText $PackageVersion
 $outputName = "Imvix-v$packageFileVersionLabel-store-x64.msix"
 $outputPath = Join-Path $publishRoot $outputName
@@ -431,9 +438,10 @@ New-AppxManifestXml `
     -PublisherDisplayNameValue $PublisherDisplayName `
     -DescriptionValue $Description `
     -MinVersionValue $MinVersion `
-    -MaxVersionTestedValue $MaxVersionTested
+    -MaxVersionTestedValue $MaxVersionTested `
+    -SupportedLanguages $supportedManifestLanguages
 
-Invoke-ExternalTool -ToolPath $makePri -Arguments @("createconfig", "/cf", $priConfigPath, "/dq", "en-US", "/pv", "10.0.0", "/o") | Out-Null
+Invoke-ExternalTool -ToolPath $makePri -Arguments @("createconfig", "/cf", $priConfigPath, "/dq", $defaultManifestLanguage, "/pv", "10.0.0", "/o") | Out-Null
 Invoke-ExternalTool -ToolPath $makePri -Arguments @("new", "/pr", $layoutRoot, "/cf", $priConfigPath, "/mn", $manifestPath, "/of", $resourcesPriPath, "/o") | Out-Null
 
 Invoke-ExternalTool -ToolPath $makeAppx -Arguments @("pack", "/v", "/h", "SHA256", "/o", "/d", $layoutRoot, "/p", $outputPath) | Out-Null
@@ -459,7 +467,7 @@ if (-not $SkipSigning) {
     OutputPath = $outputPath
     PublishDirectory = $publishRoot
     PackageVersion = $PackageVersion
-    Languages = "zh-Hans, zh-Hant, en-US, ja-JP, ko-KR, de-DE, fr-FR, it-IT, ru-RU, th-TH, vi-VN, ar-SA"
+    Languages = ($supportedManifestLanguages -join ", ")
     PublishFileCount = $sourceFiles.Count
     Signing = $signingMode
     CertificateThumbprint = $certificateThumbprint
