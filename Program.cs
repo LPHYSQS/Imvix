@@ -1,6 +1,7 @@
-﻿using Avalonia;
-using System;
+using Avalonia;
 using Imvix.Services;
+using System;
+using System.Diagnostics;
 
 namespace Imvix
 {
@@ -12,6 +13,13 @@ namespace Imvix
         [STAThread]
         public static void Main(string[] args)
         {
+            // Let debugger-launched runs open normally even if another instance exists.
+            if (Debugger.IsAttached)
+            {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+                return;
+            }
+
             using var singleInstance = new SingleInstanceService("Imvix");
             if (!singleInstance.IsFirstInstance)
             {
